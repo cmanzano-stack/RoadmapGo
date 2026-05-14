@@ -151,6 +151,26 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
   .kpi-card{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   .meeting-item{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 }
+  
+/* --- REGLAS PARA EVITAR CORTES EN EL PDF --- */
+.block, .card, .section, .kpi-card, .meeting-item, tr {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+  position: relative; 
+}
+
+.phase-header {
+  page-break-after: avoid !important;
+  break-after: avoid !important;
+}
+
+/* Esto asegura que si el bloque es muy grande, 
+   la librería sepa que debe moverlo a la siguiente página */
+.html2pdf__page-break {
+  display: block;
+  height: 0;
+  page-break-before: always;
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
@@ -694,25 +714,30 @@ function generateRoadmap(){
   document.getElementById('output').style.display='block';
   document.getElementById('output').scrollIntoView({behavior:'smooth'});
 }
-  function downloadPDF() {
-  const element = document.getElementById('output'); // El contenedor que quieres exportar
+function downloadPDF() {
+  const element = document.getElementById('output');
   
-  // Si el roadmap aún no se ha generado, avisar al usuario
   if (element.style.display === 'none' || element.style.display === '') {
     alert("Primero debes hacer clic en 'Generar roadmap'");
     return;
   }
 
   const opt = {
-    margin:       10,
+    margin:       [10, 10, 15, 10], // Márgenes: arriba, izquierda, abajo, derecha
     filename:     'Roadmap_Apprecio.pdf',
     image:        { type: 'jpeg', quality: 0.98 },
-    html2canvas:  { scale: 2, useCORS: true }, // scale 2 mejora la resolución
-    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    html2canvas:  { 
+      scale: 2, 
+      useCORS: true, 
+      scrollY: 0 // Evita que el PDF salga desplazado si hiciste scroll
+    },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    // Esta configuración es la que lee tus estilos 'avoid' del paso 1
+    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
   };
 
-  // Ejecutar la conversión y descarga
   html2pdf().set(opt).from(element).save();
+}
 }
 </script>
 </body>
