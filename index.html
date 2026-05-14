@@ -152,6 +152,7 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
   .meeting-item{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -176,7 +177,7 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
     </div>
     <div class="btn-row">
       <button class="btn-primary" onclick="generateRoadmap()">Generar roadmap</button>
-      <button class="btn-secondary" onclick="window.print()">Imprimir / PDF</button>
+      <button class="btn-secondary" onclick="downloadPDF()">Descargar PDF</button>
     </div>
   </div>
 </div>
@@ -240,18 +241,8 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
           </div>
 
           <div class="section">
-            <div class="section-title">Entregables Apprecio</div>
-            <div class="pills-area" id="pills-kickoff-entregables">
-              <span class="pill"><span class="pill-text" contenteditable="true" spellcheck="false">Acta de kick-off firmada</span><button class="pill-del" onclick="delPill(this)" title="Eliminar">×</button></span>
-              <span class="pill"><span class="pill-text" contenteditable="true" spellcheck="false">Checklist de inputs con fecha límite</span><button class="pill-del" onclick="delPill(this)" title="Eliminar">×</button></span>
-              <span class="pill"><span class="pill-text" contenteditable="true" spellcheck="false">Presentación T14 / T30 / T90 compartida</span><button class="pill-del" onclick="delPill(this)" title="Eliminar">×</button></span>
-              <button class="btn-add-pill" onclick="addPill('pills-kickoff-entregables')">+ Agregar</button>
-            </div>
-          </div>
-
-          <div class="section">
             <div class="section-title">Alerta</div>
-            <div class="alert" contenteditable="true" spellcheck="false">Si el cliente no entrega los inputs en los primeros 5 días hábiles, la fecha de Go-Live se recorre automáticamente. Documentar en acta.</div>
+            <div class="alert" contenteditable="true" spellcheck="false">Si el cliente no entrega los inputs en los primeros 5 días hábiles, la fecha de Go-Live se corre automáticamente.</div>
           </div>
 
         </div>
@@ -293,7 +284,7 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 
           <div class="section">
             <div class="section-title">Alerta</div>
-            <div class="alert" contenteditable="true" spellcheck="false">Nómina y tramos son el camino crítico — sin ellos no se puede configurar el scorecard. Sin scorecard no hay Go-Live.</div>
+            <div class="alert" contenteditable="true" spellcheck="false">Nómina y tramos son el camino crítico sin ellos no se puede configurar el scorecard. Sin scorecard no hay Go-Live.</div>
           </div>
 
         </div>
@@ -702,6 +693,26 @@ function generateRoadmap(){
   document.getElementById('out-footer').textContent = 'Plan generado para '+client+' · Go-Live: '+new Date(gs+'T12:00:00').toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'})+' · D+90: '+toISO(addDays(goLive,90));
   document.getElementById('output').style.display='block';
   document.getElementById('output').scrollIntoView({behavior:'smooth'});
+}
+  function downloadPDF() {
+  const element = document.getElementById('output'); // El contenedor que quieres exportar
+  
+  // Si el roadmap aún no se ha generado, avisar al usuario
+  if (element.style.display === 'none' || element.style.display === '') {
+    alert("Primero debes hacer clic en 'Generar roadmap'");
+    return;
+  }
+
+  const opt = {
+    margin:       10,
+    filename:     'Roadmap_Apprecio.pdf',
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, useCORS: true }, // scale 2 mejora la resolución
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  // Ejecutar la conversión y descarga
+  html2pdf().set(opt).from(element).save();
 }
 </script>
 </body>
