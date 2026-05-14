@@ -32,7 +32,9 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .setup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:1.25rem;}
 .field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);margin-bottom:5px;}
 .field input,.field select{width:100%;padding:9px 12px;border:1px solid var(--border-m);border-radius:var(--r-md);font-family:var(--font);font-size:13px;color:var(--text-1);background:var(--bg-1);outline:none;transition:border-color .15s;}
-.field input:focus,.field select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(250,52,94,.12);}
+.field input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(250,52,94,.12);}
+.field input.invalid { border-color: var(--brand); background: #fff5f7; }
+
 .btn-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .btn-primary{background:var(--brand);color:#fff;border:none;padding:11px 26px;border-radius:var(--r-md);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;}
 .btn-primary:hover{background:var(--brand-dark);}
@@ -46,120 +48,67 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .rm-title{font-size:24px;font-weight:700;margin-bottom:4px;}
 .rm-dates{font-size:13px;color:var(--text-2);}
 
-/* LEGEND */
-.legend{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:2rem;}
-.legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-2);}
-.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-
-/* PHASE HEADER */
-.phase-header{display:flex;align-items:center;gap:12px;margin:2.5rem 0 1rem;}
-.phase-badge{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:5px 14px;border-radius:20px;white-space:nowrap;}
-.phase-line{flex:1;height:1px;background:var(--border-l);}
-
-/* TIMELINE */
+/* TIMELINE & CARDS */
 .timeline{position:relative;padding-left:28px;}
 .timeline::before{content:'';position:absolute;left:9px;top:8px;bottom:8px;width:2px;background:var(--border-l);border-radius:2px;}
 .block{position:relative;margin-bottom:1.25rem;}
 .block-dot{position:absolute;left:-23px;top:16px;width:12px;height:12px;border-radius:50%;border:2px solid var(--bg-page);z-index:1;}
-
-/* CARD */
 .card{background:var(--bg-1);border:1px solid var(--border-l);border-radius:var(--r-lg);overflow:visible;}
 .card-header{padding:14px 16px;cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;transition:background .15s;border-radius:var(--r-lg) var(--r-lg) 0 0;}
-.card-header:hover{background:var(--bg-2);}
 .card-tag{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;white-space:nowrap;flex-shrink:0;}
 .card-meta{flex:1;}
 .card-title-text{font-size:14px;font-weight:600;margin-bottom:2px;}
 .card-sub-text{font-size:12px;color:var(--text-2);}
-.card-period{font-size:11px;color:var(--brand);font-weight:600;margin-top:5px;}
 .chevron{font-size:20px;color:var(--text-3);transition:transform .2s;flex-shrink:0;margin-top:1px;line-height:1;user-select:none;}
 .chevron.open{transform:rotate(90deg);}
 .card-body{display:none;border-top:1px solid var(--border-l);padding:16px;}
 .card-body.open{display:block;}
 
-/* SECTIONS */
+/* SECTIONS & PILLS */
 .section{margin-bottom:16px;}
-.section:last-child{margin-bottom:0;}
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);}
-
-/* EDITABLE PILLS */
+.section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:8px;}
 .pills-area{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;}
 .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:12px;border:1px solid var(--border-l);color:var(--text-2);background:var(--bg-1);}
-.pill-text{outline:none;min-width:40px;max-width:260px;white-space:nowrap;}
-.pill-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:14px;line-height:1;padding:0;display:flex;align-items:center;transition:color .15s;}
-.pill-del:hover{color:var(--brand);}
-.btn-add-pill{font-size:11px;font-weight:700;color:var(--brand);background:var(--brand-light);border:none;padding:4px 11px;border-radius:12px;cursor:pointer;transition:background .15s;white-space:nowrap;}
-.btn-add-pill:hover{background:#f8c4cc;}
+.pill-text{outline:none;min-width:40px;white-space:nowrap;}
+.pill-del, .meeting-del, .kpi-del, .row-del button{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:14px;padding:0;transition:color .15s;}
+.pill-del:hover, .meeting-del:hover, .kpi-del:hover, .row-del button:hover{color:var(--brand);}
+.btn-add-pill{font-size:11px;font-weight:700;color:var(--brand);background:var(--brand-light);border:none;padding:4px 11px;border-radius:12px;cursor:pointer;}
 
-/* MEETING LIST */
+/* MEETINGS & KPIs */
 .meeting-list{display:flex;flex-direction:column;gap:6px;}
 .meeting-item{display:flex;align-items:flex-start;gap:8px;background:var(--bg-2);border-left:3px solid var(--brand);border-radius:0 var(--r-md) var(--r-md) 0;padding:10px 12px;}
-.meeting-text{font-size:13px;color:var(--text-2);outline:none;flex:1;min-width:0;}
-.meeting-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:16px;flex-shrink:0;padding:0;transition:color .15s;}
-.meeting-del:hover{color:var(--brand);}
-
-/* KPI GRID */
+.meeting-text{font-size:13px;color:var(--text-2);outline:none;flex:1;}
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;}
 .kpi-card{background:var(--brand-light);border-radius:var(--r-md);padding:10px 12px;position:relative;}
 .kpi-val{font-size:18px;font-weight:700;color:var(--brand-dark);outline:none;}
 .kpi-lbl{font-size:11px;color:var(--brand-text);margin-top:2px;outline:none;}
-.kpi-del{position:absolute;top:6px;right:8px;background:none;border:none;cursor:pointer;color:var(--brand-text);font-size:14px;opacity:.5;transition:opacity .15s;}
-.kpi-del:hover{opacity:1;}
-.btn-add-kpi{font-size:11px;font-weight:700;color:var(--green);background:var(--green-light);border:none;padding:8px 14px;border-radius:var(--r-md);cursor:pointer;transition:background .15s;}
-.btn-add-kpi:hover{background:#d1fae5;}
 
 /* TABLE */
 .report-table{width:100%;border-collapse:collapse;font-size:12px;}
-.report-table th{text-align:left;padding:7px 12px;background:var(--brand);color:#fff;font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;}
-.report-table th:first-child{border-radius:8px 0 0 0;}
-.report-table th:last-child{border-radius:0 8px 0 0;}
+.report-table th{text-align:left;padding:7px 12px;background:var(--brand);color:#fff;font-size:10px;text-transform:uppercase;font-weight:700;}
 .report-table td{padding:8px 12px;border-top:1px solid var(--border-l);color:var(--text-2);vertical-align:top;outline:none;}
-.report-table td:first-child{color:var(--text-1);font-weight:600;}
-.report-table td[contenteditable]:focus{background:var(--brand-light);}
-.report-table .row-del{width:28px;text-align:center;}
-.report-table .row-del button{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:16px;padding:0;transition:color .15s;}
-.report-table .row-del button:hover{color:var(--brand);}
-.btn-add-row{font-size:11px;font-weight:700;color:var(--brand);background:var(--brand-light);border:none;padding:6px 14px;border-radius:0 0 8px 8px;cursor:pointer;width:100%;transition:background .15s;}
-.btn-add-row:hover{background:#f8c4cc;}
 
 /* DATE EDITOR */
 .date-edit{display:flex;align-items:center;gap:8px;margin-top:6px;}
-.date-edit input[type=date]{font-family:var(--font);font-size:12px;color:var(--brand);font-weight:600;border:none;background:transparent;cursor:pointer;outline:none;padding:0;}
-.date-sep{font-size:12px;color:var(--brand);font-weight:600;}
+.date-edit input[type=date]{font-family:var(--font);font-size:12px;color:var(--brand);font-weight:600;border:none;background:transparent;cursor:pointer;outline:none;}
 
-/* ALERT */
+/* ALERT & FOOTER */
 .alert{background:var(--brand-light);border:1px solid #f8b4c4;border-radius:var(--r-md);padding:10px 14px;font-size:12px;color:var(--brand-text);}
-
-/* EDIT BADGE */
-.edit-badge{font-size:10px;font-weight:700;color:var(--text-3);background:var(--bg-2);border:1px solid var(--border-l);padding:2px 8px;border-radius:8px;cursor:default;}
-
-/* FOOTER */
-.rm-footer{margin-top:2.5rem;padding-top:1.5rem;border-top:2px solid var(--brand-light);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.rm-footer{margin-top:2.5rem;padding-top:1.5rem;border-top:2px solid var(--brand-light);display:flex;justify-content:space-between;align-items:center;}
 .rm-footer img{height:22px;}
 .rm-footer-note{font-size:11px;color:var(--text-3);}
 
-/* --- REGLAS DE CALCE PARA PDF --- */
+/* PDF OPTIMIZATION */
 @media print {
-  body { background: white; }
   #setup { display: none !important; }
-  #output { display: block !important; padding: 0 !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; }
-  .card-body { display: block !important; } /* Fuerza apertura de cards en PDF */
-  .chevron, .btn-add-pill, .btn-add-kpi, .btn-add-row, .btn-add-meeting, .pill-del, .meeting-del, .kpi-del, .row-del, .edit-badge { display: none !important; }
-  
-  /* Evita que elementos se corten a la mitad entre páginas */
-  .block, .card, .section, .kpi-card, .meeting-item, tr, .phase-header {
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
+  #output { display: block !important; padding: 0 !important; width: 100% !important; }
+  .card-body { display: block !important; }
+  .chevron, .btn-add-pill, .btn-add-kpi, .btn-add-row, .btn-add-meeting, .pill-del, .meeting-del, .kpi-del, .row-del { display: none !important; }
+  .block, .card, .section, .kpi-card, .meeting-item, tr { 
+    page-break-inside: avoid !important; 
+    break-inside: avoid !important; 
   }
-  
-  /* Asegura colores de fondo en el PDF */
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-}
-
-.html2pdf__page-break {
-  display: block;
-  height: 0;
-  page-break-before: always;
 }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -167,7 +116,7 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 <body>
 
 <div id="topbar">
-  <img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio" onerror="this.style.display='none'">
+  <img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio">
   <span>Plan de implementación</span>
 </div>
 
@@ -175,14 +124,14 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
   <div class="setup-inner">
     <div class="setup-eyebrow">Generador de roadmap</div>
     <div class="setup-title">Configura el plan para tu cliente</div>
-    <div class="setup-sub">Completa los datos base. Una vez generado, podrás editar fechas, entregables y reuniones directamente en el roadmap.</div>
+    <div class="setup-sub">Todos los campos son obligatorios.</div>
     <div class="setup-grid">
       <div class="field"><label>Nombre del cliente</label><input type="text" id="clientName" placeholder="Ej: MercadoPago"></div>
       <div class="field"><label>Nombre del programa</label><input type="text" id="programName" placeholder="Ej: Impulsa Pro"></div>
       <div class="field"><label>Ejecutivo responsable</label><input type="text" id="execName" placeholder="Ej: Valentina Torres"></div>
       <div class="field"><label>Fecha kick-off</label><input type="date" id="dateKickoff"></div>
       <div class="field"><label>Fecha Go-Live</label><input type="date" id="dateGoLive"></div>
-      <div class="field"><label>Dotación total</label><input type="number" id="headcount" placeholder="Ej: 240" min="1"></div>
+      <div class="field"><label>Dotación total</label><input type="number" id="headcount" placeholder="Ej: 240"></div>
     </div>
     <div class="btn-row">
       <button class="btn-primary" onclick="generateRoadmap()">Generar roadmap</button>
@@ -198,14 +147,6 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
     <div class="rm-dates" id="out-dates"></div>
   </div>
 
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--brand)"></div>Configuración interna</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Reunión con cliente</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--brand-dark)"></div>Hito de adopción</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--brand-text)"></div>Acción crítica</div>
-    <div class="legend-item" style="margin-left:auto"><span class="edit-badge">✎ Todo el contenido es editable</span></div>
-  </div>
-
   <div class="phase-header">
     <span class="phase-badge" style="background:var(--brand-light);color:var(--brand-text)">Pre Go-Live</span>
     <div class="phase-line"></div>
@@ -214,43 +155,99 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
   <div class="timeline">
     <div class="block">
       <div class="block-dot" style="background:var(--brand)"></div>
-      <div class="card" id="card-kickoff">
+      <div class="card">
         <div class="card-header" onclick="toggle('kickoff')">
           <div class="card-meta">
-            <span class="card-tag" style="background:var(--brand-light);color:var(--brand-text)">Kick-off de definiciones</span>
-            <div class="card-title-text" style="margin-top:6px">Levantamiento de información con el cliente</div>
-            <div class="card-sub-text">Reunión 90 min · Todos los inputs se solicitan antes de iniciar configuración</div>
-            <div class="date-edit">
-              <input type="date" id="date-kickoff" onchange="syncDate('kickoff')">
-            </div>
+            <span class="card-tag" style="background:var(--brand-light);color:var(--brand-text)">Kick-off</span>
+            <div class="card-title-text">Definiciones iniciales</div>
+            <div class="date-edit"><input type="date" id="date-kickoff"></div>
           </div>
           <span class="chevron" id="chev-kickoff">›</span>
         </div>
         <div class="card-body" id="body-kickoff">
-          <div class="section">
-            <div class="section-header"><div class="section-title">Qué se define en esta sesión</div></div>
-            <div class="pills-area" id="pills-kickoff-define">
-              <span class="pill"><span class="pill-text" contenteditable="true" spellcheck="false">Nómina oficial de colaboradores</span><button class="pill-del" onclick="delPill(this)" title="Eliminar">×</button></span>
-              <span class="pill"><span class="pill-text" contenteditable="true" spellcheck="false">Administradores de la plataforma</span><button class="pill-del" onclick="delPill(this)" title="Eliminar">×</button></span>
-              <span class="pill"><span class="pill-text" contenteditable="true" spellcheck="false">Nombre del programa</span><button class="pill-del" onclick="delPill(this)" title="Eliminar">×</button></span>
-              <span class="pill"><span class="pill-text" contenteditable="true" spellcheck="false">Colores y logo corporativo</span><button class="pill-del" onclick="delPill(this)" title="Eliminar">×</button></span>
-              <span class="pill"><span class="pill-text" contenteditable="true" spellcheck="false">Tramos de segmentación</span><button class="pill-del" onclick="delPill(this)" title="Eliminar">×</button></span>
-              <span class="pill"><span class="pill-text" contenteditable="true" spellcheck="false">Metas por colaborador o grupo</span><button class="pill-del" onclick="delPill(this)" title="Eliminar">×</button></span>
-              <span class="pill"><span class="pill-text" contenteditable="true" spellcheck="false">KPIs prioritarios del negocio</span><button class="pill-del" onclick="delPill(this)" title="Eliminar">×</button></span>
-              <button class="btn-add-pill" onclick="addPill('pills-kickoff-define')">+ Agregar</button>
+            <div class="section">
+                <div class="section-title">Qué se define</div>
+                <div class="pills-area" id="pills-ko">
+                    <span class="pill"><span class="pill-text" contenteditable="true">Nómina oficial</span><button class="pill-del" onclick="delPill(this)">×</button></span>
+                    <span class="pill"><span class="pill-text" contenteditable="true">Logos y colores</span><button class="pill-del" onclick="delPill(this)">×</button></span>
+                    <button class="btn-add-pill" onclick="addPill('pills-ko')">+ Agregar</button>
+                </div>
             </div>
-          </div>
-          <div class="section">
-            <div class="section-title">Alerta</div>
-            <div class="alert" contenteditable="true" spellcheck="false">Si el cliente no entrega los inputs en los primeros 5 días hábiles, la fecha de Go-Live se corre automáticamente.</div>
-          </div>
         </div>
       </div>
     </div>
+
+    <div class="block">
+        <div class="block-dot" style="background:var(--brand)"></div>
+        <div class="card">
+          <div class="card-header" onclick="toggle('sprint')">
+            <div class="card-meta">
+              <span class="card-tag" style="background:var(--brand-light);color:var(--brand-text)">Sprint</span>
+              <div class="card-title-text">Configuración de entorno</div>
+              <div class="date-edit"><input type="date" id="date-sprint-s"> <span class="date-sep">→</span> <input type="date" id="date-sprint-e"></div>
+            </div>
+            <span class="chevron" id="chev-sprint">›</span>
+          </div>
+          <div class="card-body" id="body-sprint">
+              <div class="section">
+                  <div class="section-title">Entregables</div>
+                  <div class="pills-area" id="pills-spr">
+                      <span class="pill"><span class="pill-text" contenteditable="true">Scorecard listo</span><button class="pill-del" onclick="delPill(this)">×</button></span>
+                      <button class="btn-add-pill" onclick="addPill('pills-spr')">+ Agregar</button>
+                  </div>
+              </div>
+          </div>
+        </div>
     </div>
-  
+  </div>
+
+  <div class="phase-header">
+    <span class="phase-badge" style="background:var(--brand);color:#fff">Go-Live</span>
+    <div class="phase-line"></div>
+  </div>
+
+  <div class="timeline">
+    <div class="block">
+      <div class="block-dot" style="background:var(--brand-dark)"></div>
+      <div class="card">
+        <div class="card-header" onclick="toggle('t14')">
+          <div class="card-meta">
+            <span class="card-tag" style="background:var(--brand-light);color:var(--brand-text)">T14</span>
+            <div class="card-title-text">Activación y Onboarding</div>
+            <div class="date-edit"><input type="date" id="date-t14-s"> <span class="date-sep">→</span> <input type="date" id="date-t14-e"></div>
+          </div>
+          <span class="chevron" id="chev-t14">›</span>
+        </div>
+        <div class="card-body" id="body-t14">
+            <div class="section">
+                <div class="section-title">KPI Objetivo</div>
+                <div class="kpi-grid">
+                    <div class="kpi-card" id="kpi-40hc"><div class="kpi-val">—</div><div class="kpi-lbl">activos (40%)</div></div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-header">
+    <span class="phase-badge" style="background:var(--green-light);color:var(--green)">Reportería</span>
+    <div class="phase-line"></div>
+  </div>
+  <div style="background:#fff; border:1px solid var(--border-l); border-radius:var(--r-lg); overflow:hidden; margin-bottom:2rem;">
+      <table class="report-table">
+          <thead>
+              <tr><th>Reporte</th><th>Frecuencia</th><th>Destinatario</th></tr>
+          </thead>
+          <tbody>
+              <tr><td contenteditable="true">Adopción semanal</td><td contenteditable="true">Lunes</td><td contenteditable="true">Admins</td></tr>
+              <tr><td contenteditable="true">Business Review</td><td contenteditable="true">Trimestral</td><td contenteditable="true">Sponsor</td></tr>
+          </tbody>
+      </table>
+  </div>
+
   <div class="rm-footer">
-    <img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio" onerror="this.style.display='none'">
+    <img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio">
     <div class="rm-footer-note" id="out-footer"></div>
   </div>
 </div>
@@ -262,122 +259,83 @@ function toISO(d){return d.toISOString().split('T')[0];}
 function toggle(id){
   const body=document.getElementById('body-'+id);
   const chev=document.getElementById('chev-'+id);
-  body.classList.toggle('open');
-  chev.classList.toggle('open');
+  if(body) body.classList.toggle('open');
+  if(chev) chev.classList.toggle('open');
 }
 
-function syncDate(id){} 
-
-function addPill(containerId){
-  const container=document.getElementById(containerId);
-  const btn=container.querySelector('.btn-add-pill');
-  const pill=document.createElement('span');
-  pill.className='pill';
-  pill.innerHTML='<span class="pill-text" contenteditable="true" spellcheck="false">Nuevo ítem</span><button class="pill-del" onclick="delPill(this)" title="Eliminar">×</button>';
-  container.insertBefore(pill,btn);
+function addPill(id){
+  const container = document.getElementById(id);
+  const btn = container.querySelector('.btn-add-pill');
+  const span = document.createElement('span');
+  span.className = 'pill';
+  span.innerHTML = '<span class="pill-text" contenteditable="true">Nuevo ítem</span><button class="pill-del" onclick="delPill(this)">×</button>';
+  container.insertBefore(span, btn);
 }
-
-function delPill(btn){btn.parentElement.remove();}
-
-function addMeeting(listId){
-  const list=document.getElementById(listId);
-  const item=document.createElement('div');
-  item.className='meeting-item';
-  item.innerHTML='<div class="meeting-text" contenteditable="true" spellcheck="false">Nueva reunión</div><button class="meeting-del" onclick="delMeeting(this)" title="Eliminar">×</button>';
-  list.appendChild(item);
-}
-
-function delMeeting(btn){btn.parentElement.remove();}
-
-function addKpi(gridId){
-  const grid=document.getElementById(gridId);
-  const card=document.createElement('div');
-  card.className='kpi-card';
-  card.innerHTML='<button class="kpi-del" onclick="delKpi(this)" title="Eliminar">×</button><div class="kpi-val" contenteditable="true" spellcheck="false">—</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Descripción</div>';
-  grid.appendChild(card);
-}
-
-function delKpi(btn){btn.parentElement.remove();}
-
-function addRow(tableId){
-  const table=document.getElementById(tableId);
-  const tbody=table.querySelector('tbody');
-  const tr=document.createElement('tr');
-  tr.innerHTML='<td contenteditable="true" spellcheck="false">Nueva métrica</td><td contenteditable="true" spellcheck="false">Descripción del valor</td><td class="row-del"><button onclick="delRow(this)" title="Eliminar">×</button></td>';
-  tbody.appendChild(tr);
-}
-
-function delRow(btn){btn.closest('tr').remove();}
+function delPill(btn){ btn.parentElement.remove(); }
 
 function generateRoadmap(){
-  const clientInput = document.getElementById('clientName');
-  const programInput = document.getElementById('programName');
-  const execInput = document.getElementById('execName');
-  const kickoffInput = document.getElementById('dateKickoff');
-  const goLiveInput = document.getElementById('dateGoLive');
-  const headcountInput = document.getElementById('headcount');
+  const inputs = ['clientName', 'programName', 'execName', 'dateKickoff', 'dateGoLive', 'headcount'];
+  let valid = true;
 
-  if (!clientInput.value.trim() || !programInput.value.trim() || !execInput.value.trim() || 
-      !kickoffInput.value || !goLiveInput.value || !headcountInput.value) {
-    alert("Por favor, completa todos los campos del formulario antes de generar el roadmap.");
+  inputs.forEach(id => {
+    const el = document.getElementById(id);
+    if(!el.value.trim()){
+      el.classList.add('invalid');
+      valid = false;
+    } else {
+      el.classList.remove('invalid');
+    }
+  });
+
+  if(!valid){
+    alert("Por favor completa todos los campos.");
     return;
   }
 
-  const client  = clientInput.value.trim();
-  const program = programInput.value.trim();
-  const exec    = execInput.value.trim();
-  const ks      = kickoffInput.value;
-  const gs      = goLiveInput.value;
-  const hc      = parseInt(headcountInput.value);
+  const client = document.getElementById('clientName').value;
+  const program = document.getElementById('programName').value;
+  const ks = document.getElementById('dateKickoff').value;
+  const gs = document.getElementById('dateGoLive').value;
+  const hc = parseInt(document.getElementById('headcount').value);
 
-  const kickoff = new Date(ks+'T12:00:00');
-  const goLive  = new Date(gs+'T12:00:00');
+  document.getElementById('out-client').textContent = client + ' · ' + program;
+  document.getElementById('out-title').textContent = 'Plan de implementación — ' + program;
+  document.getElementById('out-dates').textContent = 'Ejecutivo: ' + document.getElementById('execName').value;
 
-  document.getElementById('out-client').textContent = client+' · '+program;
-  document.getElementById('out-title').textContent  = 'Plan de implementación — '+program;
-  document.getElementById('out-dates').textContent  = 'Ejecutivo: '+exec+' · Generado el '+new Date().toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
+  // Llenar fechas
+  document.getElementById('date-kickoff').value = ks;
+  const goLive = new Date(gs + 'T12:00:00');
+  document.getElementById('date-t14-s').value = gs;
+  document.getElementById('date-t14-e').value = toISO(addDays(goLive, 14));
 
-  const set = (id, d) => { const el=document.getElementById(id); if(el&&d) el.value=toISO(d); };
-  set('date-kickoff', kickoff);
-  
-  if(hc>0){
-    const k40=document.getElementById('kpi-40hc');
-    if(k40){k40.querySelector('.kpi-val').textContent=Math.round(hc*.4);k40.querySelector('.kpi-lbl').textContent='colaboradores activos (40% de '+hc+')';}
-  }
+  // KPI
+  const k40 = document.getElementById('kpi-40hc');
+  k40.querySelector('.kpi-val').textContent = Math.round(hc * 0.4);
 
-  document.getElementById('out-footer').textContent = 'Plan generado para '+client+' · Go-Live: '+goLive.toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('output').style.display='block';
-  document.getElementById('output').scrollIntoView({behavior:'smooth'});
+  document.getElementById('out-footer').textContent = 'Roadmap para ' + client + ' · Go-Live: ' + goLive.toLocaleDateString();
+  document.getElementById('output').style.display = 'block';
 }
 
 function downloadPDF() {
   const element = document.getElementById('output');
-  
-  if (element.style.display === 'none' || element.style.display === '') {
-    alert("Primero debes hacer clic en 'Generar roadmap'");
+  if (element.style.display === 'none') {
+    alert("Genera el roadmap primero.");
     return;
   }
 
   const opt = {
-    margin:       [10, 5, 10, 5], 
-    filename:     'Roadmap_Apprecio.pdf',
-    image:        { type: 'jpeg', quality: 1 },
-    html2canvas:  { 
-      scale: 2, 
-      useCORS: true, 
-      letterRendering: true,
-      scrollY: 0
-    },
-    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+    margin: [10, 10, 15, 10],
+    filename: 'Roadmap_Apprecio.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
   };
 
-  // Temporalmente expandir todos los cuerpos de las cards para el PDF
   const bodies = element.querySelectorAll('.card-body');
   bodies.forEach(b => b.style.display = 'block');
 
   html2pdf().set(opt).from(element).save().then(() => {
-    // Restaurar estado visual original (solo las abiertas en UI se mantienen abiertas)
     bodies.forEach(b => b.style.display = '');
   });
 }
