@@ -906,3 +906,32 @@ function downloadPDF(){
       ${buildPDFSection('T14 · Activación y onboarding',document.getElementById('t14-title').textContent,document.getElementById('t14-sub').textContent,getDateVal('date-t14-start')+' → '+getDateVal('date-t14-end'),'','#FDE8ED','#9B1535',t14Body)}
       ${buildPDFSection('T30 · Segmentación y tracción',document.getElementById('t30-title').textContent,document.getElementById('t30-sub').textContent,getDateVal('date-t30-start')+' → '+getDateVal('date-t30-end'),'','#FDE8ED','#9B1535',t30Body)}
       ${buildPDFSection('T90 · Sostenibilidad y retención',document.getElementById('t90-title').textContent,document.getElementById('t90-sub').textContent,getDateVal('date-t90-start')+' → '+getDateVal('date-t90-end'),'','#9B1535','#fff',t90Body)}
+      <div style="margin-top:20px;padding-top:14px;border-top:2px solid #FDE8ED;display:flex;justify-content:space-between;align-items:center;">
+        <img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" style="height:18px;" alt="Apprecio">
+        <span style="font-size:9px;color:#888780;">${footer}</span>
+      </div>
+    </div>
+  </div>`;
+
+  const pdfEl=document.getElementById('pdf-output');
+  pdfEl.innerHTML=html;
+  pdfEl.style.display='block';
+
+  const clientName=document.getElementById('clientName').value.trim().replace(/\s+/g,'_')||'Cliente';
+  const programName=document.getElementById('programName').value.trim().replace(/\s+/g,'_')||'Programa';
+
+  html2pdf().set({
+    margin:[8,8,12,8],
+    filename:`Roadmap_${clientName}_${programName}.pdf`,
+    image:{type:'jpeg',quality:0.98},
+    html2canvas:{scale:2,useCORS:true,scrollY:0},
+    jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+    pagebreak:{mode:['avoid-all','css','legacy']}
+  }).from(pdfEl).save().then(()=>{
+    pdfEl.style.display='none';
+    pdfEl.innerHTML='';
+  });
+}
+</script>
+</body>
+</html>
