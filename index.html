@@ -398,12 +398,12 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
     <!-- T14 -->
     <div class="block">
       <div class="block-dot" style="background:var(--brand-dark)"></div>
-      <div class="card">
+      <div class="card" id="card-t14">
         <div class="card-header" onclick="toggle('t14')">
           <div class="card-meta">
             <span class="card-tag" style="background:var(--brand-light);color:var(--brand-text)">T14 · Activación y onboarding</span>
-            <div class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Primer uso, certificación y sprint de cierre</div>
-            <div class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Foco: lograr el primer uso real y certificar comprensión de las reglas del juego</div>
+            <div id="t14-title" class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Primer uso, certificación y sprint de cierre</div>
+            <div id="t14-sub" class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Foco: lograr el primer uso real y certificar comprensión de las reglas del juego</div>
             <div class="date-edit">
               <input type="date" id="date-t14-start" onchange="checkOverlaps()">
               <span class="date-sep">→</span>
@@ -463,12 +463,12 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
     <!-- T30 -->
     <div class="block">
       <div class="block-dot" style="background:var(--brand-dark)"></div>
-      <div class="card">
+      <div class="card" id="card-t30">
         <div class="card-header" onclick="toggle('t30')">
           <div class="card-meta">
             <span class="card-tag" style="background:var(--brand-light);color:var(--brand-text)">T30 · Segmentación y tracción</span>
-            <div class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Cambio de comportamiento y flujo diario de trabajo</div>
-            <div class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Foco: el equipo comprende sus metas, su nivel y el sistema se vuelve rutina</div>
+            <div id="t30-title" class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Cambio de comportamiento y flujo diario de trabajo</div>
+            <div id="t30-sub" class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Foco: el equipo comprende sus metas, su nivel y el sistema se vuelve rutina</div>
             <div class="date-edit">
               <input type="date" id="date-t30-start" onchange="checkOverlaps()">
               <span class="date-sep">→</span>
@@ -529,12 +529,12 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
     <!-- T90 -->
     <div class="block">
       <div class="block-dot" style="background:var(--brand-text)"></div>
-      <div class="card">
+      <div class="card" id="card-t90">
         <div class="card-header" onclick="toggle('t90')">
           <div class="card-meta">
             <span class="card-tag" style="background:var(--brand-text);color:#fff">T90 · Sostenibilidad y retención</span>
-            <div class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">El activo y la barrera de salida</div>
-            <div class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Foco: fidelización de los mejores y ataque a la rotación crítica mensual</div>
+            <div id="t90-title" class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">El activo y la barrera de salida</div>
+            <div id="t90-sub" class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Foco: fidelización de los mejores y ataque a la rotación crítica mensual</div>
             <div class="date-edit">
               <input type="date" id="date-t90-start" onchange="checkOverlaps()">
               <span class="date-sep">→</span>
@@ -903,6 +903,6 @@ function downloadPDF(){
         <div style="flex:1;height:1px;background:rgba(0,0,0,0.09);"></div>
       </div>
 
-      ${buildPDFSection('T14 · Activación y onboarding',document.querySelector('#card-t14 .card-title-text').textContent,document.querySelector('#card-t14 .card-sub-text').textContent,getDateVal('date-t14-start')+' → '+getDateVal('date-t14-end'),'','#FDE8ED','#9B1535',t14Body)}
-      ${buildPDFSection('T30 · Segmentación y tracción',document.querySelector('#card-t30 .card-title-text').textContent,document.querySelector('#card-t30 .card-sub-text').textContent,getDateVal('date-t30-start')+' → '+getDateVal('date-t30-end'),'','#FDE8ED','#9B1535',t30Body)}
-      ${buildPDFSection('T90 · Sostenibilidad y retención',document.querySelector('#card-t90 .card-title-text').textContent,document.querySelector('#card-t90 .card-sub-text').textContent
+      ${buildPDFSection('T14 · Activación y onboarding',document.getElementById('t14-title').textContent,document.getElementById('t14-sub').textContent,getDateVal('date-t14-start')+' → '+getDateVal('date-t14-end'),'','#FDE8ED','#9B1535',t14Body)}
+      ${buildPDFSection('T30 · Segmentación y tracción',document.getElementById('t30-title').textContent,document.getElementById('t30-sub').textContent,getDateVal('date-t30-start')+' → '+getDateVal('date-t30-end'),'','#FDE8ED','#9B1535',t30Body)}
+      ${buildPDFSection('T90 · Sostenibilidad y retención',document.getElementById('t90-title').textContent,document.getElementById('t90-sub').textContent,getDateVal('date-t90-start')+' → '+getDateVal('date-t90-end'),'','#9B1535','#fff',t90Body)}
