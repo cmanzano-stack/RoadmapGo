@@ -95,9 +95,16 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .date-edit input[type=date]{font-family:var(--font);font-size:12px;color:var(--brand);font-weight:600;border:1px solid var(--brand-light);background:var(--brand-light);border-radius:6px;cursor:pointer;outline:none;padding:3px 7px;}
 .date-sep{font-size:12px;color:var(--brand);font-weight:600;}
 .date-warning{font-size:10px;color:#c05000;font-weight:600;margin-top:4px;display:none;}
-.section{margin-bottom:16px;}
+.section{margin-bottom:16px;position:relative;}
 .section:last-child{margin-bottom:0;}
-.section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:8px;}
+.section-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);outline:none;}
+.section-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:15px;line-height:1;padding:0 0 0 6px;opacity:.5;transition:opacity .15s;}
+.section-del:hover{opacity:1;color:var(--brand);}
+.btn-add-section{display:block;width:100%;margin-top:12px;font-size:11px;font-weight:700;color:var(--text-3);background:transparent;border:1.5px dashed var(--border-m);border-radius:var(--r-md);padding:8px;cursor:pointer;text-align:center;transition:all .15s;}
+.btn-add-section:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-light);}
+body.present-mode .section-del,
+body.present-mode .btn-add-section{display:none!important;}
 .pills-area{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;}
 .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:12px;border:1px solid var(--border-l);color:var(--text-2);background:var(--bg-1);}
 .pill-text{outline:none;min-width:40px;max-width:260px;white-space:nowrap;}
@@ -263,15 +270,15 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
         <div class="card-header" onclick="toggle('kickoff')">
           <div class="card-meta">
             <span class="card-tag" style="background:var(--brand-light);color:var(--brand-text)">Kick-off de definiciones</span>
-            <div class="card-title-text" style="margin-top:6px">Levantamiento de informacion con el cliente</div>
-            <div class="card-sub-text">Reunion 90 min - Todos los inputs se solicitan antes de iniciar configuracion</div>
+            <div class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Levantamiento de informacion con el cliente</div>
+            <div class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Reunion 90 min - Todos los inputs se solicitan antes de iniciar configuracion</div>
             <div class="date-edit"><input type="date" id="date-kickoff" onchange="onDateChange()"></div>
           </div>
           <span class="chevron" id="chev-kickoff">&#8250;</span>
         </div>
         <div class="card-body" id="body-kickoff">
           <div class="section">
-            <div class="section-title">Que se define en esta sesion</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Que se define en esta sesion</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="pills-area" id="pills-kickoff-define">
               <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Nomina oficial de colaboradores</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
               <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Administradores de la plataforma</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
@@ -284,16 +291,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
             </div>
           </div>
           <div class="section">
-            <div class="section-title">Entregables Apprecio</div>
-            <div class="pills-area" id="pills-kickoff-entregables">
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Acta de kick-off firmada</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Checklist de inputs con fecha limite</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Presentacion T14 / T30 / T90 compartida</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <button class="btn-add-pill" onclick="addPill('pills-kickoff-entregables','pre')">+ Agregar</button>
-            </div>
-          </div>
-          <div class="section">
-            <div class="section-title">Criterios de Go-Live - Pre</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Criterios de Go-Live - Pre</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="golive-list" id="golive-pre">
               <div class="golive-item"><input type="checkbox" id="gl-pre-1" onchange="toggleGoLive(this)"><label for="gl-pre-1">Nomina oficial entregada por el cliente</label><span class="golive-status pending">Pendiente</span></div>
               <div class="golive-item"><input type="checkbox" id="gl-pre-2" onchange="toggleGoLive(this)"><label for="gl-pre-2">Scorecard configurado y aprobado</label><span class="golive-status pending">Pendiente</span></div>
@@ -302,9 +300,10 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
             </div>
           </div>
           <div class="section">
-            <div class="section-title">Alerta</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Alerta</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="alert" contenteditable="true" spellcheck="false">Si el cliente no entrega los inputs en los primeros 5 dias habiles, la fecha de Go-Live se corre automaticamente. Documentar en acta.</div>
           </div>
+          <button class="btn-add-section" onclick="addSection(this.closest(\'.card-body\'))">+ Agregar seccion</button>
         </div>
       </div>
     </div>
@@ -314,8 +313,8 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
         <div class="card-header" onclick="toggle('sprint')">
           <div class="card-meta">
             <span class="card-tag" style="background:var(--brand-light);color:var(--brand-text)">Sprint de configuracion</span>
-            <div class="card-title-text" style="margin-top:6px">Construccion del entorno Apprecio</div>
-            <div class="card-sub-text">Trabajo interno - En paralelo a medida que el cliente entrega informacion</div>
+            <div class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Construccion del entorno Apprecio</div>
+            <div class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Trabajo interno - En paralelo a medida que el cliente entrega informacion</div>
             <div class="date-edit">
               <input type="date" id="date-sprint-start" onchange="onDateChange()">
               <span class="date-sep">&#8594;</span>
@@ -327,7 +326,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
         </div>
         <div class="card-body" id="body-sprint">
           <div class="section">
-            <div class="section-title">Entregables del sprint</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Entregables del sprint</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="pills-area" id="pills-sprint">
               <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Scorecard del vendedor configurado</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
               <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Tramos y metas cargadas</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
@@ -340,9 +339,10 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
             </div>
           </div>
           <div class="section">
-            <div class="section-title">Alerta</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Alerta</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="alert" contenteditable="true" spellcheck="false">Nomina y tramos son el camino critico - sin ellos no se puede configurar el scorecard. Sin scorecard no hay Go-Live.</div>
           </div>
+          <button class="btn-add-section" onclick="addSection(this.closest(\'.card-body\'))">+ Agregar seccion</button>
         </div>
       </div>
     </div>
@@ -352,8 +352,8 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
         <div class="card-header" onclick="toggle('demo')">
           <div class="card-meta">
             <span class="card-tag" style="background:var(--green-light);color:var(--green)">Demo + Aprobacion + Capacitacion admins</span>
-            <div class="card-title-text" style="margin-top:6px">Primer acercamiento real del cliente con la plataforma</div>
-            <div class="card-sub-text">Reunion 90 min - Con administradores y sponsor del proyecto</div>
+            <div class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Primer acercamiento real del cliente con la plataforma</div>
+            <div class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Reunion 90 min - Con administradores y sponsor del proyecto</div>
             <div class="date-edit">
               <input type="date" id="date-demo-start" onchange="onDateChange()">
               <span class="date-sep">&#8594;</span>
@@ -365,7 +365,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
         </div>
         <div class="card-body" id="body-demo">
           <div class="section">
-            <div class="section-title">Agenda de la sesion</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Agenda de la sesion</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="meeting-list" id="meetings-demo">
               <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>0-20 min:</strong> Recorrido del entorno configurado con datos reales del cliente</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
               <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>20-45 min:</strong> Lectura de reportes, graficas de campana y scorecard</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
@@ -375,13 +375,14 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
             <button class="btn-add-pill btn-add-meeting" style="margin-top:8px" onclick="addMeeting('meetings-demo')">+ Agregar punto de agenda</button>
           </div>
           <div class="section">
-            <div class="section-title">Criterio de Go-Live</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Criterio de Go-Live</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="pills-area" id="pills-demo-criterio">
               <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Aprobacion formal documentada por el cliente</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
               <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Admins certificados en lectura de reportes</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
               <button class="btn-add-pill" onclick="addPill('pills-demo-criterio','pre')">+ Agregar</button>
             </div>
           </div>
+          <button class="btn-add-section" onclick="addSection(this.closest(\'.card-body\'))">+ Agregar seccion</button>
         </div>
       </div>
     </div>
@@ -410,7 +411,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
         </div>
         <div class="card-body" id="body-t14">
           <div class="section">
-            <div class="section-title">KPIs objetivo</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">KPIs objetivo</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="kpi-grid" id="kpis-t14">
               <div class="kpi-card"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">40%</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Fuerza de venta activa</div></div>
               <div class="kpi-card"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">100%</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Metas cargadas y comprendidas</div></div>
@@ -419,7 +420,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
             <button class="btn-add-kpi" style="margin-top:8px" onclick="addKpi('kpis-t14')">+ Agregar KPI</button>
           </div>
           <div class="section">
-            <div class="section-title">Cadencia de reuniones</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Cadencia de reuniones</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="meeting-list" id="meetings-t14">
               <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>Dia 1 (lanzamiento):</strong> Kick-off operativo con admins - 30 min - Confirmar accesos, comunicado interno enviado</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
               <div class="meeting-item" id="meet-d7"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>D+7:</strong> Check-in de adopcion - 45 min - % de activacion, troubleshooting temprano</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
@@ -428,7 +429,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
             <button class="btn-add-pill btn-add-meeting" style="margin-top:8px" onclick="addMeeting('meetings-t14')">+ Agregar reunion</button>
           </div>
           <div class="section">
-            <div class="section-title">Reporteria semanal (cada lunes)</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Reporteria semanal (cada lunes)</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div style="border:1px solid var(--border-l);border-radius:var(--r-md);overflow:hidden;">
               <table class="report-table" id="table-t14">
                 <thead><tr><th>Metrica</th><th>Valor que genera al cliente</th><th style="width:32px"></th></tr></thead>
@@ -443,7 +444,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
             </div>
           </div>
           <div class="section">
-            <div class="section-title">Acciones a entregar al cliente</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Acciones a entregar al cliente</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="pills-area" id="pills-t14-acciones">
               <span class="pill" data-phase="t14"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Insignias Activador</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
               <span class="pill" data-phase="t14"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Certificacion Venta de Valor evaluada</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
@@ -451,6 +452,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
               <button class="btn-add-pill" onclick="addPill('pills-t14-acciones','t14')">+ Agregar</button>
             </div>
           </div>
+          <button class="btn-add-section" onclick="addSection(this.closest(\'.card-body\'))">+ Agregar seccion</button>
         </div>
       </div>
     </div>
@@ -473,7 +475,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
         </div>
         <div class="card-body" id="body-t30">
           <div class="section">
-            <div class="section-title">KPIs objetivo</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">KPIs objetivo</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="kpi-grid" id="kpis-t30">
               <div class="kpi-card"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">60-70%</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Dotacion activa</div></div>
               <div class="kpi-card"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">&gt;2</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Challenges completados por vendedor</div></div>
@@ -482,7 +484,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
             <button class="btn-add-kpi" style="margin-top:8px" onclick="addKpi('kpis-t30')">+ Agregar KPI</button>
           </div>
           <div class="section">
-            <div class="section-title">Cadencia de reuniones</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Cadencia de reuniones</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="meeting-list" id="meetings-t30">
               <div class="meeting-item" id="meet-d21"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>D+21 (quincenal):</strong> Revision de segmentacion - 45 min - Quien sube de tramo? Identificar rezagados</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
               <div class="meeting-item" id="meet-d30"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>D+30 (cierre de mes):</strong> Revision mensual T30 - 60 min - KPIs, encuesta D+30, ajuste de campanas</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
@@ -491,7 +493,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
             <button class="btn-add-pill btn-add-meeting" style="margin-top:8px" onclick="addMeeting('meetings-t30')">+ Agregar reunion</button>
           </div>
           <div class="section">
-            <div class="section-title">Reporte quincenal</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Reporte quincenal</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div style="border:1px solid var(--border-l);border-radius:var(--r-md);overflow:hidden;">
               <table class="report-table" id="table-t30">
                 <thead><tr><th>Metrica</th><th>Valor que genera al cliente</th><th style="width:32px"></th></tr></thead>
@@ -507,7 +509,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
             </div>
           </div>
           <div class="section">
-            <div class="section-title">Acciones a entregar al cliente</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Acciones a entregar al cliente</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="pills-area" id="pills-t30-acciones">
               <span class="pill" data-phase="t30"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Bono de Salto de tramo</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
               <span class="pill" data-phase="t30"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Reto de Calidad (0% anulaciones)</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
@@ -515,6 +517,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
               <button class="btn-add-pill" onclick="addPill('pills-t30-acciones','t30')">+ Agregar</button>
             </div>
           </div>
+          <button class="btn-add-section" onclick="addSection(this.closest(\'.card-body\'))">+ Agregar seccion</button>
         </div>
       </div>
     </div>
@@ -537,7 +540,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
         </div>
         <div class="card-body" id="body-t90">
           <div class="section">
-            <div class="section-title">KPIs objetivo</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">KPIs objetivo</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="kpi-grid" id="kpis-t90">
               <div class="kpi-card"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">rot.</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Tramos Oro y Plata</div></div>
               <div class="kpi-card"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">3m+</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Actividad sostenida</div></div>
@@ -546,7 +549,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
             <button class="btn-add-kpi" style="margin-top:8px" onclick="addKpi('kpis-t90')">+ Agregar KPI</button>
           </div>
           <div class="section">
-            <div class="section-title">Cadencia de reuniones</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Cadencia de reuniones</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="meeting-list" id="meetings-t90">
               <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>Mensual (ultimo martes):</strong> Revision ejecutiva - 60 min - KPIs + data encuesta terreno + alertas de rotacion</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
               <div class="meeting-item" id="meet-d90"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>D+90 - Business Review trimestral:</strong> 90 min con sponsor - Resultados vs promesa T14/T30/T90, ROI estimado, propuesta siguiente trimestre</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
@@ -555,7 +558,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
             <button class="btn-add-pill btn-add-meeting" style="margin-top:8px" onclick="addMeeting('meetings-t90')">+ Agregar reunion</button>
           </div>
           <div class="section">
-            <div class="section-title">Business Review trimestral (D+90)</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Business Review trimestral (D+90)</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div style="border:1px solid var(--border-l);border-radius:var(--r-md);overflow:hidden;">
               <table class="report-table" id="table-t90">
                 <thead><tr><th>Seccion</th><th>Valor que genera al cliente</th><th style="width:32px"></th></tr></thead>
@@ -571,7 +574,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
             </div>
           </div>
           <div class="section">
-            <div class="section-title">Acciones a entregar al cliente</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Acciones a entregar al cliente</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
             <div class="pills-area" id="pills-t90-acciones">
               <span class="pill" data-phase="t90"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Gran Pozo Oro</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
               <span class="pill" data-phase="t90"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Encuesta de clima D+90</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
@@ -580,6 +583,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
               <button class="btn-add-pill" onclick="addPill('pills-t90-acciones','t90')">+ Agregar</button>
             </div>
           </div>
+          <button class="btn-add-section" onclick="addSection(this.closest(\'.card-body\'))">+ Agregar seccion</button>
         </div>
       </div>
     </div>
@@ -796,6 +800,19 @@ function addRowReporteria(){
   t.appendChild(tr);tr.querySelector('td').focus();scheduleSave();
 }
 function delRow(btn){btn.closest('tr').remove();scheduleSave();}
+function delSection(btn){if(!confirm('Eliminar esta seccion?'))return;btn.closest('.section').remove();scheduleSave();}
+function addSection(cardBody){
+  var uid='sec-'+Date.now();
+  var sec=document.createElement('div');sec.className='section';
+  sec.innerHTML='<div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Nueva seccion</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>'
+    +'<div class="pills-area" id="pills-'+uid+'">'
+    +'<button class="btn-add-pill" onclick="addPill(\'pills-'+uid+'\',\'pre\')">+ Agregar item</button>'
+    +'</div>';
+  var addBtn=cardBody.querySelector('.btn-add-section');
+  cardBody.insertBefore(sec,addBtn);
+  sec.querySelector('.section-title').focus();document.execCommand('selectAll',false,null);
+  scheduleSave();
+}
 function generateRoadmap(){
   var cN=getVal('clientName').trim(),pN=getVal('programName').trim(),eN=getVal('execName').trim(),ks=getVal('dateKickoff'),gs=getVal('dateGoLive'),hcV=getVal('headcount');
   if(!cN||!pN||!eN||!ks||!gs||!hcV){alert('Por favor completa todos los campos.');return;}
