@@ -381,13 +381,12 @@ const PLAYBOOKS = {
       ]
     },
     t90:{
-      como_medimos:'Business Review 90 min · Actividad sostenida 3 meses · ROI vs línea base del cliente · Benchmark de industria',
-      kpis_fallback:'Rotación tramos Oro/Plata · actividad sostenida 3m+ · ROI documentado',
+      como_medimos:'Business Review trimestral · seguimiento actividad sostenida 3 meses',
+      kpis_fallback:'Rotación tramos Oro/Plata · actividad sostenida 3m+ · Impacto documentado en el negocio',
       acciones:['Gran Pozo Oro trimestral','Encuesta de clima D+90','Premios trimestrales formales','Propuesta de renovación'],
       roles:['CSM','KAM','C-Level','Sponsor'],
       reportes:[
         {nombre:'Business Review trimestral D+90',meta:'Sesión 90 min + deck T-90',dest:'C-Level + sponsor'},
-        {nombre:'ROI del programa',meta:'Reporte ejecutivo PDF',dest:'C-Level'},
         {nombre:'Benchmark de industria',meta:'Comparativa vs. promedio segmento',dest:'C-Level'}
       ]
     }
@@ -415,13 +414,13 @@ const PLAYBOOKS = {
       ]
     },
     t90:{
-      como_medimos:'Business Review 90 min · Análisis de cohortes · NPS clima vs línea base · ROI en ahorro de reemplazo',
-      kpis_fallback:'Reducción rotación vs línea base · NPS clima ↑ · ROI en ahorro de reemplazo',
-      acciones:['Premio trimestral de permanencia','Encuesta clima D+90','Análisis de cohortes','Propuesta renovación con ROI'],
+      como_medimos:'Business Review trimestral · análisis de cohortes retención',
+      kpis_fallback:'Reducción rotación vs línea base · NPS clima ↑ · Ahorro en costo de reemplazo',
+      acciones:['Premio trimestral de permanencia','Encuesta clima D+90','Análisis de cohortes','Propuesta de renovación'],
       roles:['CSM','KAM','C-Level','Sponsor'],
       reportes:[
         {nombre:'Business Review RRHH D+90',meta:'Sesión 90 min + deck',dest:'Directivos + RRHH'},
-        {nombre:'ROI (costo rotación evitado)',meta:'Reporte ejecutivo PDF',dest:'Gerente General'}
+        {nombre:'Benchmark vs. industria en retención',meta:'Comparativa adopción y clima',dest:'Gerente General'}
       ]
     }
   },
@@ -448,13 +447,13 @@ const PLAYBOOKS = {
       ]
     },
     t90:{
-      como_medimos:'Business Review 90 min · Análisis cohortes conversión · Revenue atribuible vs baseline · Benchmark industria',
+      como_medimos:'Business Review trimestral · análisis cohortes conversión vs baseline',
       kpis_fallback:'Conversión ↑ vs baseline · churn clientes ↓ · revenue atribuible documentado',
-      acciones:['Premio trimestral performer','Análisis cohortes conversión','Encuesta satisfacción D+90','Propuesta renovación ROI'],
+      acciones:['Premio trimestral performer','Análisis cohortes conversión','Encuesta satisfacción D+90','Propuesta de renovación'],
       roles:['CSM','KAM','C-Level','Sponsor'],
       reportes:[
         {nombre:'Business Review Marketing D+90',meta:'Sesión 90 min + deck',dest:'C-Level'},
-        {nombre:'ROI (revenue atribuido)',meta:'Reporte ejecutivo PDF',dest:'CEO / CFO'}
+        {nombre:'Benchmark vs. industria en conversión',meta:'Comparativa vs. promedio segmento',dest:'CEO / CFO'}
       ]
     }
   },
@@ -481,13 +480,13 @@ const PLAYBOOKS = {
       ]
     },
     t90:{
-      como_medimos:'Business Review 90 min · Análisis cohortes calidad · Ahorro en reprocesos vs baseline · ROI documentado',
-      kpis_fallback:'Tasa error ↓ vs baseline · cumplimiento sostenido · ROI en ahorro reprocesos',
-      acciones:['Premio trimestral mejor equipo','Análisis cohortes calidad','Encuesta clima operacional D+90','Propuesta renovación ROI'],
+      como_medimos:'Business Review trimestral · análisis cohortes calidad vs baseline',
+      kpis_fallback:'Tasa error ↓ vs baseline · cumplimiento sostenido · Ahorro en reprocesos documentado',
+      acciones:['Premio trimestral mejor equipo','Análisis cohortes calidad','Encuesta clima operacional D+90','Propuesta de renovación'],
       roles:['CSM','KAM','C-Level','Sponsor'],
       reportes:[
         {nombre:'Business Review Operaciones D+90',meta:'Sesión 90 min + deck',dest:'Directivos'},
-        {nombre:'ROI (ahorro en reprocesos)',meta:'Reporte ejecutivo PDF',dest:'Gerente General / CFO'}
+        {nombre:'Benchmark vs. industria en cumplimiento',meta:'Comparativa vs. promedio segmento',dest:'Gerente General / CFO'}
       ]
     }
   }
@@ -499,7 +498,7 @@ Eres un asistente especializado en analizar presentaciones comerciales de Apprec
 Apprecio trabaja bajo esta lógica de 3 fases:
 T14: Primer uso, activación, certificación. Engagement inicial.
 T30: Autonomía y cambio de comportamiento. Uso sostenido, metas comprendidas.
-T90: Flujo diario consolidado. Barrera de salida. ROI documentado.
+T90: Flujo diario consolidado. Barrera de salida. Impacto sostenido en el negocio.
 
 Analiza el texto y responde SOLO con este JSON sin texto adicional ni backticks:
 {
@@ -508,28 +507,31 @@ Analiza el texto y responde SOLO con este JSON sin texto adicional ni backticks:
   "dolores": ["problema concreto en máx 6 palabras", "problema 2", "problema 3"],
   "t14": {
     "como_medimos": "frase de máx 12 palabras sobre el mecanismo de medición en T14",
-    "kpis": ["KPI con número o % de T14, ej: 40% equipo activo al D+14", "KPI 2"]
+    "kpis": ["KPI con número o % de T14, ej: 40% equipo activo al D+14", "ej: ≥70% certificación aprobada"]
   },
   "t30": {
     "como_medimos": "frase de máx 12 palabras sobre el mecanismo de medición en T30",
-    "kpis": ["KPI con número o % de T30, ej: 65% dotación activa", "KPI 2"]
+    "kpis": ["KPI con número o % de T30, ej: 65% dotación activa", "ej: >2 challenges completados por vendedor"]
   },
   "t90": {
     "como_medimos": "frase de máx 12 palabras sobre el mecanismo de medición en T90",
-    "kpis": ["KPI con número o % de T90, ej: ROI documentado vs baseline", "KPI 2"]
+    "kpis": ["KPI de T90 copiado textualmente del PPT, ej: % fuerza de venta en nivel Plata u Oro", "ej: % representantes con actividad sostenida (últimos 3 meses)", "ej: Frecuencia de uso mensual"]
   }
 }
 
-REGLAS CRÍTICAS — léelas antes de responder:
+REGLAS CRÍTICAS:
 1. dolores = problemas del negocio del CLIENTE, NO acciones de Apprecio. Máx 6 palabras.
 2. como_medimos = UNA frase corta (máx 12 palabras). Describe el mecanismo, no el resultado.
    ✓ Correcto: "Reporte D+7 y revisión quincenal con admins"
-   ✗ Incorrecto: "Introducir Challenges Gamificados para motivar la participación temprana · Implementar Scorecards..."
-3. kpis = SOLO métricas con números, porcentajes o indicadores medibles. NUNCA acciones.
-   ✓ Correcto: "40% equipo activo al D+14" / "≥70% certificación aprobada" / "ROI documentado"
-   ✗ Incorrecto: "Introducir challenges gamificados" / "Implementar scorecards" / "Reconocimiento por logros"
-4. Si no encuentras un KPI numérico para una fase, devuelve [] (array vacío).
-5. Responde ÚNICAMENTE con el JSON, sin texto antes ni después.
+   ✗ Incorrecto: "Introducir Challenges Gamificados para motivar la participación..."
+3. kpis T14/T30 = SOLO métricas con números o porcentajes concretos.
+   ✓ "40% equipo activo al D+14" / "≥70% certificación aprobada"
+   ✗ "Introducir challenges gamificados" / "Implementar scorecards"
+4. kpis T90 = copiar TEXTUALMENTE los KPIs de T90 del PPT, aunque no tengan número.
+   ✓ "% fuerza de venta en nivel Plata u Oro" / "Frecuencia de uso mensual"
+   ✗ No inventes KPIs que no estén en el PPT para T90
+5. Si no encuentras KPIs para una fase, devuelve [] (array vacío).
+6. Responde ÚNICAMENTE con el JSON, sin texto antes ni después.
 
 TEXTO DEL PPT:
 {{ $json.pptText.substring(0, 3000) }}
@@ -611,6 +613,22 @@ async function analyzeWithN8n(pptText){
   applyPlaybook(parsed);
 }
 
+// Sanitize any text coming from n8n: remove "ROI" in all its forms
+function sanitizeText(str){
+  if(!str || typeof str !== 'string') return str;
+  return str
+    .replace(/\bROI\b/gi, 'Impacto')
+    .replace(/retorno (sobre|de) (la )?inversión/gi, 'impacto en el negocio')
+    .replace(/return on investment/gi, 'impacto en el negocio');
+}
+function sanitizePhase(phase){
+  if(!phase) return {};
+  const out = {...phase};
+  if(out.como_medimos) out.como_medimos = sanitizeText(out.como_medimos);
+  if(out.kpis) out.kpis = out.kpis.map(sanitizeText);
+  return out;
+}
+
 function applyPlaybook(parsed){
   const equipoKey = parsed.equipo||'fuerza_de_venta';
   const playbook = PLAYBOOKS[equipoKey]||PLAYBOOKS['fuerza_de_venta'];
@@ -622,10 +640,10 @@ function applyPlaybook(parsed){
   }
   window._detectedPlaybook = {
     key: equipoKey,
-    dolores: parsed.dolores||[],
-    t14: parsed.t14||{},
-    t30: parsed.t30||{},
-    t90: parsed.t90||{}
+    dolores: (parsed.dolores||[]).map(sanitizeText),
+    t14: sanitizePhase(parsed.t14||{}),
+    t30: sanitizePhase(parsed.t30||{}),
+    t90: sanitizePhase(parsed.t90||{})
   };
   hideAiSpinner();
 }
@@ -740,18 +758,28 @@ function generateRoadmap(){
 
   // KPI validation: reject strings that look like actions, not metrics
   // A real KPI contains a %, number, ↑, ↓, or common metric keyword
+  // KPI validation: must contain a number/% or a clear metric keyword
+  // Used for T14 and T30 where Ollama tends to mix actions with KPIs
   function isValidKpi(str){
-    if(!str || typeof str !== 'string') return false;
-    return /[%↑↓\d]|activ|adopc|certif|rotaci|conversi|cumpli|retenci|churn|roi|revenue|transacci/i.test(str);
+    if(!str || typeof str !== 'string' || str.length < 5) return false;
+    // Must have a number, % or ↑↓ to be considered a real KPI
+    return /[%↑↓]|\d+/.test(str);
   }
 
-  // Helper: "indicador de éxito" — PPT KPIs validated, then phase-specific playbook fallback
-  function buildIndicador(pptPhase, pbPhase, dotacionPct){
+  // Helper: "indicador de éxito"
+  // strict=true (T14, T30): KPI debe tener % o número concreto
+  // strict=false (T90): usar el PPT tal cual, sin filtrar — el modelo ya sabe separar KPIs de acciones
+  function buildIndicador(pptPhase, pbPhase, dotacionPct, strict){
     if(pptPhase.kpis && pptPhase.kpis.length){
-      const validKpis = pptPhase.kpis.filter(isValidKpi);
+      let validKpis;
+      if(strict){
+        validKpis = pptPhase.kpis.filter(isValidKpi);
+      } else {
+        // T90: aceptar cualquier string no vacío — sin filtro de validación
+        validKpis = pptPhase.kpis.filter(k => k && typeof k === 'string' && k.trim().length > 3);
+      }
       if(validKpis.length) return validKpis.join(' · ');
     }
-    // Use the phase-specific fallback with the correct dotación percentage
     const dotacionStr = hc && dotacionPct ? ' · mín '+Math.round(hc*dotacionPct)+' personas activas' : '';
     return pbPhase.kpis_fallback + dotacionStr;
   }
@@ -770,7 +798,7 @@ function generateRoadmap(){
     objetivo:{
       dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',
       comoMedimos:buildComoMedimos(pptT14, playbook.t14),
-      indicador:buildIndicador(pptT14, playbook.t14, 0.40)
+      indicador:buildIndicador(pptT14, playbook.t14, 0.40, true)
     }
   });
 
@@ -788,7 +816,7 @@ function generateRoadmap(){
     objetivo:{
       dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',
       comoMedimos:buildComoMedimos(pptT30, playbook.t30),
-      indicador:buildIndicador(pptT30, playbook.t30, 0.65)
+      indicador:buildIndicador(pptT30, playbook.t30, 0.65, true)
     }
   });
 
@@ -806,7 +834,7 @@ function generateRoadmap(){
     objetivo:{
       dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',
       comoMedimos:buildComoMedimos(pptT90, playbook.t90),
-      indicador:buildIndicador(pptT90, playbook.t90, null)
+      indicador:buildIndicador(pptT90, playbook.t90, null, false)
     }
   });
 
