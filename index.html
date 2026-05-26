@@ -764,46 +764,19 @@ async function extractPptxText(file) {
 }
 
 async function analyzeWithClaude(pptText) {
-  const prompt = `Analiza esta presentación comercial de Apprecio y extrae SOLO un JSON sin texto adicional ni backticks markdown.
+  // Llama al webhook de n8n que usa Ollama internamente
+  const N8N_WEBHOOK = 'https://n8n.openip.cl/webhook/apprecio-ppt-analyze';
 
-Detecta:
-1. El TIPO DE EQUIPO del cliente: fuerza_de_venta | rrhh | marketing | operaciones
-   - fuerza_de_venta: si habla de vendedores, ventas, transacciones, cuotas, comisiones
-   - rrhh: si habla de rotación de personas, retención de empleados, clima laboral, cultura
-   - marketing: si habla de campañas, conversión, leads, clientes, churn de clientes
-   - operaciones: si habla de procesos, calidad, cumplimiento, eficiencia operacional
-2. Los DOLORES específicos del cliente mencionados (máx 6, frases cortas)
-3. El NOMBRE del cliente si aparece
-
-Responde SOLO con este JSON:
-{
-  "equipo": "fuerza_de_venta",
-  "cliente": "nombre o null",
-  "dolores": ["dolor 1", "dolor 2", "dolor 3"]
-}
-
-TEXTO:
-${pptText.substring(0, 6000)}`;
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetch(N8N_WEBHOOK, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 400,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    body: JSON.stringify({ pptText: pptText.substring(0, 5000) })
   });
 
-  const data = await res.json();
-  const raw = data.content && data.content[0] ? data.content[0].text : '';
+  if (!res.ok) throw new Error('El webhook de n8n respondió con error ' + res.status + '. Verifica que el workflow esté activo.');
 
-  let parsed;
-  try {
-    parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
-  } catch(e) {
-    throw new Error('No se pudo interpretar la respuesta de la IA.');
-  }
+  const parsed = await res.json();
+  if (!parsed.equipo) throw new Error('Respuesta inesperada del workflow. Revisa el nodo "Parsea respuesta" en n8n.');
 
   applyPlaybook(parsed);
 }
