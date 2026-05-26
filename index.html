@@ -3,13 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Roadmap de implementacion - Apprecio</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Apprecio — Roadmap Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 :root {
   --brand:#FA345E; --brand-dark:#D42A4E; --brand-light:#FDE8ED; --brand-text:#9B1535;
   --green:#065F46; --green-light:#F0FFF4;
+  --orange:#c0550b; --orange-light:#FFF3E0;
+  --blue:#1e40af; --blue-light:#EEF2FF;
   --text-1:#1a1a18; --text-2:#5F5E5A; --text-3:#888780;
   --bg-1:#fff; --bg-2:#F9F7F7; --bg-page:#F5F0F0;
   --border-l:rgba(0,0,0,0.09); --border-m:rgba(0,0,0,0.16);
@@ -18,7 +21,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-height:1.5;}
-#topbar{background:var(--brand);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:56px;flex-wrap:wrap;gap:8px;}
+#topbar{background:var(--brand);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:56px;gap:8px;}
 #topbar img{height:28px;filter:brightness(0) invert(1);}
 .topbar-actions{display:flex;align-items:center;gap:8px;}
 .btn-mode{font-family:var(--font);font-size:11px;font-weight:700;padding:5px 13px;border-radius:20px;cursor:pointer;border:1.5px solid rgba(255,255,255,.5);background:transparent;color:#fff;transition:all .15s;}
@@ -26,23 +29,42 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .btn-mode:hover:not(.active){background:rgba(255,255,255,.15);}
 .saved-toast{font-size:11px;font-weight:600;color:rgba(255,255,255,.85);opacity:0;transition:opacity .3s;white-space:nowrap;}
 .saved-toast.show{opacity:1;}
-#setup{background:var(--bg-1);border-bottom:1px solid var(--border-l);}
-.setup-inner{max-width:960px;margin:0 auto;padding:2rem 2rem 1.75rem;}
-.setup-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.4rem;}
-.setup-title{font-size:22px;font-weight:700;margin-bottom:.3rem;}
-.setup-sub{font-size:13px;color:var(--text-2);margin-bottom:1.75rem;}
-.setup-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:1.25rem;}
+.step-wrap{max-width:960px;margin:0 auto;padding:2rem 2rem 0;}
+#step-upload{background:var(--bg-1);border:1px solid var(--border-l);border-radius:var(--r-lg);padding:2rem 2.5rem;margin-bottom:1.5rem;}
+.step-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.4rem;}
+.step-title{font-size:20px;font-weight:700;margin-bottom:.3rem;}
+.step-sub{font-size:13px;color:var(--text-2);margin-bottom:1.5rem;}
+.upload-zone{border:2px dashed var(--border-m);border-radius:var(--r-lg);padding:2.5rem;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg-2);position:relative;}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--brand);background:var(--brand-light);}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-icon{font-size:32px;margin-bottom:.75rem;}
+.upload-label{font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:.25rem;}
+.upload-hint{font-size:11px;color:var(--text-3);}
+.upload-filename{font-size:13px;font-weight:700;color:var(--brand);margin-top:.75rem;display:none;}
+.ai-status{display:none;margin-top:1.25rem;padding:14px 16px;background:var(--brand-light);border-radius:var(--r-md);border:1px solid rgba(250,52,94,.2);}
+.ai-status .ai-label{font-size:12px;font-weight:700;color:var(--brand-text);margin-bottom:.5rem;display:flex;align-items:center;gap:8px;}
+.ai-status .ai-log{font-size:11px;color:var(--brand-text);line-height:1.7;}
+.spinner{width:14px;height:14px;border:2px solid rgba(155,21,53,.3);border-top-color:var(--brand-text);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Detected equipo badge */
+.detected-strip{display:none;margin-top:12px;padding:10px 14px;background:#fff;border:1px solid var(--border-m);border-radius:var(--r-md);align-items:center;gap:10px;}
+.detected-strip.show{display:flex;}
+.detected-dot{width:10px;height:10px;border-radius:50%;background:var(--brand);flex-shrink:0;}
+.detected-label{font-size:12px;font-weight:700;color:var(--text-1);}
+.detected-sub{font-size:11px;color:var(--text-3);margin-left:auto;}
+#step-config{background:var(--bg-1);border:1px solid var(--border-l);border-radius:var(--r-lg);padding:2rem 2.5rem;margin-bottom:1.5rem;}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:1.25rem;}
 .field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);margin-bottom:5px;}
 .field input{width:100%;padding:9px 12px;border:1px solid var(--border-m);border-radius:var(--r-md);font-family:var(--font);font-size:13px;color:var(--text-1);background:var(--bg-1);outline:none;transition:border-color .15s;}
 .field input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(250,52,94,.12);}
 .btn-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .btn-primary{background:var(--brand);color:#fff;border:none;padding:11px 26px;border-radius:var(--r-md);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;}
 .btn-primary:hover{background:var(--brand-dark);}
-.btn-secondary{background:transparent;color:var(--text-2);border:1px solid var(--border-m);padding:11px 18px;border-radius:var(--r-md);font-family:var(--font);font-size:13px;cursor:pointer;transition:background .15s;}
+.btn-secondary{background:transparent;color:var(--text-2);border:1px solid var(--border-m);padding:11px 18px;border-radius:var(--r-md);font-family:var(--font);font-size:13px;cursor:pointer;}
 .btn-secondary:hover{background:var(--bg-2);}
 .btn-danger{background:transparent;color:#c0392b;border:1px solid #f5c6cb;padding:11px 18px;border-radius:var(--r-md);font-family:var(--font);font-size:13px;cursor:pointer;}
 .btn-danger:hover{background:#fff0f0;}
-#output{max-width:960px;margin:0 auto;padding:2rem;display:none;}
+#output{max-width:960px;margin:0 auto;padding:0 2rem 3rem;display:none;}
 .rm-header{margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:2px solid var(--brand-light);}
 .rm-client{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:5px;}
 .rm-title{font-size:24px;font-weight:700;margin-bottom:4px;}
@@ -50,19 +72,15 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .legend{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:1.5rem;}
 .legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-2);}
 .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-.edit-badge{font-size:10px;font-weight:700;color:var(--text-3);background:var(--bg-2);border:1px solid var(--border-l);padding:2px 8px;border-radius:8px;}
 #gantt-wrap{background:var(--bg-1);border:1px solid var(--border-l);border-radius:var(--r-lg);padding:20px 24px;margin-bottom:1.5rem;}
 .gantt-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);margin-bottom:16px;}
-/* ── Gantt track: extra vertical room for staggered labels ── */
 .gantt-track{position:relative;height:36px;background:var(--bg-2);border-radius:18px;overflow:visible;margin-bottom:48px;}
 .gantt-seg{position:absolute;top:0;height:100%;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;}
-/* Milestone: centered on dot, labels stagger above/below */
 .gantt-milestone{position:absolute;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;pointer-events:none;}
 .gantt-dot{width:12px;height:12px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.12);flex-shrink:0;}
 .gantt-mlabel{position:absolute;white-space:nowrap;font-size:9px;font-weight:700;color:var(--text-2);background:var(--bg-1);padding:1px 4px;border-radius:3px;}
 .gantt-mlabel.above{bottom:14px;left:50%;transform:translateX(-50%);}
 .gantt-mlabel.below{top:14px;left:50%;transform:translateX(-50%);}
-/* Clamp first and last label to avoid viewport overflow */
 .gantt-mlabel.edge-left{left:0;transform:none;}
 .gantt-mlabel.edge-right{left:auto;right:0;transform:none;}
 .gantt-dates{display:flex;justify-content:space-between;font-size:10px;color:var(--text-3);}
@@ -91,35 +109,29 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .chevron.open{transform:rotate(90deg);}
 .card-body{display:none;border-top:1px solid var(--border-l);padding:16px;}
 .card-body.open{display:block;}
-.date-edit{display:flex;align-items:center;gap:8px;margin-top:6px;}
-.date-edit input[type=date]{font-family:var(--font);font-size:12px;color:var(--brand);font-weight:600;border:1px solid var(--brand-light);background:var(--brand-light);border-radius:6px;cursor:pointer;outline:none;padding:3px 7px;}
-.date-sep{font-size:12px;color:var(--brand);font-weight:600;}
-.date-warning{font-size:10px;color:#c05000;font-weight:600;margin-top:4px;display:none;}
-.section{margin-bottom:16px;position:relative;}
-.section:last-child{margin-bottom:0;}
-.section-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);outline:none;}
-.section-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:15px;line-height:1;padding:0 0 0 6px;opacity:.5;transition:opacity .15s;}
-.section-del:hover{opacity:1;color:var(--brand);}
-.btn-add-section{display:block;width:100%;margin-top:12px;font-size:11px;font-weight:700;color:var(--text-3);background:transparent;border:1.5px dashed var(--border-m);border-radius:var(--r-md);padding:8px;cursor:pointer;text-align:center;transition:all .15s;}
-.btn-add-section:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-light);}
-body.present-mode .section-del,
-body.present-mode .btn-add-section{display:none!important;}
 .pills-area{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start;}
 .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 10px;border-radius:12px;border:1px solid var(--border-l);color:var(--text-2);background:var(--bg-1);}
 .pill-text{outline:none;min-width:40px;max-width:260px;white-space:nowrap;}
-.pill-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:14px;line-height:1;padding:0;display:flex;align-items:center;transition:color .15s;}
+.pill-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:14px;line-height:1;padding:0;}
 .pill-del:hover{color:var(--brand);}
-.btn-add-pill{font-size:11px;font-weight:700;color:var(--brand);background:var(--brand-light);border:none;padding:4px 11px;border-radius:12px;cursor:pointer;white-space:nowrap;}
-.btn-add-pill:hover{background:#f8c4cc;}
+.btn-add-pill{font-size:11px;font-weight:700;color:var(--brand);background:var(--brand-light);border:none;padding:4px 11px;border-radius:12px;cursor:pointer;}
 .pill.completed .pill-text{text-decoration:line-through;opacity:.5;}
 .pill-check{background:none;border:none;cursor:pointer;font-size:12px;color:var(--text-3);padding:0;line-height:1;}
-.pill-check:hover{color:var(--green);}
 .pill-check.done{color:var(--green);}
+.pill.dolor{border-color:#f8b4c4;background:var(--brand-light);}
+.pill.dolor .pill-text{color:var(--brand-text);}
+.section{margin-bottom:16px;}
+.section:last-child{margin-bottom:0;}
+.section-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);outline:none;}
+.section-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:15px;line-height:1;padding:0 0 0 6px;opacity:.5;}
+.section-del:hover{opacity:1;color:var(--brand);}
+.btn-add-section{display:block;width:100%;margin-top:12px;font-size:11px;font-weight:700;color:var(--text-3);background:transparent;border:1.5px dashed var(--border-m);border-radius:var(--r-md);padding:8px;cursor:pointer;text-align:center;}
+.btn-add-section:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-light);}
 .meeting-list{display:flex;flex-direction:column;gap:6px;}
 .meeting-item{display:flex;align-items:flex-start;gap:8px;background:var(--bg-2);border-left:3px solid var(--brand);border-radius:0 var(--r-md) var(--r-md) 0;padding:10px 12px;}
-.meeting-text{font-size:13px;color:var(--text-2);outline:none;flex:1;min-width:0;}
-.meeting-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:16px;flex-shrink:0;padding:0;}
+.meeting-text{font-size:13px;color:var(--text-2);outline:none;flex:1;}
+.meeting-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:16px;flex-shrink:0;}
 .meeting-del:hover{color:var(--brand);}
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;}
 .kpi-card{background:var(--brand-light);border-radius:var(--r-md);padding:10px 12px;position:relative;}
@@ -134,11 +146,14 @@ body.present-mode .btn-add-section{display:none!important;}
 .report-table th:last-child{border-radius:0 8px 0 0;}
 .report-table td{padding:8px 12px;border-top:1px solid var(--border-l);color:var(--text-2);vertical-align:top;outline:none;}
 .report-table td:first-child{color:var(--text-1);font-weight:600;}
-.report-table td[contenteditable]:focus{background:var(--brand-light);}
 .report-table .row-del{width:28px;text-align:center;}
-.report-table .row-del button{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:16px;padding:0;}
+.report-table .row-del button{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:16px;}
 .report-table .row-del button:hover{color:var(--brand);}
 .btn-add-row{font-size:11px;font-weight:700;color:var(--brand);background:var(--brand-light);border:none;padding:6px 14px;border-radius:0 0 8px 8px;cursor:pointer;width:100%;}
+.alert{background:var(--brand-light);border:1px solid #f8b4c4;border-radius:var(--r-md);padding:10px 14px;font-size:12px;color:var(--brand-text);}
+.date-edit{display:flex;align-items:center;gap:8px;margin-top:6px;}
+.date-edit input[type=date]{font-family:var(--font);font-size:12px;color:var(--brand);font-weight:600;border:1px solid var(--brand-light);background:var(--brand-light);border-radius:6px;cursor:pointer;outline:none;padding:3px 7px;}
+.date-sep{font-size:12px;color:var(--brand);font-weight:600;}
 .golive-list{display:flex;flex-direction:column;gap:6px;}
 .golive-item{display:flex;align-items:center;gap:10px;background:var(--bg-2);border-radius:var(--r-md);padding:9px 12px;border:1px solid var(--border-l);}
 .golive-item input[type=checkbox]{accent-color:var(--green);width:15px;height:15px;cursor:pointer;flex-shrink:0;}
@@ -147,66 +162,76 @@ body.present-mode .btn-add-section{display:none!important;}
 .golive-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;}
 .golive-status.ok{background:#d1fae5;color:#065F46;}
 .golive-status.pending{background:var(--bg-2);color:var(--text-3);border:1px solid var(--border-l);}
-.alert{background:var(--brand-light);border:1px solid #f8b4c4;border-radius:var(--r-md);padding:10px 14px;font-size:12px;color:var(--brand-text);}
 .rm-footer{margin-top:2.5rem;padding-top:1.5rem;border-top:2px solid var(--brand-light);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
 .rm-footer img{height:22px;}
 .rm-footer-note{font-size:11px;color:var(--text-3);}
-.reporteria-section{margin-top:2rem;}
 body.present-mode .card-header{cursor:default;}
-body.present-mode .edit-badge,
-body.present-mode .date-edit,
-body.present-mode .date-warning,
-body.present-mode .btn-add-pill,
-body.present-mode .btn-add-kpi,
-body.present-mode .btn-add-row,
-body.present-mode .btn-add-meeting,
-body.present-mode .pill-del,
-body.present-mode .pill-check,
-body.present-mode .meeting-del,
-body.present-mode .kpi-del,
-body.present-mode .row-del,
-body.present-mode .chevron,
-body.present-mode #setup,
-body.present-mode .reporteria-section,
+body.present-mode .section-del,body.present-mode .btn-add-section,body.present-mode .btn-add-pill,
+body.present-mode .btn-add-kpi,body.present-mode .btn-add-row,body.present-mode .btn-add-meeting,
+body.present-mode .pill-del,body.present-mode .pill-check,body.present-mode .meeting-del,
+body.present-mode .kpi-del,body.present-mode .row-del,body.present-mode .chevron,
+body.present-mode #step-upload,body.present-mode #step-config,body.present-mode .date-edit,
 body.present-mode .golive-item input[type=checkbox]{display:none!important;}
 body.present-mode .card-body{display:block!important;}
 body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
 @media print{
-  #topbar,#setup,.reporteria-section,.rm-footer,.edit-badge,
-  .date-edit,.date-warning,.btn-add-pill,.btn-add-kpi,
-  .btn-add-row,.btn-add-meeting,.pill-del,.pill-check,
-  .meeting-del,.kpi-del,.row-del,#gantt-wrap,#progress-wrap{display:none!important;}
+  #topbar,.step-wrap,.rm-footer,.date-edit,#gantt-wrap,#progress-wrap{display:none!important;}
   #output{display:block!important;padding:1rem;}
   .card-body{display:block!important;}
-  .chevron{display:none!important;}
-  .card-header{cursor:default;}
+  .chevron,.section-del,.btn-add-section,.btn-add-pill,.btn-add-kpi,.btn-add-row,.btn-add-meeting,.pill-del,.pill-check,.meeting-del,.kpi-del,.row-del{display:none!important;}
   .block{break-inside:avoid;}
-  .report-table th,.kpi-card,.meeting-item{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 }
 </style>
 </head>
 <body>
+
 <div id="topbar">
   <img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio" onerror="this.style.display='none'">
   <div class="topbar-actions">
     <span id="savedToast" class="saved-toast">Guardado</span>
-    <button class="btn-mode active" id="btnEdit" onclick="setMode('edit')">Edicion</button>
-    <button class="btn-mode" id="btnPresent" onclick="setMode('present')">Presentacion</button>
+    <button class="btn-mode active" id="btnEdit" onclick="setMode('edit')">Edición</button>
+    <button class="btn-mode" id="btnPresent" onclick="setMode('present')">Presentación</button>
     <button style="font-family:var(--font);font-size:11px;font-weight:700;padding:5px 13px;border-radius:20px;cursor:pointer;border:1.5px solid rgba(255,255,255,.5);background:transparent;color:#fff;" onclick="downloadPDF()">PDF</button>
   </div>
 </div>
-<div id="setup">
-  <div class="setup-inner">
-    <div class="setup-eyebrow">Generador de roadmap</div>
-    <div class="setup-title">Configura el plan para tu cliente</div>
-    <div class="setup-sub">Completa los datos base. Una vez generado, podras editar fechas, entregables y reuniones directamente en el roadmap.</div>
-    <div class="setup-grid">
-      <div class="field"><label>Nombre del cliente</label><input type="text" id="clientName" placeholder="Ej: MercadoPago"></div>
+
+<div class="step-wrap">
+  <div id="step-upload">
+    <div class="step-eyebrow">Paso 1 · Presentación del cliente</div>
+    <div class="step-title">Sube el PPT del cliente</div>
+    <div class="step-sub">La IA detecta el tipo de equipo, extrae los dolores y carga el playbook de KPIs correspondiente. Luego puedes ajustar todo manualmente.</div>
+    <div class="upload-zone" id="dropZone">
+      <input type="file" id="pptFile" accept=".pptx" onchange="handleFile(this.files[0])">
+      <div class="upload-icon">📊</div>
+      <div class="upload-label">Arrastra el .pptx aquí o haz clic para seleccionar</div>
+      <div class="upload-hint">Solo archivos .pptx · El archivo no sale de tu navegador</div>
+      <div class="upload-filename" id="uploadedName"></div>
+    </div>
+    <div class="ai-status" id="aiStatus">
+      <div class="ai-label">
+        <div class="spinner" id="aiSpinner"></div>
+        <span id="aiStatusLabel">Leyendo presentación...</span>
+      </div>
+      <div class="ai-log" id="aiLog"></div>
+    </div>
+    <div class="detected-strip" id="detectedStrip">
+      <div class="detected-dot"></div>
+      <div class="detected-label" id="detectedLabel">—</div>
+      <div class="detected-sub" id="detectedSub">Playbook cargado automáticamente</div>
+    </div>
+  </div>
+
+  <div id="step-config">
+    <div class="step-eyebrow">Paso 2 · Datos base</div>
+    <div class="step-title">Configura el plan para tu cliente</div>
+    <div class="step-sub">Completa los datos base. El roadmap combina estos campos con lo extraído del PPT.</div>
+    <div class="form-grid">
+      <div class="field"><label>Nombre del cliente</label><input type="text" id="clientName" placeholder="Ej: Mercado Pago"></div>
       <div class="field"><label>Nombre del programa</label><input type="text" id="programName" placeholder="Ej: Apprecio Beat"></div>
       <div class="field"><label>Contraparte / Admin</label><input type="text" id="execName" placeholder="Ej: Valentina Torres"></div>
       <div class="field"><label>Fecha kick-off</label><input type="date" id="dateKickoff"></div>
       <div class="field"><label>Fecha Go-Live</label><input type="date" id="dateGoLive"></div>
-      <div class="field"><label>Dotacion total</label><input type="number" id="headcount" placeholder="Ej: 240" min="1"></div>
+      <div class="field"><label>Dotación total</label><input type="number" id="headcount" placeholder="Ej: 240" min="1"></div>
     </div>
     <div class="btn-row">
       <button class="btn-primary" onclick="generateRoadmap()">Generar roadmap</button>
@@ -215,6 +240,7 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
     </div>
   </div>
 </div>
+
 <div id="output">
   <div class="rm-header">
     <div class="rm-client" id="out-client"></div>
@@ -222,47 +248,25 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
     <div class="rm-dates" id="out-dates"></div>
   </div>
   <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--brand)"></div>Configuracion interna</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Reunion con cliente</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--brand-dark)"></div>Hito de adopcion</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--brand-text)"></div>Accion critica</div>
-    <div class="legend-item edit-badge" style="margin-left:auto;display:flex;align-items:center;">Todo el contenido es editable</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--brand)"></div>Configuración interna</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Reunión con cliente</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--brand-dark)"></div>Hito de adopción</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--brand-text)"></div>Acción crítica</div>
   </div>
   <div id="gantt-wrap">
-    <div class="gantt-label">Linea de tiempo</div>
+    <div class="gantt-label">Línea de tiempo</div>
     <div class="gantt-track" id="ganttTrack"></div>
     <div class="gantt-dates" id="ganttDates"></div>
   </div>
   <div id="progress-wrap">
-    <div class="prog-card" id="prog-pre">
-      <div class="prog-phase" style="color:var(--brand-text)">Pre Go-Live</div>
-      <div class="prog-pct" style="color:var(--brand)">0%</div>
-      <div class="prog-sub">entregables completados</div>
-      <div class="prog-bar-bg"><div class="prog-bar-fill" style="background:var(--brand);width:0%"></div></div>
-    </div>
-    <div class="prog-card" id="prog-t14">
-      <div class="prog-phase" style="color:#7B3F00">T14</div>
-      <div class="prog-pct" style="color:#c0550b">0%</div>
-      <div class="prog-sub">entregables completados</div>
-      <div class="prog-bar-bg"><div class="prog-bar-fill" style="background:#c0550b;width:0%"></div></div>
-    </div>
-    <div class="prog-card" id="prog-t30">
-      <div class="prog-phase" style="color:var(--green)">T30</div>
-      <div class="prog-pct" style="color:var(--green)">0%</div>
-      <div class="prog-sub">entregables completados</div>
-      <div class="prog-bar-bg"><div class="prog-bar-fill" style="background:var(--green);width:0%"></div></div>
-    </div>
-    <div class="prog-card" id="prog-t90">
-      <div class="prog-phase" style="color:#1e3a8a">T90</div>
-      <div class="prog-pct" style="color:#1e40af">0%</div>
-      <div class="prog-sub">entregables completados</div>
-      <div class="prog-bar-bg"><div class="prog-bar-fill" style="background:#1e40af;width:0%"></div></div>
-    </div>
+    <div class="prog-card" id="prog-pre"><div class="prog-phase" style="color:var(--brand-text)">Pre Go-Live</div><div class="prog-pct" style="color:var(--brand)">0%</div><div class="prog-sub">entregables completados</div><div class="prog-bar-bg"><div class="prog-bar-fill" style="background:var(--brand);width:0%"></div></div></div>
+    <div class="prog-card" id="prog-t14"><div class="prog-phase" style="color:#7B3F00">T14</div><div class="prog-pct" style="color:var(--orange)">0%</div><div class="prog-sub">entregables completados</div><div class="prog-bar-bg"><div class="prog-bar-fill" style="background:var(--orange);width:0%"></div></div></div>
+    <div class="prog-card" id="prog-t30"><div class="prog-phase" style="color:var(--green)">T30</div><div class="prog-pct" style="color:var(--green)">0%</div><div class="prog-sub">entregables completados</div><div class="prog-bar-bg"><div class="prog-bar-fill" style="background:var(--green);width:0%"></div></div></div>
+    <div class="prog-card" id="prog-t90"><div class="prog-phase" style="color:#1e3a8a">T90</div><div class="prog-pct" style="color:var(--blue)">0%</div><div class="prog-sub">entregables completados</div><div class="prog-bar-bg"><div class="prog-bar-fill" style="background:var(--blue);width:0%"></div></div></div>
   </div>
-  <div class="phase-header">
-    <span class="phase-badge" style="background:var(--brand-light);color:var(--brand-text)">Pre Go-Live</span>
-    <div class="phase-line"></div>
-  </div>
+
+  <!-- PRE GO-LIVE -->
+  <div class="phase-header"><span class="phase-badge" style="background:var(--brand-light);color:var(--brand-text)">Pre Go-Live</span><div class="phase-line"></div></div>
   <div class="timeline">
     <div class="block">
       <div class="block-dot" style="background:var(--brand)"></div>
@@ -270,40 +274,43 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
         <div class="card-header" onclick="toggle('kickoff')">
           <div class="card-meta">
             <span class="card-tag" style="background:var(--brand-light);color:var(--brand-text)">Kick-off de definiciones</span>
-            <div class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Levantamiento de informacion con el cliente</div>
-            <div class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Reunion 90 min - Todos los inputs se solicitan antes de iniciar configuracion</div>
+            <div class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Levantamiento de información con el cliente</div>
+            <div class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Reunión 90 min · Todos los inputs se solicitan antes de iniciar configuración</div>
             <div class="date-edit"><input type="date" id="date-kickoff" onchange="onDateChange()"></div>
           </div>
-          <span class="chevron" id="chev-kickoff">&#8250;</span>
+          <span class="chevron" id="chev-kickoff">›</span>
         </div>
         <div class="card-body" id="body-kickoff">
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Que se define en esta sesion</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Dolores identificados del cliente</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="pills-area" id="pills-kickoff-dolores"><button class="btn-add-pill" onclick="addPill('pills-kickoff-dolores','pre',true)">+ Agregar dolor</button></div>
+          </div>
+          <div class="section">
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Qué se define en esta sesión</div><button class="section-del" onclick="delSection(this)">×</button></div>
             <div class="pills-area" id="pills-kickoff-define">
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Nomina oficial de colaboradores</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Administradores de la plataforma</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Nombre del programa</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Colores y logo corporativo</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Tramos de segmentacion</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Metas por colaborador o grupo</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">KPIs prioritarios del negocio</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
+              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">○</button><span class="pill-text" contenteditable="true" spellcheck="false">Nómina oficial de colaboradores</span><button class="pill-del" onclick="delPill(this)">×</button></span>
+              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">○</button><span class="pill-text" contenteditable="true" spellcheck="false">Administradores de la plataforma</span><button class="pill-del" onclick="delPill(this)">×</button></span>
+              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">○</button><span class="pill-text" contenteditable="true" spellcheck="false">Colores y logo corporativo</span><button class="pill-del" onclick="delPill(this)">×</button></span>
+              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">○</button><span class="pill-text" contenteditable="true" spellcheck="false">Tramos de segmentación</span><button class="pill-del" onclick="delPill(this)">×</button></span>
+              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">○</button><span class="pill-text" contenteditable="true" spellcheck="false">Metas por colaborador o grupo</span><button class="pill-del" onclick="delPill(this)">×</button></span>
+              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">○</button><span class="pill-text" contenteditable="true" spellcheck="false">KPIs prioritarios del negocio</span><button class="pill-del" onclick="delPill(this)">×</button></span>
               <button class="btn-add-pill" onclick="addPill('pills-kickoff-define','pre')">+ Agregar</button>
             </div>
           </div>
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Criterios de Go-Live - Pre</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Criterios de Go-Live</div><button class="section-del" onclick="delSection(this)">×</button></div>
             <div class="golive-list" id="golive-pre">
-              <div class="golive-item"><input type="checkbox" id="gl-pre-1" onchange="toggleGoLive(this)"><label for="gl-pre-1">Nomina oficial entregada por el cliente</label><span class="golive-status pending">Pendiente</span></div>
-              <div class="golive-item"><input type="checkbox" id="gl-pre-2" onchange="toggleGoLive(this)"><label for="gl-pre-2">Scorecard configurado y aprobado</label><span class="golive-status pending">Pendiente</span></div>
-              <div class="golive-item"><input type="checkbox" id="gl-pre-3" onchange="toggleGoLive(this)"><label for="gl-pre-3">Aprobacion formal del cliente documentada</label><span class="golive-status pending">Pendiente</span></div>
-              <div class="golive-item"><input type="checkbox" id="gl-pre-4" onchange="toggleGoLive(this)"><label for="gl-pre-4">Admins certificados en lectura de reportes</label><span class="golive-status pending">Pendiente</span></div>
+              <div class="golive-item"><input type="checkbox" id="gl1" onchange="toggleGoLive(this)"><label for="gl1">Nómina oficial entregada por el cliente</label><span class="golive-status pending">Pendiente</span></div>
+              <div class="golive-item"><input type="checkbox" id="gl2" onchange="toggleGoLive(this)"><label for="gl2">Scorecard configurado y aprobado</label><span class="golive-status pending">Pendiente</span></div>
+              <div class="golive-item"><input type="checkbox" id="gl3" onchange="toggleGoLive(this)"><label for="gl3">Aprobación formal del cliente documentada</label><span class="golive-status pending">Pendiente</span></div>
+              <div class="golive-item"><input type="checkbox" id="gl4" onchange="toggleGoLive(this)"><label for="gl4">Admins certificados en lectura de reportes</label><span class="golive-status pending">Pendiente</span></div>
             </div>
           </div>
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Alerta</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
-            <div class="alert" contenteditable="true" spellcheck="false">Si el cliente no entrega los inputs en los primeros 5 dias habiles, la fecha de Go-Live se corre automaticamente. Documentar en acta.</div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Alerta</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="alert" contenteditable="true" spellcheck="false">Si el cliente no entrega los inputs en los primeros 5 días hábiles, la fecha de Go-Live se corre automáticamente. Documentar en acta.</div>
           </div>
-          <button class="btn-add-section" onclick="addSection(this.closest(\'.card-body\'))">+ Agregar seccion</button>
+          <button class="btn-add-section" onclick="addSection(this.closest('.card-body'))">+ Agregar sección</button>
         </div>
       </div>
     </div>
@@ -312,37 +319,26 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
       <div class="card">
         <div class="card-header" onclick="toggle('sprint')">
           <div class="card-meta">
-            <span class="card-tag" style="background:var(--brand-light);color:var(--brand-text)">Sprint de configuracion</span>
-            <div class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Construccion del entorno Apprecio</div>
-            <div class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Trabajo interno - En paralelo a medida que el cliente entrega informacion</div>
-            <div class="date-edit">
-              <input type="date" id="date-sprint-start" onchange="onDateChange()">
-              <span class="date-sep">&#8594;</span>
-              <input type="date" id="date-sprint-end" onchange="onDateChange()">
-            </div>
-            <div class="date-warning" id="warn-sprint">Se solapa con otra etapa</div>
+            <span class="card-tag" style="background:var(--brand-light);color:var(--brand-text)">Sprint de configuración</span>
+            <div class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Construcción del entorno Apprecio</div>
+            <div class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Trabajo interno · En paralelo a medida que el cliente entrega información</div>
+            <div class="date-edit"><input type="date" id="date-sprint-start" onchange="onDateChange()"><span class="date-sep">→</span><input type="date" id="date-sprint-end" onchange="onDateChange()"></div>
           </div>
-          <span class="chevron" id="chev-sprint">&#8250;</span>
+          <span class="chevron" id="chev-sprint">›</span>
         </div>
         <div class="card-body" id="body-sprint">
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Entregables del sprint</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Entregables del sprint</div><button class="section-del" onclick="delSection(this)">×</button></div>
             <div class="pills-area" id="pills-sprint">
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Scorecard del vendedor configurado</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Tramos y metas cargadas</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Campanas T14 / T30 / T90 creadas</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Modulo de entrenamiento configurado</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Insignias Activador configuradas</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Plantilla de reporte semanal lista</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Accesos de administradores creados</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
+              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">○</button><span class="pill-text" contenteditable="true" spellcheck="false">Scorecard del colaborador configurado</span><button class="pill-del" onclick="delPill(this)">×</button></span>
+              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">○</button><span class="pill-text" contenteditable="true" spellcheck="false">Tramos y metas cargadas</span><button class="pill-del" onclick="delPill(this)">×</button></span>
+              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">○</button><span class="pill-text" contenteditable="true" spellcheck="false">Campañas T14 / T30 / T90 creadas</span><button class="pill-del" onclick="delPill(this)">×</button></span>
+              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">○</button><span class="pill-text" contenteditable="true" spellcheck="false">Módulo de entrenamiento configurado</span><button class="pill-del" onclick="delPill(this)">×</button></span>
+              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">○</button><span class="pill-text" contenteditable="true" spellcheck="false">Accesos de administradores creados</span><button class="pill-del" onclick="delPill(this)">×</button></span>
               <button class="btn-add-pill" onclick="addPill('pills-sprint','pre')">+ Agregar</button>
             </div>
           </div>
-          <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Alerta</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
-            <div class="alert" contenteditable="true" spellcheck="false">Nomina y tramos son el camino critico - sin ellos no se puede configurar el scorecard. Sin scorecard no hay Go-Live.</div>
-          </div>
-          <button class="btn-add-section" onclick="addSection(this.closest(\'.card-body\'))">+ Agregar seccion</button>
+          <button class="btn-add-section" onclick="addSection(this.closest('.card-body'))">+ Agregar sección</button>
         </div>
       </div>
     </div>
@@ -351,542 +347,799 @@ body.present-mode .pill.completed .pill-text{text-decoration:none;opacity:1;}
       <div class="card">
         <div class="card-header" onclick="toggle('demo')">
           <div class="card-meta">
-            <span class="card-tag" style="background:var(--green-light);color:var(--green)">Demo + Aprobacion + Capacitacion admins</span>
+            <span class="card-tag" style="background:var(--green-light);color:var(--green)">Demo + Aprobación + Capacitación admins</span>
             <div class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Primer acercamiento real del cliente con la plataforma</div>
-            <div class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Reunion 90 min - Con administradores y sponsor del proyecto</div>
-            <div class="date-edit">
-              <input type="date" id="date-demo-start" onchange="onDateChange()">
-              <span class="date-sep">&#8594;</span>
-              <input type="date" id="date-demo-end" onchange="onDateChange()">
-            </div>
-            <div class="date-warning" id="warn-demo">Se solapa con otra etapa</div>
+            <div class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Reunión 90 min · Con administradores y sponsor del proyecto</div>
+            <div class="date-edit"><input type="date" id="date-demo-start" onchange="onDateChange()"><span class="date-sep">→</span><input type="date" id="date-demo-end" onchange="onDateChange()"></div>
           </div>
-          <span class="chevron" id="chev-demo">&#8250;</span>
+          <span class="chevron" id="chev-demo">›</span>
         </div>
         <div class="card-body" id="body-demo">
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Agenda de la sesion</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Agenda de la sesión</div><button class="section-del" onclick="delSection(this)">×</button></div>
             <div class="meeting-list" id="meetings-demo">
-              <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>0-20 min:</strong> Recorrido del entorno configurado con datos reales del cliente</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
-              <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>20-45 min:</strong> Lectura de reportes, graficas de campana y scorecard</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
-              <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>45-70 min:</strong> Capacitacion practica a administradores</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
-              <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>70-90 min:</strong> Ajustes finales y aprobacion formal para Go-Live</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
+              <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>0-20 min:</strong> Recorrido del entorno configurado con datos reales del cliente</div><button class="meeting-del" onclick="delMeeting(this)">×</button></div>
+              <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>20-45 min:</strong> Lectura de reportes y scorecard</div><button class="meeting-del" onclick="delMeeting(this)">×</button></div>
+              <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>45-70 min:</strong> Capacitación práctica a administradores</div><button class="meeting-del" onclick="delMeeting(this)">×</button></div>
+              <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>70-90 min:</strong> Ajustes finales y aprobación formal para Go-Live</div><button class="meeting-del" onclick="delMeeting(this)">×</button></div>
             </div>
-            <button class="btn-add-pill btn-add-meeting" style="margin-top:8px" onclick="addMeeting('meetings-demo')">+ Agregar punto de agenda</button>
+            <button class="btn-add-pill btn-add-meeting" style="margin-top:8px" onclick="addMeeting('meetings-demo')">+ Agregar punto</button>
           </div>
-          <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Criterio de Go-Live</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
-            <div class="pills-area" id="pills-demo-criterio">
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Aprobacion formal documentada por el cliente</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="pre"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Admins certificados en lectura de reportes</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <button class="btn-add-pill" onclick="addPill('pills-demo-criterio','pre')">+ Agregar</button>
-            </div>
-          </div>
-          <button class="btn-add-section" onclick="addSection(this.closest(\'.card-body\'))">+ Agregar seccion</button>
+          <button class="btn-add-section" onclick="addSection(this.closest('.card-body'))">+ Agregar sección</button>
         </div>
       </div>
     </div>
   </div>
-  <div class="phase-header">
-    <span class="phase-badge" style="background:var(--brand);color:#fff">Go-Live</span>
-    <div class="phase-line"></div>
-  </div>
+
+  <!-- GO-LIVE PHASES -->
+  <div class="phase-header"><span class="phase-badge" style="background:var(--brand);color:#fff">Go-Live</span><div class="phase-line"></div></div>
   <div class="timeline">
+    <!-- T14 -->
     <div class="block">
-      <div class="block-dot" style="background:var(--brand-dark)"></div>
-      <div class="card" id="card-t14">
+      <div class="block-dot" style="background:var(--orange)"></div>
+      <div class="card">
         <div class="card-header" onclick="toggle('t14')">
           <div class="card-meta">
-            <span class="card-tag" style="background:var(--brand-light);color:var(--brand-text)">T14 - Activacion y onboarding</span>
-            <div id="t14-title" class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Primer uso, certificacion y sprint de cierre</div>
-            <div id="t14-sub" class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Foco: lograr el primer uso real y certificar comprension de las reglas del juego</div>
-            <div class="date-edit">
-              <input type="date" id="date-t14-start" onchange="onDateChange()">
-              <span class="date-sep">&#8594;</span>
-              <input type="date" id="date-t14-end" onchange="onDateChange()">
-            </div>
-            <div class="date-warning" id="warn-t14">Se solapa con otra etapa</div>
+            <span class="card-tag" style="background:var(--orange-light);color:var(--orange)">T14 · Activación y Onboarding</span>
+            <div class="card-title-text" style="margin-top:6px" id="t14-title" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Primer uso, certificación y sprint de cierre</div>
+            <div class="card-sub-text" id="t14-sub" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Foco: lograr el primer uso real y certificar comprensión de las reglas del juego</div>
+            <div class="date-edit"><input type="date" id="date-t14-start" onchange="onDateChange()"><span class="date-sep">→</span><input type="date" id="date-t14-end" onchange="onDateChange()"></div>
           </div>
-          <span class="chevron" id="chev-t14">&#8250;</span>
+          <span class="chevron" id="chev-t14">›</span>
         </div>
         <div class="card-body" id="body-t14">
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">KPIs objetivo</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
-            <div class="kpi-grid" id="kpis-t14">
-              <div class="kpi-card"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">40%</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Fuerza de venta activa</div></div>
-              <div class="kpi-card"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">100%</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Metas cargadas y comprendidas</div></div>
-              <div class="kpi-card" id="kpi-40hc"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">--</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Minimo colaboradores activos</div></div>
-            </div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Dolores que atacamos en T14</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="pills-area" id="pills-t14-dolores"><button class="btn-add-pill" onclick="addPill('pills-t14-dolores','t14',true)">+ Agregar</button></div>
+          </div>
+          <div class="section">
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">KPIs objetivo</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="kpi-grid" id="kpis-t14"></div>
             <button class="btn-add-kpi" style="margin-top:8px" onclick="addKpi('kpis-t14')">+ Agregar KPI</button>
           </div>
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Cadencia de reuniones</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
-            <div class="meeting-list" id="meetings-t14">
-              <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>Dia 1 (lanzamiento):</strong> Kick-off operativo con admins - 30 min - Confirmar accesos, comunicado interno enviado</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
-              <div class="meeting-item" id="meet-d7"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>D+7:</strong> Check-in de adopcion - 45 min - % de activacion, troubleshooting temprano</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
-              <div class="meeting-item" id="meet-d14"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>D+14:</strong> Revision T14 - 60 min - Resultados de certificacion, lista de re-capacitacion urgente</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
-            </div>
-            <button class="btn-add-pill btn-add-meeting" style="margin-top:8px" onclick="addMeeting('meetings-t14')">+ Agregar reunion</button>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Acciones y entregables</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="pills-area" id="pills-t14-acciones"><button class="btn-add-pill" onclick="addPill('pills-t14-acciones','t14')">+ Agregar</button></div>
           </div>
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Reporteria semanal (cada lunes)</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Cadencia de reuniones</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="meeting-list" id="meetings-t14"></div>
+            <button class="btn-add-pill btn-add-meeting" style="margin-top:8px" onclick="addMeeting('meetings-t14')">+ Agregar reunión</button>
+          </div>
+          <div class="section">
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Reportería a entregar</div><button class="section-del" onclick="delSection(this)">×</button></div>
             <div style="border:1px solid var(--border-l);border-radius:var(--r-md);overflow:hidden;">
-              <table class="report-table" id="table-t14">
-                <thead><tr><th>Metrica</th><th>Valor que genera al cliente</th><th style="width:32px"></th></tr></thead>
-                <tbody>
-                  <tr><td contenteditable="true" spellcheck="false">% adopcion acumulado</td><td contenteditable="true" spellcheck="false">Senal de salud del programa; permite actuar antes de que el problema se consolide</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                  <tr><td contenteditable="true" spellcheck="false">% certificacion aprobada vs reprobada</td><td contenteditable="true" spellcheck="false">Identifica quienes no entienden las reglas del juego</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                  <tr><td contenteditable="true" spellcheck="false">Primeras transacciones generadas</td><td contenteditable="true" spellcheck="false">Valida que la instalacion no quedo dormida - el KPI real del negocio</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                  <tr><td contenteditable="true" spellcheck="false">Top 10 vendedores activos</td><td contenteditable="true" spellcheck="false">Reconocimiento temprano = traccion organica por pares</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                </tbody>
-              </table>
-              <button class="btn-add-row" onclick="addRow('table-t14')">+ Agregar metrica</button>
+              <table class="report-table"><thead><tr><th>Reporte / Análisis</th><th>Formato</th><th>Destinatario</th><th style="width:32px"></th></tr></thead><tbody id="tbody-t14"></tbody></table>
+              <button class="btn-add-row" onclick="addReportRow('tbody-t14')">+ Agregar reporte</button>
             </div>
           </div>
-          <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Acciones a entregar al cliente</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
-            <div class="pills-area" id="pills-t14-acciones">
-              <span class="pill" data-phase="t14"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Insignias Activador</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="t14"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Certificacion Venta de Valor evaluada</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="t14"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Bono sprint cierre (ultimos 3 dias)</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <button class="btn-add-pill" onclick="addPill('pills-t14-acciones','t14')">+ Agregar</button>
-            </div>
-          </div>
-          <button class="btn-add-section" onclick="addSection(this.closest(\'.card-body\'))">+ Agregar seccion</button>
+          <button class="btn-add-section" onclick="addSection(this.closest('.card-body'))">+ Agregar sección</button>
         </div>
       </div>
     </div>
+    <!-- T30 -->
     <div class="block">
-      <div class="block-dot" style="background:var(--brand-dark)"></div>
-      <div class="card" id="card-t30">
+      <div class="block-dot" style="background:var(--green)"></div>
+      <div class="card">
         <div class="card-header" onclick="toggle('t30')">
           <div class="card-meta">
-            <span class="card-tag" style="background:var(--brand-light);color:var(--brand-text)">T30 - Segmentacion y traccion</span>
-            <div id="t30-title" class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Cambio de comportamiento y flujo diario de trabajo</div>
-            <div id="t30-sub" class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Foco: el equipo comprende sus metas, su nivel y el sistema se vuelve rutina</div>
-            <div class="date-edit">
-              <input type="date" id="date-t30-start" onchange="onDateChange()">
-              <span class="date-sep">&#8594;</span>
-              <input type="date" id="date-t30-end" onchange="onDateChange()">
-            </div>
-            <div class="date-warning" id="warn-t30">Se solapa con otra etapa</div>
+            <span class="card-tag" style="background:var(--green-light);color:var(--green)">T30 · Segmentación y Tracción</span>
+            <div class="card-title-text" style="margin-top:6px" id="t30-title" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Cambio de comportamiento y flujo diario de trabajo</div>
+            <div class="card-sub-text" id="t30-sub" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Foco: el equipo comprende sus metas, su nivel y el sistema se vuelve rutina</div>
+            <div class="date-edit"><input type="date" id="date-t30-start" onchange="onDateChange()"><span class="date-sep">→</span><input type="date" id="date-t30-end" onchange="onDateChange()"></div>
           </div>
-          <span class="chevron" id="chev-t30">&#8250;</span>
+          <span class="chevron" id="chev-t30">›</span>
         </div>
         <div class="card-body" id="body-t30">
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">KPIs objetivo</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
-            <div class="kpi-grid" id="kpis-t30">
-              <div class="kpi-card"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">60-70%</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Dotacion activa</div></div>
-              <div class="kpi-card"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">&gt;2</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Challenges completados por vendedor</div></div>
-              <div class="kpi-card" id="kpi-60hc"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">--</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Minimo colaboradores activos</div></div>
-            </div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Dolores que atacamos en T30</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="pills-area" id="pills-t30-dolores"><button class="btn-add-pill" onclick="addPill('pills-t30-dolores','t30',true)">+ Agregar</button></div>
+          </div>
+          <div class="section">
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">KPIs objetivo</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="kpi-grid" id="kpis-t30"></div>
             <button class="btn-add-kpi" style="margin-top:8px" onclick="addKpi('kpis-t30')">+ Agregar KPI</button>
           </div>
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Cadencia de reuniones</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
-            <div class="meeting-list" id="meetings-t30">
-              <div class="meeting-item" id="meet-d21"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>D+21 (quincenal):</strong> Revision de segmentacion - 45 min - Quien sube de tramo? Identificar rezagados</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
-              <div class="meeting-item" id="meet-d30"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>D+30 (cierre de mes):</strong> Revision mensual T30 - 60 min - KPIs, encuesta D+30, ajuste de campanas</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
-              <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>Reporte semanal automatico:</strong> Cada lunes a administradores via plataforma</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
-            </div>
-            <button class="btn-add-pill btn-add-meeting" style="margin-top:8px" onclick="addMeeting('meetings-t30')">+ Agregar reunion</button>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Acciones y entregables</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="pills-area" id="pills-t30-acciones"><button class="btn-add-pill" onclick="addPill('pills-t30-acciones','t30')">+ Agregar</button></div>
           </div>
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Reporte quincenal</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Cadencia de reuniones</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="meeting-list" id="meetings-t30"></div>
+            <button class="btn-add-pill btn-add-meeting" style="margin-top:8px" onclick="addMeeting('meetings-t30')">+ Agregar reunión</button>
+          </div>
+          <div class="section">
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Reportería a entregar</div><button class="section-del" onclick="delSection(this)">×</button></div>
             <div style="border:1px solid var(--border-l);border-radius:var(--r-md);overflow:hidden;">
-              <table class="report-table" id="table-t30">
-                <thead><tr><th>Metrica</th><th>Valor que genera al cliente</th><th style="width:32px"></th></tr></thead>
-                <tbody>
-                  <tr><td contenteditable="true" spellcheck="false">Mapa de calor por tramo</td><td contenteditable="true" spellcheck="false">Visualiza la distribucion real del equipo para redistribuir recursos de capacitacion</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                  <tr><td contenteditable="true" spellcheck="false">Evolucion de saltos de nivel</td><td contenteditable="true" spellcheck="false">Evidencia el impacto del programa en el comportamiento real de ventas</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                  <tr><td contenteditable="true" spellcheck="false">% ventas 100% digitalizadas</td><td contenteditable="true" spellcheck="false">Ataca directamente la calidad del servicio y reduce riesgo operacional</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                  <tr><td contenteditable="true" spellcheck="false">% anulaciones</td><td contenteditable="true" spellcheck="false">Senal de alerta temprana de problemas de calidad en terreno</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                  <tr><td contenteditable="true" spellcheck="false">Ranking de challenges completados</td><td contenteditable="true" spellcheck="false">Identifica a los mas comprometidos - candidatos a reconocimiento formal</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                </tbody>
-              </table>
-              <button class="btn-add-row" onclick="addRow('table-t30')">+ Agregar metrica</button>
+              <table class="report-table"><thead><tr><th>Reporte / Análisis</th><th>Formato</th><th>Destinatario</th><th style="width:32px"></th></tr></thead><tbody id="tbody-t30"></tbody></table>
+              <button class="btn-add-row" onclick="addReportRow('tbody-t30')">+ Agregar reporte</button>
             </div>
           </div>
-          <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Acciones a entregar al cliente</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
-            <div class="pills-area" id="pills-t30-acciones">
-              <span class="pill" data-phase="t30"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Bono de Salto de tramo</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="t30"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Reto de Calidad (0% anulaciones)</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="t30"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Encuesta D+30 premiada con puntos</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <button class="btn-add-pill" onclick="addPill('pills-t30-acciones','t30')">+ Agregar</button>
-            </div>
-          </div>
-          <button class="btn-add-section" onclick="addSection(this.closest(\'.card-body\'))">+ Agregar seccion</button>
+          <button class="btn-add-section" onclick="addSection(this.closest('.card-body'))">+ Agregar sección</button>
         </div>
       </div>
     </div>
+    <!-- T90 -->
     <div class="block">
       <div class="block-dot" style="background:var(--brand-text)"></div>
-      <div class="card" id="card-t90">
+      <div class="card">
         <div class="card-header" onclick="toggle('t90')">
           <div class="card-meta">
-            <span class="card-tag" style="background:var(--brand-text);color:#fff">T90 - Sostenibilidad y retencion</span>
-            <div id="t90-title" class="card-title-text" style="margin-top:6px" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">El activo y la barrera de salida</div>
-            <div id="t90-sub" class="card-sub-text" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Foco: fidelizacion de los mejores y ataque a la rotacion critica mensual</div>
-            <div class="date-edit">
-              <input type="date" id="date-t90-start" onchange="onDateChange()">
-              <span class="date-sep">&#8594;</span>
-              <input type="date" id="date-t90-end" onchange="onDateChange()">
-            </div>
-            <div class="date-warning" id="warn-t90">Se solapa con otra etapa</div>
+            <span class="card-tag" style="background:var(--brand-text);color:#fff">T90 · Sostenibilidad y Retención</span>
+            <div class="card-title-text" style="margin-top:6px" id="t90-title" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">El activo y la barrera de salida</div>
+            <div class="card-sub-text" id="t90-sub" contenteditable="true" spellcheck="false" onclick="event.stopPropagation()">Foco: fidelización de los mejores y ataque a la rotación crítica mensual</div>
+            <div class="date-edit"><input type="date" id="date-t90-start" onchange="onDateChange()"><span class="date-sep">→</span><input type="date" id="date-t90-end" onchange="onDateChange()"></div>
           </div>
-          <span class="chevron" id="chev-t90">&#8250;</span>
+          <span class="chevron" id="chev-t90">›</span>
         </div>
         <div class="card-body" id="body-t90">
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">KPIs objetivo</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
-            <div class="kpi-grid" id="kpis-t90">
-              <div class="kpi-card"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">rot.</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Tramos Oro y Plata</div></div>
-              <div class="kpi-card"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">3m+</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Actividad sostenida</div></div>
-              <div class="kpi-card"><button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">ROI</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Documentado para renovacion</div></div>
-            </div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Dolores que atacamos en T90</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="pills-area" id="pills-t90-dolores"><button class="btn-add-pill" onclick="addPill('pills-t90-dolores','t90',true)">+ Agregar</button></div>
+          </div>
+          <div class="section">
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">KPIs objetivo</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="kpi-grid" id="kpis-t90"></div>
             <button class="btn-add-kpi" style="margin-top:8px" onclick="addKpi('kpis-t90')">+ Agregar KPI</button>
           </div>
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Cadencia de reuniones</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
-            <div class="meeting-list" id="meetings-t90">
-              <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>Mensual (ultimo martes):</strong> Revision ejecutiva - 60 min - KPIs + data encuesta terreno + alertas de rotacion</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
-              <div class="meeting-item" id="meet-d90"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>D+90 - Business Review trimestral:</strong> 90 min con sponsor - Resultados vs promesa T14/T30/T90, ROI estimado, propuesta siguiente trimestre</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
-              <div class="meeting-item"><div class="meeting-text" contenteditable="true" spellcheck="false"><strong>Reporte mensual ejecutivo:</strong> Enviado al sponsor 48 hrs antes de cada reunion mensual</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button></div>
-            </div>
-            <button class="btn-add-pill btn-add-meeting" style="margin-top:8px" onclick="addMeeting('meetings-t90')">+ Agregar reunion</button>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Acciones y entregables</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="pills-area" id="pills-t90-acciones"><button class="btn-add-pill" onclick="addPill('pills-t90-acciones','t90')">+ Agregar</button></div>
           </div>
           <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Business Review trimestral (D+90)</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Cadencia de reuniones</div><button class="section-del" onclick="delSection(this)">×</button></div>
+            <div class="meeting-list" id="meetings-t90"></div>
+            <button class="btn-add-pill btn-add-meeting" style="margin-top:8px" onclick="addMeeting('meetings-t90')">+ Agregar reunión</button>
+          </div>
+          <div class="section">
+            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Reportería a entregar</div><button class="section-del" onclick="delSection(this)">×</button></div>
             <div style="border:1px solid var(--border-l);border-radius:var(--r-md);overflow:hidden;">
-              <table class="report-table" id="table-t90">
-                <thead><tr><th>Seccion</th><th>Valor que genera al cliente</th><th style="width:32px"></th></tr></thead>
-                <tbody>
-                  <tr><td contenteditable="true" spellcheck="false">Adopcion acumulada 90 dias</td><td contenteditable="true" spellcheck="false">Evidencia el retorno sobre la inversion en el programa</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                  <tr><td contenteditable="true" spellcheck="false">Cambio en tasa de rotacion</td><td contenteditable="true" spellcheck="false">El dato que el cliente necesita para justificar la renovacion internamente</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                  <tr><td contenteditable="true" spellcheck="false">ROI estimado del programa</td><td contenteditable="true" spellcheck="false">Monetiza el impacto: reduccion de rotacion x costo de reemplazo por vendedor</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                  <tr><td contenteditable="true" spellcheck="false">Percepcion cualitativa de terreno</td><td contenteditable="true" spellcheck="false">Datos de la calle que el cliente no puede obtener de otra forma</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                  <tr><td contenteditable="true" spellcheck="false">Propuesta siguiente trimestre</td><td contenteditable="true" spellcheck="false">Mantiene la conversacion en crecimiento, no en renovacion</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-                </tbody>
-              </table>
-              <button class="btn-add-row" onclick="addRow('table-t90')">+ Agregar seccion</button>
+              <table class="report-table"><thead><tr><th>Reporte / Análisis</th><th>Formato</th><th>Destinatario</th><th style="width:32px"></th></tr></thead><tbody id="tbody-t90"></tbody></table>
+              <button class="btn-add-row" onclick="addReportRow('tbody-t90')">+ Agregar reporte</button>
             </div>
           </div>
-          <div class="section">
-            <div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Acciones a entregar al cliente</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>
-            <div class="pills-area" id="pills-t90-acciones">
-              <span class="pill" data-phase="t90"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Gran Pozo Oro</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="t90"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Encuesta de clima D+90</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="t90"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Premios trimestrales formales</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <span class="pill" data-phase="t90"><button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Nominaciones por categoria</span><button class="pill-del" onclick="delPill(this)">&#215;</button></span>
-              <button class="btn-add-pill" onclick="addPill('pills-t90-acciones','t90')">+ Agregar</button>
-            </div>
-          </div>
-          <button class="btn-add-section" onclick="addSection(this.closest(\'.card-body\'))">+ Agregar seccion</button>
+          <button class="btn-add-section" onclick="addSection(this.closest('.card-body'))">+ Agregar sección</button>
         </div>
       </div>
     </div>
   </div>
-  <div class="reporteria-section">
-    <div class="phase-header">
-      <span class="phase-badge" style="background:var(--green-light);color:var(--green)">Estandar de reporteria</span>
-      <div class="phase-line"></div>
-    </div>
-    <div style="background:var(--bg-1);border:1px solid var(--border-l);border-radius:var(--r-lg);overflow:hidden;margin-bottom:2rem;">
-      <table class="report-table" id="table-reporteria">
-        <thead><tr><th>Reporte</th><th>Frecuencia</th><th>Destinatario</th><th>Formato</th><th>Cuando entregarlo</th><th style="width:32px"></th></tr></thead>
-        <tbody>
-          <tr><td contenteditable="true" spellcheck="false">Adopcion semanal</td><td contenteditable="true" spellcheck="false">Cada lunes</td><td contenteditable="true" spellcheck="false">Admins operativos</td><td contenteditable="true" spellcheck="false">Automatico via plataforma</td><td contenteditable="true" spellcheck="false">Desde dia 1 del Go-Live</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-          <tr><td contenteditable="true" spellcheck="false">Revision T14</td><td contenteditable="true" spellcheck="false">Dia 14</td><td contenteditable="true" spellcheck="false">Admins + jefe comercial</td><td contenteditable="true" spellcheck="false">Reunion 60 min + resumen escrito</td><td contenteditable="true" spellcheck="false">D+14 desde Go-Live</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-          <tr><td contenteditable="true" spellcheck="false">Reporte quincenal de tramos</td><td contenteditable="true" spellcheck="false">Quincenal</td><td contenteditable="true" spellcheck="false">Jefe comercial</td><td contenteditable="true" spellcheck="false">PDF ejecutivo (5 slides)</td><td contenteditable="true" spellcheck="false">D+21 y cada 15 dias</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-          <tr><td contenteditable="true" spellcheck="false">Revision mensual</td><td contenteditable="true" spellcheck="false">Mensual</td><td contenteditable="true" spellcheck="false">Admins + sponsor</td><td contenteditable="true" spellcheck="false">Reunion 60 min + reporte PDF</td><td contenteditable="true" spellcheck="false">Ultimo martes de cada mes</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-          <tr><td contenteditable="true" spellcheck="false">Reporte ejecutivo mensual</td><td contenteditable="true" spellcheck="false">Mensual</td><td contenteditable="true" spellcheck="false">Sponsor del proyecto</td><td contenteditable="true" spellcheck="false">Presentacion 5 slides</td><td contenteditable="true" spellcheck="false">48 hrs antes de reunion mensual</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-          <tr><td contenteditable="true" spellcheck="false">Business Review trimestral</td><td contenteditable="true" spellcheck="false">Trimestral (D+90)</td><td contenteditable="true" spellcheck="false">C-level + sponsor</td><td contenteditable="true" spellcheck="false">Sesion 90 min presencial/video</td><td contenteditable="true" spellcheck="false">Semana del D+90</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td></tr>
-        </tbody>
-      </table>
-      <button class="btn-add-row" onclick="addRowReporteria()">+ Agregar reporte</button>
-    </div>
-  </div>
+
   <div class="rm-footer">
     <img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio" onerror="this.style.display='none'">
     <div class="rm-footer-note" id="out-footer"></div>
   </div>
 </div>
 <div id="pdf-output" style="display:none;"></div>
+
 <script>
-const LS_KEY='apprecio_rm_v3';
-function addDays(d,n){var r=new Date(d);r.setDate(r.getDate()+n);return r;}
-function toISO(d){return d.toISOString().split('T')[0];}
-function parseDate(s){return s?new Date(s+'T12:00:00'):null;}
-function fmtLong(d){return d.toLocaleDateString('es-CL',{day:'numeric',month:'long',year:'numeric'});}
-function fmtShort(d){return d.toLocaleDateString('es-CL',{day:'numeric',month:'short',year:'numeric'});}
-function fmtMed(d){return d.toLocaleDateString('es-CL',{day:'numeric',month:'short'});}
-function setVal(id,v){var e=document.getElementById(id);if(e&&v!==undefined)e.value=v;}
-function getVal(id){var e=document.getElementById(id);return e?e.value:'';}
-var _saveTimer=null;
-function scheduleSave(){clearTimeout(_saveTimer);_saveTimer=setTimeout(persistState,600);}
-function persistState(){
-  try{
-    var data={
-      config:{client:getVal('clientName'),prog:getVal('programName'),exec:getVal('execName'),hc:getVal('headcount'),kickoff:getVal('dateKickoff'),golive:getVal('dateGoLive')},
-      dates:{kickoff:getVal('date-kickoff'),sprintS:getVal('date-sprint-start'),sprintE:getVal('date-sprint-end'),demoS:getVal('date-demo-start'),demoE:getVal('date-demo-end'),t14S:getVal('date-t14-start'),t14E:getVal('date-t14-end'),t30S:getVal('date-t30-start'),t30E:getVal('date-t30-end'),t90S:getVal('date-t90-start'),t90E:getVal('date-t90-end')},
-      outClient:document.getElementById('out-client').textContent,
-      outTitle:document.getElementById('out-title').textContent,
-      outDates:document.getElementById('out-dates').textContent,
-      outFooter:document.getElementById('out-footer').textContent,
-      outputVisible:document.getElementById('output').style.display!=='none',
-      t14title:document.getElementById('t14-title').textContent,
-      t30title:document.getElementById('t30-title').textContent,
-      t90title:document.getElementById('t90-title').textContent,
-      t14sub:document.getElementById('t14-sub').textContent,
-      t30sub:document.getElementById('t30-sub').textContent,
-      t90sub:document.getElementById('t90-sub').textContent,
-      pillStates:collectPillStates(),
-      goLiveChecks:collectGoLiveChecks()
-    };
-    localStorage.setItem(LS_KEY,JSON.stringify(data));
-    var t=document.getElementById('savedToast');t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2000);
-  }catch(e){console.warn('Save error',e);}
-}
-function collectPillStates(){var s={};document.querySelectorAll('.pill[data-phase]').forEach(function(p,i){s['pill_'+i]=p.classList.contains('completed');});return s;}
-function collectGoLiveChecks(){var s={};document.querySelectorAll('.golive-item input[type=checkbox]').forEach(function(cb){s[cb.id]=cb.checked;});return s;}
-function restoreState(){
-  try{
-    var raw=localStorage.getItem(LS_KEY);if(!raw)return;var data=JSON.parse(raw);
-    if(data.config){setVal('clientName',data.config.client);setVal('programName',data.config.prog);setVal('execName',data.config.exec);setVal('headcount',data.config.hc);setVal('dateKickoff',data.config.kickoff);setVal('dateGoLive',data.config.golive);}
-    if(data.outputVisible){
-      document.getElementById('out-client').textContent=data.outClient||'';
-      document.getElementById('out-title').textContent=data.outTitle||'';
-      document.getElementById('out-dates').textContent=data.outDates||'';
-      document.getElementById('out-footer').textContent=data.outFooter||'';
-      if(data.t14title)document.getElementById('t14-title').textContent=data.t14title;
-      if(data.t30title)document.getElementById('t30-title').textContent=data.t30title;
-      if(data.t90title)document.getElementById('t90-title').textContent=data.t90title;
-      if(data.t14sub)document.getElementById('t14-sub').textContent=data.t14sub;
-      if(data.t30sub)document.getElementById('t30-sub').textContent=data.t30sub;
-      if(data.t90sub)document.getElementById('t90-sub').textContent=data.t90sub;
-      if(data.dates){setVal('date-kickoff',data.dates.kickoff);setVal('date-sprint-start',data.dates.sprintS);setVal('date-sprint-end',data.dates.sprintE);setVal('date-demo-start',data.dates.demoS);setVal('date-demo-end',data.dates.demoE);setVal('date-t14-start',data.dates.t14S);setVal('date-t14-end',data.dates.t14E);setVal('date-t30-start',data.dates.t30S);setVal('date-t30-end',data.dates.t30E);setVal('date-t90-start',data.dates.t90S);setVal('date-t90-end',data.dates.t90E);}
-      if(data.pillStates){document.querySelectorAll('.pill[data-phase]').forEach(function(p,i){if(data.pillStates['pill_'+i])applyPillDone(p,true);});}
-      if(data.goLiveChecks){Object.entries(data.goLiveChecks).forEach(function(entry){var cb=document.getElementById(entry[0]);if(cb&&entry[1]){cb.checked=true;updateGoLiveStatus(cb);}});}
-      document.getElementById('output').style.display='block';
-      buildGantt();updateProgress();checkOverlaps();
+// ═══════════════════════════════════════════════════════════
+// PLAYBOOKS POR TIPO DE EQUIPO
+// Estructura: misma para todos, lenguaje de KPIs varía
+// ═══════════════════════════════════════════════════════════
+const PLAYBOOKS = {
+  fuerza_de_venta: {
+    label: 'Fuerza de venta',
+    t14: {
+      kpis: [
+        { valor: '40%', label: 'Fuerza de venta activa' },
+        { valor: '≥70%', label: 'Cert. "Venta de Valor" aprobada' }
+      ],
+      acciones: ['Insignias Activador', 'Certificación Venta de Valor evaluada', 'Bono sprint cierre (últimos 3 días)'],
+      reuniones: [
+        '<strong>Día 1 (lanzamiento):</strong> Kick-off operativo con admins · 30 min · Confirmar accesos, comunicado interno enviado',
+        '<strong>D+7:</strong> Check-in de adopción · 45 min · % activación, troubleshooting temprano',
+        '<strong>D+14:</strong> Revisión T14 · 60 min · Resultados de certificación y sprint de cierre'
+      ],
+      reportes: [
+        { nombre: 'Reporte de activación D+7', formato: 'PDF ejecutivo', destinatario: 'Admins operativos' },
+        { nombre: 'Revisión T14 · % adopción y certificación', formato: 'Reunión 60 min + resumen escrito', destinatario: 'Admins + jefe comercial' }
+      ]
+    },
+    t30: {
+      kpis: [
+        { valor: '60-70%', label: 'Dotación activa' },
+        { valor: '>2', label: 'Challenges por vendedor' },
+        { valor: '↑', label: 'Transaccionalidad promedio' }
+      ],
+      acciones: ['Bono de Salto de tramo', 'Reto de Calidad (0% anulaciones)', 'Encuesta D+30 premiada con puntos'],
+      reuniones: [
+        '<strong>D+21:</strong> Revisión de tramos · 45 min · Quiénes escalaron, quiénes están en riesgo',
+        '<strong>D+30:</strong> Revisión T30 · 60 min · Análisis de comportamiento y ajustes'
+      ],
+      reportes: [
+        { nombre: 'Reporte quincenal de tramos', formato: 'PDF ejecutivo 5 slides', destinatario: 'Jefe comercial' },
+        { nombre: 'Revisión mensual T30', formato: 'Reunión 60 min + reporte PDF', destinatario: 'Admins + sponsor' }
+      ]
+    },
+    t90: {
+      kpis: [
+        { valor: 'rot.↓', label: 'Rotación tramos Oro y Plata' },
+        { valor: '3m+', label: 'Actividad sostenida en plataforma' },
+        { valor: 'ROI', label: 'Documentado para renovación' }
+      ],
+      acciones: ['Gran Pozo Oro trimestral', 'Encuesta de clima D+90', 'Premios trimestrales formales', 'Propuesta de renovación presentada'],
+      reuniones: [
+        '<strong>D+60:</strong> Mid-check · 45 min · Identificar riesgo de abandono',
+        '<strong>D+90:</strong> Business Review trimestral · 90 min · ROI, renovación y próxima etapa'
+      ],
+      reportes: [
+        { nombre: 'Business Review trimestral D+90', formato: 'Sesión 90 min + deck T90', destinatario: 'C-level + sponsor' },
+        { nombre: 'ROI del programa', formato: 'Reporte ejecutivo PDF', destinatario: 'C-level' }
+      ]
     }
-  }catch(e){console.warn('Restore error',e);}
+  },
+
+  rrhh: {
+    label: 'RRHH / Personas',
+    t14: {
+      kpis: [
+        { valor: '40%', label: 'Colaboradores activos en plataforma' },
+        { valor: '≥70%', label: 'Cert. "Cultura y Beneficios" completada' }
+      ],
+      acciones: ['Insignias de Bienvenida y Onboarding', 'Certificación cultura organizacional', 'Encuesta pulso inicial'],
+      reuniones: [
+        '<strong>Día 1:</strong> Lanzamiento con líderes de área · 30 min · Activación y comunicado interno',
+        '<strong>D+7:</strong> Check-in de activación · 45 min · % colaboradores activos, preguntas frecuentes',
+        '<strong>D+14:</strong> Revisión T14 · 60 min · Adopción y certificación completada'
+      ],
+      reportes: [
+        { nombre: 'Reporte de activación D+7', formato: 'PDF ejecutivo', destinatario: 'Admins RRHH' },
+        { nombre: 'Revisión T14 · adopción por área', formato: 'Reunión 60 min + resumen', destinatario: 'Gerente RRHH + líderes' }
+      ]
+    },
+    t30: {
+      kpis: [
+        { valor: '60-70%', label: 'Dotación activa' },
+        { valor: '↓', label: 'Rotación vs mes anterior' },
+        { valor: '>2', label: 'Usos de beneficios por persona' }
+      ],
+      acciones: ['Bono de permanencia por tramo', 'Reto de clima (encuesta + acción)', 'Reconocimiento público D+30'],
+      reuniones: [
+        '<strong>D+21:</strong> Revisión de clima · 45 min · NPS interno, ausentismo, uso de beneficios',
+        '<strong>D+30:</strong> Revisión T30 · 60 min · Rotación, retención y ajuste de acciones'
+      ],
+      reportes: [
+        { nombre: 'Reporte de retención quincenal', formato: 'PDF ejecutivo 5 slides', destinatario: 'Gerente RRHH' },
+        { nombre: 'Análisis de clima D+30', formato: 'Reunión 60 min + reporte PDF', destinatario: 'Gerente RRHH + directivos' }
+      ]
+    },
+    t90: {
+      kpis: [
+        { valor: 'rot.↓', label: 'Reducción rotación vs línea base' },
+        { valor: 'NPS↑', label: 'Clima laboral mejorado' },
+        { valor: 'ROI', label: 'Ahorro en costo de reemplazo' }
+      ],
+      acciones: ['Premio trimestral de permanencia', 'Encuesta de clima D+90', 'Análisis de cohortes de retención', 'Propuesta de renovación con ROI'],
+      reuniones: [
+        '<strong>D+60:</strong> Mid-check retención · 45 min · Identificar personas en riesgo de salida',
+        '<strong>D+90:</strong> Business Review · 90 min · Reducción rotación, clima y ROI del programa'
+      ],
+      reportes: [
+        { nombre: 'Business Review RRHH D+90', formato: 'Sesión 90 min + deck T90', destinatario: 'Directivos + RRHH' },
+        { nombre: 'ROI del programa (costo rotación evitado)', formato: 'Reporte ejecutivo PDF', destinatario: 'Gerente General' }
+      ]
+    }
+  },
+
+  marketing: {
+    label: 'Marketing / Comercial',
+    t14: {
+      kpis: [
+        { valor: '40%', label: 'Equipo activo en plataforma' },
+        { valor: '≥70%', label: 'Cert. "Metodología de campañas" aprobada' }
+      ],
+      acciones: ['Insignias de Activador de Campaña', 'Certificación metodología interna', 'Sprint de ideas (primeras 2 semanas)'],
+      reuniones: [
+        '<strong>Día 1:</strong> Lanzamiento con equipo · 30 min · Explicar dinámicas y primeros retos',
+        '<strong>D+7:</strong> Check-in campaña activa · 45 min · Primeros resultados y ajustes',
+        '<strong>D+14:</strong> Revisión T14 · 60 min · Conversión y certificación'
+      ],
+      reportes: [
+        { nombre: 'Reporte de activación campaña D+7', formato: 'PDF ejecutivo', destinatario: 'Líder de marketing' },
+        { nombre: 'Revisión T14 · adopción y primeras conversiones', formato: 'Reunión 60 min + resumen', destinatario: 'Gerente marketing + equipo' }
+      ]
+    },
+    t30: {
+      kpis: [
+        { valor: '60-70%', label: 'Equipo activo' },
+        { valor: '↑', label: 'Tasa de conversión vs baseline' },
+        { valor: '>2', label: 'Campañas ejecutadas por persona' }
+      ],
+      acciones: ['Bono por conversión de tramo', 'Reto de performance (mejor campaña del mes)', 'Encuesta D+30 sobre herramientas'],
+      reuniones: [
+        '<strong>D+21:</strong> Revisión de performance · 45 min · Campañas top y bottom, ajuste de metas',
+        '<strong>D+30:</strong> Revisión T30 · 60 min · Conversión, leads y cambio de comportamiento'
+      ],
+      reportes: [
+        { nombre: 'Reporte quincenal de campañas', formato: 'PDF ejecutivo 5 slides', destinatario: 'Gerente marketing' },
+        { nombre: 'Análisis de conversión T30', formato: 'Reunión 60 min + reporte PDF', destinatario: 'Gerente + directivos' }
+      ]
+    },
+    t90: {
+      kpis: [
+        { valor: 'conv.↑', label: 'Conversión vs baseline inicial' },
+        { valor: 'churn↓', label: 'Reducción churn de clientes' },
+        { valor: 'ROI', label: 'Revenue atribuible al programa' }
+      ],
+      acciones: ['Premio trimestral al mejor performer', 'Análisis de cohortes de conversión', 'Encuesta de satisfacción D+90', 'Propuesta de renovación con ROI'],
+      reuniones: [
+        '<strong>D+60:</strong> Mid-check performance · 45 min · Quiénes sostienen resultados',
+        '<strong>D+90:</strong> Business Review · 90 min · ROI, conversión y renovación'
+      ],
+      reportes: [
+        { nombre: 'Business Review Marketing D+90', formato: 'Sesión 90 min + deck T90', destinatario: 'C-level + marketing' },
+        { nombre: 'ROI del programa (revenue atribuido)', formato: 'Reporte ejecutivo PDF', destinatario: 'CEO / CFO' }
+      ]
+    }
+  },
+
+  operaciones: {
+    label: 'Operaciones',
+    t14: {
+      kpis: [
+        { valor: '40%', label: 'Operadores activos en plataforma' },
+        { valor: '≥70%', label: 'Cert. "Estándares de calidad" aprobada' }
+      ],
+      acciones: ['Insignias de Calidad y Proceso', 'Certificación de estándares operacionales', 'Sprint de cumplimiento (primeras 2 semanas)'],
+      reuniones: [
+        '<strong>Día 1:</strong> Lanzamiento con supervisores · 30 min · Dinámicas, metas y accesos',
+        '<strong>D+7:</strong> Check-in cumplimiento · 45 min · % activación por turno o área',
+        '<strong>D+14:</strong> Revisión T14 · 60 min · Adopción y certificación de calidad'
+      ],
+      reportes: [
+        { nombre: 'Reporte de activación D+7 por área', formato: 'PDF ejecutivo', destinatario: 'Supervisores / Jefe de operaciones' },
+        { nombre: 'Revisión T14 · cumplimiento y calidad', formato: 'Reunión 60 min + resumen', destinatario: 'Gerente operaciones + líderes' }
+      ]
+    },
+    t30: {
+      kpis: [
+        { valor: '60-70%', label: 'Dotación activa' },
+        { valor: '↑', label: 'Cumplimiento de procesos vs baseline' },
+        { valor: '↓', label: 'Tasa de error / reproceso' }
+      ],
+      acciones: ['Bono de cumplimiento por tramo', 'Reto de calidad (0% reprocesos)', 'Encuesta D+30 sobre procesos críticos'],
+      reuniones: [
+        '<strong>D+21:</strong> Revisión de calidad · 45 min · Indicadores por turno y área',
+        '<strong>D+30:</strong> Revisión T30 · 60 min · Cumplimiento, reprocesos y ajuste de metas'
+      ],
+      reportes: [
+        { nombre: 'Reporte quincenal de cumplimiento', formato: 'PDF ejecutivo 5 slides', destinatario: 'Jefe de operaciones' },
+        { nombre: 'Análisis de calidad T30', formato: 'Reunión 60 min + reporte PDF', destinatario: 'Gerente operaciones + directivos' }
+      ]
+    },
+    t90: {
+      kpis: [
+        { valor: 'err.↓', label: 'Reducción tasa de error vs baseline' },
+        { valor: 'proc.↑', label: 'Cumplimiento sostenido de procesos' },
+        { valor: 'ROI', label: 'Ahorro en reprocesos y no conformidades' }
+      ],
+      acciones: ['Premio trimestral al mejor equipo', 'Análisis de cohortes de calidad', 'Encuesta de clima operacional D+90', 'Propuesta de renovación con ROI'],
+      reuniones: [
+        '<strong>D+60:</strong> Mid-check calidad · 45 min · Áreas en riesgo y refuerzo',
+        '<strong>D+90:</strong> Business Review · 90 min · ROI operacional y renovación'
+      ],
+      reportes: [
+        { nombre: 'Business Review Operaciones D+90', formato: 'Sesión 90 min + deck T90', destinatario: 'Directivos + operaciones' },
+        { nombre: 'ROI del programa (ahorro en reprocesos)', formato: 'Reporte ejecutivo PDF', destinatario: 'Gerente General / CFO' }
+      ]
+    }
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
+// PPT READING + AI ANALYSIS
+// ═══════════════════════════════════════════════════════════
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); handleFile(e.dataTransfer.files[0]); });
+
+async function handleFile(file) {
+  if (!file || !file.name.endsWith('.pptx')) { alert('Por favor sube un archivo .pptx'); return; }
+  document.getElementById('uploadedName').textContent = '📎 ' + file.name;
+  document.getElementById('uploadedName').style.display = 'block';
+  showAiStatus('Extrayendo texto del PPT...');
+  try {
+    const text = await extractPptxText(file);
+    logAi('Texto extraído · Analizando con IA...');
+    await analyzeWithClaude(text);
+  } catch(err) {
+    showAiStatus('Error: ' + err.message, true);
+  }
 }
-function resetAll(){if(!confirm('Limpiar todos los datos y empezar desde cero?'))return;localStorage.removeItem(LS_KEY);location.reload();}
-document.addEventListener('DOMContentLoaded',function(){
-  restoreState();
-  var obs=new MutationObserver(function(){scheduleSave();});
-  var out=document.getElementById('output');
-  if(out)obs.observe(out,{subtree:true,childList:true,characterData:true,attributes:false});
-  document.querySelectorAll('input[type=date]').forEach(function(i){i.addEventListener('change',scheduleSave);});
-  document.querySelectorAll('input[type=text],input[type=number]').forEach(function(i){i.addEventListener('input',scheduleSave);});
-});
-function toggle(id){document.getElementById('body-'+id).classList.toggle('open');document.getElementById('chev-'+id).classList.toggle('open');}
-function overlaps(as,ae,bs,be){if(!as||!ae||!bs||!be)return false;return as<=be&&ae>=bs;}
-function checkOverlaps(){
-  var ranges=[
-    {id:'sprint',s:parseDate(getVal('date-sprint-start')),e:parseDate(getVal('date-sprint-end'))},
-    {id:'demo',s:parseDate(getVal('date-demo-start')),e:parseDate(getVal('date-demo-end'))},
-    {id:'t14',s:parseDate(getVal('date-t14-start')),e:parseDate(getVal('date-t14-end'))},
-    {id:'t30',s:parseDate(getVal('date-t30-start')),e:parseDate(getVal('date-t30-end'))},
-    {id:'t90',s:parseDate(getVal('date-t90-start')),e:parseDate(getVal('date-t90-end'))},
-  ];
-  ranges.forEach(function(r){var w=document.getElementById('warn-'+r.id);if(w)w.style.display='none';});
-  for(var i=0;i<ranges.length;i++){for(var j=i+1;j<ranges.length;j++){var a=ranges[i],b=ranges[j];if(overlaps(a.s,a.e,b.s,b.e)){var wa=document.getElementById('warn-'+a.id),wb=document.getElementById('warn-'+b.id);if(wa)wa.style.display='block';if(wb)wb.style.display='block';}}}
-  buildGantt();
+
+async function extractPptxText(file) {
+  const ab = await file.arrayBuffer();
+  const zip = await JSZip.loadAsync(ab);
+  const slideFiles = Object.keys(zip.files)
+    .filter(n => n.match(/ppt\/slides\/slide\d+\.xml$/))
+    .sort((a,b) => parseInt(a.match(/slide(\d+)/)[1]) - parseInt(b.match(/slide(\d+)/)[1]));
+  let out = '';
+  for (const sf of slideFiles) {
+    const xml = await zip.files[sf].async('string');
+    out += `\n--- Slide ${slideFiles.indexOf(sf)+1} ---\n${xml.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim()}\n`;
+  }
+  return out;
 }
-function onDateChange(){checkOverlaps();scheduleSave();}
-function buildGantt(){
-  var ks=getVal('date-kickoff')||getVal('dateKickoff'),ge=getVal('date-t90-end');
-  if(!ks||!ge)return;
-  var start=parseDate(ks),end=parseDate(ge),total=end-start||1;
-  function pct(d){return d?Math.max(0,Math.min(100,((parseDate(d)-start)/total)*100)):null;}
-  var segments=[
-    {from:getVal('date-kickoff'),to:getVal('date-demo-end'),color:'#FA345E',label:'Pre Go-Live'},
-    {from:getVal('date-t14-start'),to:getVal('date-t14-end'),color:'#c0550b',label:'T14'},
-    {from:getVal('date-t30-start'),to:getVal('date-t30-end'),color:'#065F46',label:'T30'},
-    {from:getVal('date-t90-start'),to:getVal('date-t90-end'),color:'#1e40af',label:'T90'},
-  ];
-  var milestones=[
-    {d:getVal('date-kickoff'),label:'Kick-off',color:'#FA345E'},
-    {d:getVal('date-t14-start'),label:'Go-Live',color:'#c0550b'},
-    {d:getVal('date-t14-end'),label:'D+14',color:'#c0550b'},
-    {d:getVal('date-t30-end'),label:'D+30',color:'#065F46'},
-    {d:getVal('date-t90-end'),label:'D+90',color:'#1e40af'},
-  ];
-  var track=document.getElementById('ganttTrack');track.innerHTML='';
-  segments.forEach(function(s){
-    var l=pct(s.from),r=pct(s.to);if(l===null||r===null||r-l<0.5)return;
-    var div=document.createElement('div');div.className='gantt-seg';
-    div.style.cssText='left:'+l+'%;width:'+(r-l)+'%;background:'+s.color+';';
-    div.textContent=(r-l)>8?s.label:'';track.appendChild(div);
+
+async function analyzeWithClaude(pptText) {
+  const prompt = `Analiza esta presentación comercial de Apprecio y extrae SOLO un JSON sin texto adicional ni backticks markdown.
+
+Detecta:
+1. El TIPO DE EQUIPO del cliente: fuerza_de_venta | rrhh | marketing | operaciones
+   - fuerza_de_venta: si habla de vendedores, ventas, transacciones, cuotas, comisiones
+   - rrhh: si habla de rotación de personas, retención de empleados, clima laboral, cultura
+   - marketing: si habla de campañas, conversión, leads, clientes, churn de clientes
+   - operaciones: si habla de procesos, calidad, cumplimiento, eficiencia operacional
+2. Los DOLORES específicos del cliente mencionados (máx 6, frases cortas)
+3. El NOMBRE del cliente si aparece
+
+Responde SOLO con este JSON:
+{
+  "equipo": "fuerza_de_venta",
+  "cliente": "nombre o null",
+  "dolores": ["dolor 1", "dolor 2", "dolor 3"]
+}
+
+TEXTO:
+${pptText.substring(0, 6000)}`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 400,
+      messages: [{ role: 'user', content: prompt }]
+    })
   });
-  /* Milestones: alternate above / below, clamp edges */
-  milestones.forEach(function(m,idx){
-    var p=pct(m.d);if(p===null)return;
-    var wrap=document.createElement('div');
-    wrap.className='gantt-milestone';
-    wrap.style.cssText='left:'+p+'%;';
-    var isAbove=idx%2===0;
-    var posClass=isAbove?'above':'below';
-    /* Clamp labels near edges to avoid overflow */
-    var edgeClass='';
-    if(p<8)edgeClass=' edge-left';
-    else if(p>92)edgeClass=' edge-right';
-    wrap.innerHTML='<div class="gantt-dot" style="background:'+m.color+'"></div>'
-      +'<div class="gantt-mlabel '+posClass+edgeClass+'">'+m.label+'</div>';
+
+  const data = await res.json();
+  const raw = data.content && data.content[0] ? data.content[0].text : '';
+
+  let parsed;
+  try {
+    parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+  } catch(e) {
+    throw new Error('No se pudo interpretar la respuesta de la IA.');
+  }
+
+  applyPlaybook(parsed);
+}
+
+function applyPlaybook(parsed) {
+  const equipoKey = parsed.equipo || 'fuerza_de_venta';
+  const playbook = PLAYBOOKS[equipoKey] || PLAYBOOKS['fuerza_de_venta'];
+
+  // Show detected badge
+  document.getElementById('detectedLabel').textContent = 'Equipo detectado: ' + playbook.label;
+  document.getElementById('detectedStrip').classList.add('show');
+  logAi('✅ Playbook cargado: ' + playbook.label);
+
+  // Pre-fill client name
+  if (parsed.cliente && !document.getElementById('clientName').value) {
+    document.getElementById('clientName').value = parsed.cliente;
+  }
+
+  // Load dolores into kickoff section
+  if (parsed.dolores && parsed.dolores.length) {
+    const area = document.getElementById('pills-kickoff-dolores');
+    area.innerHTML = '';
+    parsed.dolores.forEach(d => area.appendChild(createPill(d, 'pre', true)));
+    const btn = document.createElement('button');
+    btn.className = 'btn-add-pill';
+    btn.onclick = () => addPill('pills-kickoff-dolores', 'pre', true);
+    btn.textContent = '+ Agregar dolor';
+    area.appendChild(btn);
+  }
+
+  // Apply playbook KPIs, acciones, reuniones, reportes for each phase
+  ['t14', 't30', 't90'].forEach(phase => {
+    const pb = playbook[phase];
+    if (!pb) return;
+
+    // KPIs
+    const kpiGrid = document.getElementById('kpis-' + phase);
+    kpiGrid.innerHTML = '';
+    pb.kpis.forEach(k => {
+      const card = document.createElement('div');
+      card.className = 'kpi-card';
+      card.innerHTML = `<button class="kpi-del" onclick="delKpi(this)">×</button><div class="kpi-val" contenteditable="true" spellcheck="false">${k.valor}</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">${k.label}</div>`;
+      kpiGrid.appendChild(card);
+    });
+
+    // Acciones
+    const accionArea = document.getElementById('pills-' + phase + '-acciones');
+    accionArea.innerHTML = '';
+    pb.acciones.forEach(a => accionArea.appendChild(createPill(a, phase)));
+    const addBtn = document.createElement('button');
+    addBtn.className = 'btn-add-pill';
+    addBtn.onclick = () => addPill('pills-' + phase + '-acciones', phase);
+    addBtn.textContent = '+ Agregar';
+    accionArea.appendChild(addBtn);
+
+    // Reuniones
+    const meetList = document.getElementById('meetings-' + phase);
+    meetList.innerHTML = '';
+    pb.reuniones.forEach(r => {
+      const item = document.createElement('div');
+      item.className = 'meeting-item';
+      item.innerHTML = `<div class="meeting-text" contenteditable="true" spellcheck="false">${r}</div><button class="meeting-del" onclick="delMeeting(this)">×</button>`;
+      meetList.appendChild(item);
+    });
+
+    // Reportes
+    const tbody = document.getElementById('tbody-' + phase);
+    tbody.innerHTML = '';
+    pb.reportes.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td contenteditable="true" spellcheck="false">${r.nombre}</td><td contenteditable="true" spellcheck="false">${r.formato}</td><td contenteditable="true" spellcheck="false">${r.destinatario}</td><td class="row-del"><button onclick="delRow(this)">×</button></td>`;
+      tbody.appendChild(tr);
+    });
+  });
+
+  hideAiSpinner();
+}
+
+function showAiStatus(msg, isError = false) {
+  const el = document.getElementById('aiStatus');
+  el.style.display = 'block';
+  if (isError) el.style.background = '#fff0f0';
+  document.getElementById('aiStatusLabel').textContent = msg;
+}
+function logAi(msg) {
+  const log = document.getElementById('aiLog');
+  log.innerHTML += (log.innerHTML ? '<br>' : '') + msg;
+}
+function hideAiSpinner() {
+  document.getElementById('aiSpinner').style.display = 'none';
+  document.getElementById('aiStatusLabel').textContent = 'Listo · Completa los datos y genera el roadmap';
+}
+
+// ═══════════════════════════════════════════════════════════
+// DATES
+// ═══════════════════════════════════════════════════════════
+function addDays(d, n) { var r = new Date(d); r.setDate(r.getDate() + n); return r; }
+function toISO(d) { return d.toISOString().split('T')[0]; }
+function parseDate(s) { return s ? new Date(s + 'T12:00:00') : null; }
+function fmtLong(d) { return d.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' }); }
+function fmtShort(d) { return d.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function fmtMed(d) { return d.toLocaleDateString('es-CL', { day: 'numeric', month: 'short' }); }
+function setVal(id, v) { var e = document.getElementById(id); if (e && v !== undefined) e.value = v; }
+function getVal(id) { var e = document.getElementById(id); return e ? e.value : ''; }
+
+// ═══════════════════════════════════════════════════════════
+// GENERATE ROADMAP
+// ═══════════════════════════════════════════════════════════
+function generateRoadmap() {
+  const cN = getVal('clientName').trim(), pN = getVal('programName').trim();
+  const eN = getVal('execName').trim(), ks = getVal('dateKickoff'), gs = getVal('dateGoLive');
+  const hcV = getVal('headcount');
+  if (!cN || !eN || !ks || !gs || !hcV) { alert('Completa todos los campos del Paso 2.'); return; }
+  const kickoff = parseDate(ks), goLive = parseDate(gs), hc = parseInt(hcV);
+  if (goLive <= kickoff) { alert('La fecha de Go-Live debe ser posterior al kick-off.'); return; }
+
+  document.getElementById('out-client').textContent = cN + (pN ? ' · ' + pN : '');
+  document.getElementById('out-title').textContent = 'Plan de implementación' + (pN ? ' · ' + pN : '');
+  document.getElementById('out-dates').textContent = 'Contraparte: ' + eN + ' · Generado el ' + fmtLong(new Date());
+
+  setVal('date-kickoff', toISO(kickoff));
+  setVal('date-sprint-start', toISO(addDays(kickoff, 1)));
+  setVal('date-sprint-end', toISO(addDays(goLive, -8)));
+  setVal('date-demo-start', toISO(addDays(goLive, -7)));
+  setVal('date-demo-end', toISO(addDays(goLive, -1)));
+  setVal('date-t14-start', toISO(goLive));
+  setVal('date-t14-end', toISO(addDays(goLive, 14)));
+  setVal('date-t30-start', toISO(addDays(goLive, 15)));
+  setVal('date-t30-end', toISO(addDays(goLive, 30)));
+  setVal('date-t90-start', toISO(addDays(goLive, 31)));
+  setVal('date-t90-end', toISO(addDays(goLive, 90)));
+
+  // Update KPI labels with real headcount
+  if (hc > 0) {
+    document.querySelectorAll('.kpi-lbl').forEach(el => {
+      if (el.textContent.includes('Colaboradores activos en plataforma') ||
+          el.textContent.includes('Fuerza de venta activa') ||
+          el.textContent.includes('Equipo activo') ||
+          el.textContent.includes('Operadores activos')) {
+        el.textContent = el.textContent + ' · mín ' + Math.round(hc * 0.4) + ' personas';
+      }
+      if (el.textContent.includes('Dotación activa')) {
+        el.textContent = el.textContent + ' · mín ' + Math.round(hc * 0.65) + ' personas';
+      }
+    });
+  }
+
+  document.getElementById('out-footer').textContent = 'Plan generado para ' + cN + ' · Go-Live: ' + fmtLong(goLive) + ' · D+90: ' + fmtShort(addDays(goLive, 90));
+  document.getElementById('output').style.display = 'block';
+  document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+  buildGantt(); updateProgress();
+}
+
+// ═══════════════════════════════════════════════════════════
+// GANTT
+// ═══════════════════════════════════════════════════════════
+function buildGantt() {
+  const ks = getVal('date-kickoff') || getVal('dateKickoff'), ge = getVal('date-t90-end');
+  if (!ks || !ge) return;
+  const start = parseDate(ks), end = parseDate(ge), total = end - start || 1;
+  function pct(d) { return d ? Math.max(0, Math.min(100, ((parseDate(d) - start) / total) * 100)) : null; }
+  const segs = [
+    { from: getVal('date-kickoff'), to: getVal('date-demo-end'), color: '#FA345E', label: 'Pre Go-Live' },
+    { from: getVal('date-t14-start'), to: getVal('date-t14-end'), color: '#c0550b', label: 'T14' },
+    { from: getVal('date-t30-start'), to: getVal('date-t30-end'), color: '#065F46', label: 'T30' },
+    { from: getVal('date-t90-start'), to: getVal('date-t90-end'), color: '#1e40af', label: 'T90' },
+  ];
+  const milestones = [
+    { d: getVal('date-kickoff'), label: 'Kick-off', color: '#FA345E' },
+    { d: getVal('date-t14-start'), label: 'Go-Live', color: '#c0550b' },
+    { d: getVal('date-t14-end'), label: 'D+14', color: '#c0550b' },
+    { d: getVal('date-t30-end'), label: 'D+30', color: '#065F46' },
+    { d: getVal('date-t90-end'), label: 'D+90', color: '#1e40af' },
+  ];
+  const track = document.getElementById('ganttTrack'); track.innerHTML = '';
+  segs.forEach(s => {
+    const l = pct(s.from), r = pct(s.to); if (l === null || r === null || r - l < 0.5) return;
+    const div = document.createElement('div'); div.className = 'gantt-seg';
+    div.style.cssText = 'left:' + l + '%;width:' + (r - l) + '%;background:' + s.color + ';';
+    div.textContent = (r - l) > 8 ? s.label : ''; track.appendChild(div);
+  });
+  milestones.forEach((m, idx) => {
+    const p = pct(m.d); if (p === null) return;
+    const wrap = document.createElement('div'); wrap.className = 'gantt-milestone'; wrap.style.cssText = 'left:' + p + '%;';
+    const ec = p < 8 ? ' edge-left' : p > 92 ? ' edge-right' : '';
+    wrap.innerHTML = '<div class="gantt-dot" style="background:' + m.color + '"></div><div class="gantt-mlabel ' + (idx % 2 === 0 ? 'above' : 'below') + ec + '">' + m.label + '</div>';
     track.appendChild(wrap);
   });
-  var dEl=document.getElementById('ganttDates');
-  dEl.innerHTML='<span>'+fmtShort(parseDate(ks))+'</span><span>'+fmtShort(parseDate(ge))+'</span>';
+  const dEl = document.getElementById('ganttDates');
+  dEl.innerHTML = '<span>' + fmtShort(parseDate(ks)) + '</span><span>' + fmtShort(parseDate(ge)) + '</span>';
 }
-function updateProgress(){
-  var phases=['pre','t14','t30','t90'];
-  phases.forEach(function(ph){
-    var pills=document.querySelectorAll('.pill[data-phase="'+ph+'"]');
-    var total=pills.length,done=0;
-    pills.forEach(function(p){if(p.classList.contains('completed'))done++;});
-    var pct=total?Math.round((done/total)*100):0;
-    var card=document.getElementById('prog-'+ph);if(!card)return;
-    card.querySelector('.prog-pct').textContent=pct+'%';
-    card.querySelector('.prog-sub').textContent=done+'/'+total+' completados';
-    card.querySelector('.prog-bar-fill').style.width=pct+'%';
+function onDateChange() { buildGantt(); }
+
+// ═══════════════════════════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════════════════════════
+function updateProgress() {
+  ['pre', 't14', 't30', 't90'].forEach(ph => {
+    const pills = document.querySelectorAll('.pill[data-phase="' + ph + '"]');
+    const total = pills.length, done = Array.from(pills).filter(p => p.classList.contains('completed')).length;
+    const pct = total ? Math.round((done / total) * 100) : 0;
+    const card = document.getElementById('prog-' + ph); if (!card) return;
+    card.querySelector('.prog-pct').textContent = pct + '%';
+    card.querySelector('.prog-sub').textContent = done + '/' + total + ' completados';
+    card.querySelector('.prog-bar-fill').style.width = pct + '%';
   });
 }
-function addPill(cid,phase){
-  var c=document.getElementById(cid),btn=c.querySelector('.btn-add-pill');
-  var p=document.createElement('span');p.className='pill';p.dataset.phase=phase||'pre';
-  p.innerHTML='<button class="pill-check" onclick="togglePillDone(this)">&#9675;</button><span class="pill-text" contenteditable="true" spellcheck="false">Nuevo item</span><button class="pill-del" onclick="delPill(this)">&#215;</button>';
-  c.insertBefore(p,btn);p.querySelector('.pill-text').focus();document.execCommand('selectAll',false,null);scheduleSave();
+
+// ═══════════════════════════════════════════════════════════
+// PILL HELPERS
+// ═══════════════════════════════════════════════════════════
+function createPill(text, phase, isDolor = false) {
+  const span = document.createElement('span');
+  span.className = 'pill' + (isDolor ? ' dolor' : '');
+  span.dataset.phase = phase;
+  span.innerHTML = `<button class="pill-check" onclick="togglePillDone(this)">○</button><span class="pill-text" contenteditable="true" spellcheck="false">${text}</span><button class="pill-del" onclick="delPill(this)">×</button>`;
+  return span;
 }
-function delPill(btn){btn.parentElement.remove();updateProgress();scheduleSave();}
-function applyPillDone(pill,done){
-  var btn=pill.querySelector('.pill-check');
-  if(done){pill.classList.add('completed');if(btn){btn.textContent='✓';btn.classList.add('done');}}
-  else{pill.classList.remove('completed');if(btn){btn.textContent='○';btn.classList.remove('done');}}
+function addPill(cid, phase, isDolor = false) {
+  const c = document.getElementById(cid), btn = c.querySelector('.btn-add-pill');
+  const p = createPill('Nuevo ítem', phase, isDolor);
+  c.insertBefore(p, btn); p.querySelector('.pill-text').focus(); document.execCommand('selectAll', false, null);
 }
-function togglePillDone(btn){
-  var pill=btn.parentElement,isDone=!pill.classList.contains('completed');
-  applyPillDone(pill,isDone);updateProgress();scheduleSave();
+function delPill(btn) { btn.parentElement.remove(); updateProgress(); }
+function togglePillDone(btn) {
+  const pill = btn.parentElement, isDone = !pill.classList.contains('completed');
+  if (isDone) { pill.classList.add('completed'); btn.textContent = '✓'; btn.classList.add('done'); }
+  else { pill.classList.remove('completed'); btn.textContent = '○'; btn.classList.remove('done'); }
+  updateProgress();
 }
-function toggleGoLive(cb){updateGoLiveStatus(cb);scheduleSave();}
-function updateGoLiveStatus(cb){
-  var item=cb.closest('.golive-item'),lbl=item.querySelector('label'),st=item.querySelector('.golive-status');
-  if(cb.checked){lbl.classList.add('checked');st.textContent='Listo';st.className='golive-status ok';}
-  else{lbl.classList.remove('checked');st.textContent='Pendiente';st.className='golive-status pending';}
+
+// ═══════════════════════════════════════════════════════════
+// MEETINGS
+// ═══════════════════════════════════════════════════════════
+function addMeeting(lid) {
+  const l = document.getElementById(lid), i = document.createElement('div'); i.className = 'meeting-item';
+  i.innerHTML = '<div class="meeting-text" contenteditable="true" spellcheck="false">Nueva reunión</div><button class="meeting-del" onclick="delMeeting(this)">×</button>';
+  l.appendChild(i); i.querySelector('.meeting-text').focus();
 }
-function addMeeting(lid){
-  var l=document.getElementById(lid),i=document.createElement('div');i.className='meeting-item';
-  i.innerHTML='<div class="meeting-text" contenteditable="true" spellcheck="false">Nueva reunion</div><button class="meeting-del" onclick="delMeeting(this)">&#215;</button>';
-  l.appendChild(i);i.querySelector('.meeting-text').focus();document.execCommand('selectAll',false,null);scheduleSave();
+function delMeeting(btn) { btn.parentElement.remove(); }
+
+// ═══════════════════════════════════════════════════════════
+// KPIs
+// ═══════════════════════════════════════════════════════════
+function addKpi(gid) {
+  const g = document.getElementById(gid), c = document.createElement('div'); c.className = 'kpi-card';
+  c.innerHTML = '<button class="kpi-del" onclick="delKpi(this)">×</button><div class="kpi-val" contenteditable="true" spellcheck="false">--</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Descripción</div>';
+  g.appendChild(c); c.querySelector('.kpi-val').focus();
 }
-function delMeeting(btn){btn.parentElement.remove();scheduleSave();}
-function addKpi(gid){
-  var g=document.getElementById(gid),c=document.createElement('div');c.className='kpi-card';
-  c.innerHTML='<button class="kpi-del" onclick="delKpi(this)">&#215;</button><div class="kpi-val" contenteditable="true" spellcheck="false">--</div><div class="kpi-lbl" contenteditable="true" spellcheck="false">Descripcion</div>';
-  g.appendChild(c);c.querySelector('.kpi-val').focus();scheduleSave();
+function delKpi(btn) { btn.parentElement.remove(); }
+
+// ═══════════════════════════════════════════════════════════
+// TABLES
+// ═══════════════════════════════════════════════════════════
+function addReportRow(tbodyId) {
+  const t = document.getElementById(tbodyId), tr = document.createElement('tr');
+  tr.innerHTML = '<td contenteditable="true" spellcheck="false">Nuevo reporte</td><td contenteditable="true" spellcheck="false">Formato</td><td contenteditable="true" spellcheck="false">Destinatario</td><td class="row-del"><button onclick="delRow(this)">×</button></td>';
+  t.appendChild(tr); tr.querySelector('td').focus();
 }
-function delKpi(btn){btn.parentElement.remove();scheduleSave();}
-function addRow(tid){
-  var t=document.getElementById(tid).querySelector('tbody'),tr=document.createElement('tr');
-  tr.innerHTML='<td contenteditable="true" spellcheck="false">Nueva metrica</td><td contenteditable="true" spellcheck="false">Descripcion del valor</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td>';
-  t.appendChild(tr);tr.querySelector('td').focus();scheduleSave();
+function delRow(btn) { btn.closest('tr').remove(); }
+
+// ═══════════════════════════════════════════════════════════
+// SECTIONS
+// ═══════════════════════════════════════════════════════════
+function delSection(btn) { if (!confirm('¿Eliminar esta sección?')) return; btn.closest('.section').remove(); }
+function addSection(cardBody) {
+  const uid = 'sec-' + Date.now();
+  const sec = document.createElement('div'); sec.className = 'section';
+  sec.innerHTML = '<div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Nueva sección</div><button class="section-del" onclick="delSection(this)">×</button></div>'
+    + '<div class="pills-area" id="pills-' + uid + '"><button class="btn-add-pill" onclick="addPill(\'pills-' + uid + '\',\'pre\')">+ Agregar ítem</button></div>';
+  cardBody.insertBefore(sec, cardBody.querySelector('.btn-add-section'));
+  sec.querySelector('.section-title').focus();
 }
-function addRowReporteria(){
-  var t=document.querySelector('#table-reporteria tbody'),tr=document.createElement('tr');
-  tr.innerHTML='<td contenteditable="true" spellcheck="false">Nuevo reporte</td><td contenteditable="true" spellcheck="false">Frecuencia</td><td contenteditable="true" spellcheck="false">Destinatario</td><td contenteditable="true" spellcheck="false">Formato</td><td contenteditable="true" spellcheck="false">Cuando</td><td class="row-del"><button onclick="delRow(this)">&#215;</button></td>';
-  t.appendChild(tr);tr.querySelector('td').focus();scheduleSave();
+
+// ═══════════════════════════════════════════════════════════
+// GOLIVE CHECKS
+// ═══════════════════════════════════════════════════════════
+function toggleGoLive(cb) {
+  const item = cb.closest('.golive-item'), lbl = item.querySelector('label'), st = item.querySelector('.golive-status');
+  if (cb.checked) { lbl.classList.add('checked'); st.textContent = 'Listo'; st.className = 'golive-status ok'; }
+  else { lbl.classList.remove('checked'); st.textContent = 'Pendiente'; st.className = 'golive-status pending'; }
 }
-function delRow(btn){btn.closest('tr').remove();scheduleSave();}
-function delSection(btn){if(!confirm('Eliminar esta seccion?'))return;btn.closest('.section').remove();scheduleSave();}
-function addSection(cardBody){
-  var uid='sec-'+Date.now();
-  var sec=document.createElement('div');sec.className='section';
-  sec.innerHTML='<div class="section-title-row"><div class="section-title" contenteditable="true" spellcheck="false">Nueva seccion</div><button class="section-del" onclick="delSection(this)" title="Eliminar seccion">&#215;</button></div>'
-    +'<div class="pills-area" id="pills-'+uid+'">'
-    +'<button class="btn-add-pill" onclick="addPill(\'pills-'+uid+'\',\'pre\')">+ Agregar item</button>'
-    +'</div>';
-  var addBtn=cardBody.querySelector('.btn-add-section');
-  cardBody.insertBefore(sec,addBtn);
-  sec.querySelector('.section-title').focus();document.execCommand('selectAll',false,null);
-  scheduleSave();
-}
-function generateRoadmap(){
-  var cN=getVal('clientName').trim(),pN=getVal('programName').trim(),eN=getVal('execName').trim(),ks=getVal('dateKickoff'),gs=getVal('dateGoLive'),hcV=getVal('headcount');
-  if(!cN||!pN||!eN||!ks||!gs||!hcV){alert('Por favor completa todos los campos.');return;}
-  var kickoff=parseDate(ks),goLive=parseDate(gs),hc=parseInt(hcV);
-  if(goLive<=kickoff){alert('La fecha de Go-Live debe ser posterior al kick-off.');return;}
-  document.getElementById('out-client').textContent=cN+' - '+pN;
-  document.getElementById('out-title').textContent='Plan de implementacion - '+pN;
-  document.getElementById('out-dates').textContent='Contraparte: '+eN+' - Generado el '+fmtLong(new Date());
-  setVal('date-kickoff',toISO(kickoff));
-  setVal('date-sprint-start',toISO(addDays(kickoff,1)));
-  setVal('date-sprint-end',toISO(addDays(goLive,-8)));
-  setVal('date-demo-start',toISO(addDays(goLive,-7)));
-  setVal('date-demo-end',toISO(addDays(goLive,-1)));
-  setVal('date-t14-start',toISO(goLive));
-  setVal('date-t14-end',toISO(addDays(goLive,14)));
-  setVal('date-t30-start',toISO(addDays(goLive,15)));
-  setVal('date-t30-end',toISO(addDays(goLive,30)));
-  setVal('date-t90-start',toISO(addDays(goLive,31)));
-  setVal('date-t90-end',toISO(addDays(goLive,90)));
-  var d7=addDays(goLive,7),d14=addDays(goLive,14),d21=addDays(goLive,21),d30=addDays(goLive,30),d90=addDays(goLive,90);
-  var md7=document.getElementById('meet-d7');if(md7)md7.querySelector('.meeting-text').innerHTML='<strong>D+7 ('+fmtMed(d7)+'):</strong> Check-in de adopcion - 45 min - % de activacion, troubleshooting temprano';
-  var md14=document.getElementById('meet-d14');if(md14)md14.querySelector('.meeting-text').innerHTML='<strong>D+14 ('+fmtMed(d14)+'):</strong> Revision T14 - 60 min - Resultados de certificacion, lista de re-capacitacion urgente';
-  var md21=document.getElementById('meet-d21');if(md21)md21.querySelector('.meeting-text').innerHTML='<strong>D+21 ('+fmtMed(d21)+'):</strong> Revision de segmentacion - 45 min - Quien sube de tramo? Identificar rezagados';
-  var md30=document.getElementById('meet-d30');if(md30)md30.querySelector('.meeting-text').innerHTML='<strong>D+30 ('+fmtMed(d30)+'):</strong> Revision mensual T30 - 60 min - KPIs, encuesta D+30, ajuste de campanas';
-  var md90=document.getElementById('meet-d90');if(md90)md90.querySelector('.meeting-text').innerHTML='<strong>D+90 ('+fmtMed(d90)+') - Business Review trimestral:</strong> 90 min con sponsor - Resultados vs promesa T14/T30/T90, ROI estimado, propuesta siguiente trimestre';
-  if(hc>0){
-    var k40=document.getElementById('kpi-40hc');if(k40){k40.querySelector('.kpi-val').textContent=Math.round(hc*.4);k40.querySelector('.kpi-lbl').textContent='colaboradores activos (40% de '+hc+')';}
-    var k60=document.getElementById('kpi-60hc');if(k60){k60.querySelector('.kpi-val').textContent=Math.round(hc*.65);k60.querySelector('.kpi-lbl').textContent='colaboradores activos (65% de '+hc+')';}
+
+// ═══════════════════════════════════════════════════════════
+// TOGGLE / MODE / PDF / RESET
+// ═══════════════════════════════════════════════════════════
+function toggle(id) { document.getElementById('body-' + id).classList.toggle('open'); document.getElementById('chev-' + id).classList.toggle('open'); }
+
+function setMode(mode) {
+  const isPresent = mode === 'present';
+  document.body.classList.toggle('present-mode', isPresent);
+  document.getElementById('btnEdit').classList.toggle('active', !isPresent);
+  document.getElementById('btnPresent').classList.toggle('active', isPresent);
+  if (isPresent) {
+    document.querySelectorAll('.card-body').forEach(b => b.classList.add('open'));
+    document.querySelectorAll('.chevron').forEach(c => c.classList.add('open'));
   }
-  document.getElementById('out-footer').textContent='Plan generado para '+cN+' - Go-Live: '+fmtLong(goLive)+' - D+90: '+fmtShort(d90);
-  document.getElementById('output').style.display='block';
-  document.getElementById('output').scrollIntoView({behavior:'smooth'});
-  checkOverlaps();updateProgress();persistState();
 }
-function setMode(mode){
-  var isPresent=mode==='present';
-  document.body.classList.toggle('present-mode',isPresent);
-  document.getElementById('btnEdit').classList.toggle('active',!isPresent);
-  document.getElementById('btnPresent').classList.toggle('active',isPresent);
-  if(isPresent){document.querySelectorAll('.card-body').forEach(function(b){b.classList.add('open');});document.querySelectorAll('.chevron').forEach(function(c){c.classList.add('open');});}
+
+function downloadPDF() {
+  if (document.getElementById('output').style.display === 'none') { alert('Primero genera el roadmap.'); return; }
+  const el = document.getElementById('pdf-output');
+  el.innerHTML = document.getElementById('output').innerHTML;
+  el.style.display = 'block';
+  ['date-kickoff','date-sprint-start','date-sprint-end','date-demo-start','date-demo-end',
+   'date-t14-start','date-t14-end','date-t30-start','date-t30-end','date-t90-start','date-t90-end'].forEach(id => {
+    const orig = document.getElementById(id), copy = el.querySelector('#' + id);
+    if (orig && copy) copy.value = orig.value;
+  });
+  el.querySelectorAll('.card-body').forEach(b => b.classList.add('open'));
+  el.querySelectorAll('.chevron,.section-del,.btn-add-section,.btn-add-pill,.btn-add-kpi,.btn-add-row,.btn-add-meeting,.pill-del,.pill-check,.meeting-del,.kpi-del,.row-del,.date-edit').forEach(e => e.style.display = 'none');
+  const cn = (getVal('clientName') || 'Cliente').replace(/\s+/g, '_');
+  html2pdf().set({ margin: [8,8,12,8], filename: 'Roadmap_' + cn + '.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: ['avoid-all','css'] } }).from(el).save().then(() => { el.style.display = 'none'; el.innerHTML = ''; });
 }
-function getPillTexts(id){var a=document.getElementById(id);return a?Array.from(a.querySelectorAll('.pill-text')).map(function(p){return p.textContent.trim();}).filter(Boolean):[];}
-function getMeetingTexts(id){var l=document.getElementById(id);return l?Array.from(l.querySelectorAll('.meeting-text')).map(function(m){return m.innerHTML.trim();}).filter(Boolean):[];}
-function getKpis(id){var g=document.getElementById(id);return g?Array.from(g.querySelectorAll('.kpi-card')).map(function(c){return{val:c.querySelector('.kpi-val').textContent.trim(),lbl:c.querySelector('.kpi-lbl').textContent.trim()};}):[]; }
-function getTableRows(id){var t=document.getElementById(id);return t?Array.from(t.querySelectorAll('tbody tr')).map(function(tr){return Array.from(tr.querySelectorAll('td[contenteditable]')).map(function(c){return c.textContent.trim();});}):[];}
-function getDateDisp(id){var v=getVal(id);return v?fmtShort(parseDate(v)):'--';}
-function pdfPills(arr){return arr.length?'<div style="display:flex;flex-wrap:wrap;gap:4px;">'+arr.map(function(p){return'<span style="font-size:10px;padding:3px 9px;border-radius:10px;border:1px solid rgba(0,0,0,.1);color:#5F5E5A;">'+p+'</span>';}).join('')+'</div>':'';}
-function pdfMeetings(arr){return arr.length?'<div style="display:flex;flex-direction:column;gap:4px;">'+arr.map(function(m){return'<div style="background:#fff;border-left:3px solid #FA345E;border-radius:0 6px 6px 0;padding:7px 10px;font-size:11px;color:#5F5E5A;">'+m+'</div>';}).join('')+'</div>':'';}
-function pdfKpis(arr){return arr.length?'<div style="display:flex;gap:6px;flex-wrap:wrap;">'+arr.map(function(k){return'<div style="background:#FDE8ED;border-radius:7px;padding:7px 10px;min-width:90px;"><div style="font-size:15px;font-weight:700;color:#D42A4E;">'+k.val+'</div><div style="font-size:9px;color:#9B1535;margin-top:1px;">'+k.lbl+'</div></div>';}).join('')+'</div>':'';}
-function pdfTable(rows,cols){if(!rows.length)return'';var ths=cols.map(function(c){return'<th style="text-align:left;padding:5px 9px;background:#FA345E;color:#fff;font-size:9px;text-transform:uppercase;font-weight:700;">'+c+'</th>';}).join('');var trs=rows.map(function(r){return'<tr>'+r.map(function(c,i){return'<td style="padding:6px 9px;border-top:1px solid rgba(0,0,0,.08);color:#5F5E5A;font-size:10px;'+(i===0?'color:#1a1a18;font-weight:600;':'')+'">'+c+'</td>';}).join('')+'</tr>';}).join('');return'<table style="width:100%;border-collapse:collapse;"><thead><tr>'+ths+'</tr></thead><tbody>'+trs+'</tbody></table>';}
-function pdfSection(title,content){return'<div style="margin-bottom:10px;"><div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#888780;margin-bottom:6px;">'+title+'</div>'+content+'</div>';}
-function pdfCard(tag,tagBg,tagColor,title,sub,dates,body){return'<div style="border:1px solid rgba(0,0,0,.1);border-radius:10px;margin-bottom:10px;overflow:hidden;page-break-inside:avoid;"><div style="padding:11px 14px;display:flex;align-items:flex-start;gap:10px;"><span style="font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;background:'+tagBg+';color:'+tagColor+';white-space:nowrap;flex-shrink:0;margin-top:1px;">'+tag+'</span><div><div style="font-size:13px;font-weight:700;color:#1a1a18;margin-bottom:1px;">'+title+'</div><div style="font-size:11px;color:#5F5E5A;">'+sub+'</div><div style="font-size:10px;color:#FA345E;font-weight:700;margin-top:3px;">'+dates+'</div></div></div><div style="border-top:1px solid rgba(0,0,0,.08);padding:12px 14px;background:#FAFAFA;">'+body+'</div></div>';}
-function downloadPDF(){
-  if(document.getElementById('output').style.display==='none'){alert('Primero genera el roadmap.');return;}
-  var client=document.getElementById('out-client').textContent,title=document.getElementById('out-title').textContent,meta=document.getElementById('out-dates').textContent,footer=document.getElementById('out-footer').textContent;
-  var preBody=pdfSection('Que se define en kick-off',pdfPills(getPillTexts('pills-kickoff-define')))+pdfSection('Entregables Apprecio',pdfPills(getPillTexts('pills-kickoff-entregables')));
-  var sprintBody=pdfSection('Entregables del sprint',pdfPills(getPillTexts('pills-sprint')));
-  var demoBody=pdfSection('Agenda de la sesion',pdfMeetings(getMeetingTexts('meetings-demo')))+pdfSection('Criterio de Go-Live',pdfPills(getPillTexts('pills-demo-criterio')));
-  var t14Body=pdfSection('KPIs objetivo',pdfKpis(getKpis('kpis-t14')))+pdfSection('Cadencia de reuniones',pdfMeetings(getMeetingTexts('meetings-t14')))+pdfSection('Reporteria semanal',pdfTable(getTableRows('table-t14'),['Metrica','Valor que genera al cliente']))+pdfSection('Acciones a entregar',pdfPills(getPillTexts('pills-t14-acciones')));
-  var t30Body=pdfSection('KPIs objetivo',pdfKpis(getKpis('kpis-t30')))+pdfSection('Cadencia de reuniones',pdfMeetings(getMeetingTexts('meetings-t30')))+pdfSection('Reporte quincenal',pdfTable(getTableRows('table-t30'),['Metrica','Valor que genera al cliente']))+pdfSection('Acciones a entregar',pdfPills(getPillTexts('pills-t30-acciones')));
-  var t90Body=pdfSection('KPIs objetivo',pdfKpis(getKpis('kpis-t90')))+pdfSection('Cadencia de reuniones',pdfMeetings(getMeetingTexts('meetings-t90')))+pdfSection('Business Review D+90',pdfTable(getTableRows('table-t90'),['Seccion','Valor que genera al cliente']))+pdfSection('Acciones a entregar',pdfPills(getPillTexts('pills-t90-acciones')));
-  var html='<div style="font-family:Montserrat,Arial,sans-serif;background:#fff;"><div style="background:#FA345E;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;"><img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" style="height:24px;filter:brightness(0) invert(1);" alt="Apprecio"><span style="color:rgba(255,255,255,.8);font-size:10px;font-weight:600;text-transform:uppercase;">Plan de implementacion</span></div><div style="padding:24px 28px;"><div style="margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #FDE8ED;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#FA345E;margin-bottom:4px;">'+client+'</div><div style="font-size:18px;font-weight:700;color:#1a1a18;margin-bottom:3px;">'+title+'</div><div style="font-size:10px;color:#5F5E5A;">'+meta+'</div></div>'
-  +'<div style="display:flex;align-items:center;gap:10px;margin:16px 0 10px;"><span style="font-size:10px;font-weight:700;text-transform:uppercase;padding:4px 12px;border-radius:20px;background:#FDE8ED;color:#9B1535;">Pre Go-Live</span><div style="flex:1;height:1px;background:rgba(0,0,0,.09);"></div></div>'
-  +pdfCard('Kick-off de definiciones','#FDE8ED','#9B1535','Levantamiento de informacion con el cliente','Reunion 90 min',getDateDisp('date-kickoff'),preBody)
-  +pdfCard('Sprint de configuracion','#FDE8ED','#9B1535','Construccion del entorno Apprecio','Trabajo interno',getDateDisp('date-sprint-start')+' a '+getDateDisp('date-sprint-end'),sprintBody)
-  +pdfCard('Demo + Aprobacion + Capacitacion','#F0FFF4','#065F46','Primer acercamiento real del cliente','Reunion 90 min con admins y sponsor',getDateDisp('date-demo-start')+' a '+getDateDisp('date-demo-end'),demoBody)
-  +'<div style="display:flex;align-items:center;gap:10px;margin:20px 0 10px;"><span style="font-size:10px;font-weight:700;text-transform:uppercase;padding:4px 12px;border-radius:20px;background:#FA345E;color:#fff;">Go-Live</span><div style="flex:1;height:1px;background:rgba(0,0,0,.09);"></div></div>'
-  +pdfCard('T14 - Activacion y onboarding','#FDE8ED','#9B1535',document.getElementById('t14-title').textContent,document.getElementById('t14-sub').textContent,getDateDisp('date-t14-start')+' a '+getDateDisp('date-t14-end'),t14Body)
-  +pdfCard('T30 - Segmentacion y traccion','#FDE8ED','#9B1535',document.getElementById('t30-title').textContent,document.getElementById('t30-sub').textContent,getDateDisp('date-t30-start')+' a '+getDateDisp('date-t30-end'),t30Body)
-  +pdfCard('T90 - Sostenibilidad y retencion','#9B1535','#fff',document.getElementById('t90-title').textContent,document.getElementById('t90-sub').textContent,getDateDisp('date-t90-start')+' a '+getDateDisp('date-t90-end'),t90Body)
-  +'<div style="margin-top:20px;padding-top:14px;border-top:2px solid #FDE8ED;display:flex;justify-content:space-between;align-items:center;"><img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" style="height:18px;" alt="Apprecio"><span style="font-size:9px;color:#888780;">'+footer+'</span></div></div></div>';
-  var el=document.getElementById('pdf-output');el.innerHTML=html;el.style.display='block';
-  var cn=(getVal('clientName')||'Cliente').replace(/\s+/g,'_'),pn=(getVal('programName')||'Programa').replace(/\s+/g,'_');
-  html2pdf().set({margin:[8,8,12,8],filename:'Roadmap_'+cn+'_'+pn+'.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,useCORS:true,scrollY:0},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['avoid-all','css','legacy']}}).from(el).save().then(function(){el.style.display='none';el.innerHTML='';});
+
+function resetAll() {
+  if (!confirm('¿Limpiar todo y empezar de nuevo?')) return;
+  ['clientName','programName','execName','dateKickoff','dateGoLive','headcount'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
+  document.getElementById('output').style.display = 'none';
+  document.getElementById('aiStatus').style.display = 'none';
+  document.getElementById('aiLog').innerHTML = '';
+  document.getElementById('uploadedName').style.display = 'none';
+  document.getElementById('detectedStrip').classList.remove('show');
+  document.getElementById('pptFile').value = '';
+  // Reset phase containers
+  ['t14','t30','t90'].forEach(ph => {
+    document.getElementById('kpis-' + ph).innerHTML = '';
+    const acArea = document.getElementById('pills-' + ph + '-acciones');
+    acArea.innerHTML = '<button class="btn-add-pill" onclick="addPill(\'pills-' + ph + '-acciones\',\'' + ph + '\')">+ Agregar</button>';
+    document.getElementById('meetings-' + ph).innerHTML = '';
+    document.getElementById('tbody-' + ph).innerHTML = '';
+    const dolArea = document.getElementById('pills-' + ph + '-dolores');
+    if (dolArea) dolArea.innerHTML = '<button class="btn-add-pill" onclick="addPill(\'pills-' + ph + '-dolores\',\'' + ph + '\',true)">+ Agregar</button>';
+  });
+  const kickDol = document.getElementById('pills-kickoff-dolores');
+  if (kickDol) kickDol.innerHTML = '<button class="btn-add-pill" onclick="addPill(\'pills-kickoff-dolores\',\'pre\',true)">+ Agregar dolor</button>';
 }
 </script>
 </body>
