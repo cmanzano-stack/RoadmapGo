@@ -242,16 +242,6 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
       <div class="field"><label>Fecha Go-Live</label><input type="date" id="dateGoLive"></div>
       <div class="field"><label>Dotación total</label><input type="number" id="headcount" placeholder="Ej: 240" min="1"></div>
     </div>
-    <div style="margin-bottom:1.25rem;">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--brand);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border-l);">Metas definidas por el cliente para los 90 días</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:10px;">
-        <div class="field"><label>% Adopción esperado</label><input type="text" id="metaAdopcion" placeholder="Ej: 70% del equipo activo"></div>
-        <div class="field"><label>Meta ventas / transaccionalidad</label><input type="text" id="metaVentas" placeholder="Ej: +15% vs período anterior"></div>
-        <div class="field"><label>Meta rotación (reducción)</label><input type="text" id="metaRotacion" placeholder="Ej: bajar de 8% a 5% mensual"></div>
-        <div class="field"><label>Métrica propia del cliente</label><input type="text" id="metaPropia" placeholder="Ej: NPS interno ≥ 40"></div>
-      </div>
-      <div style="font-size:11px;color:var(--text-3);font-style:italic;">* Estas metas son ingresadas por el CSM en base a lo que el cliente define. Puedes agregar más métricas directamente en cada fase del roadmap.</div>
-    </div>
     <div class="btn-row">
       <button class="btn-primary" onclick="generateRoadmap()">Generar roadmap</button>
       <button class="btn-secondary" onclick="downloadPDF()">⬇ PDF</button>
@@ -507,11 +497,23 @@ async function analyzeWithN8n(pptText) {
   const res = await fetch(N8N_WEBHOOK, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ pptText: pptText.substring(0, 5000) })
+    body: JSON.stringify({ pptText: pptText.substring(0, 3000) })
   });
-  if (!res.ok) throw new Error('El webhook de n8n respondió con error ' + res.status + '. Verifica que el workflow esté activo.');
-  const parsed = await res.json();
-  if (!parsed.equipo) throw new Error('Respuesta inesperada del workflow. Revisa el nodo "Parsea respuesta" en n8n.');
+  if (!res.ok) throw new Error('Error ' + res.status + ' — verifica que el workflow esté activo en n8n.');
+
+  // Safe JSON parse — handle empty or malformed responses
+  const text = await res.text();
+  if (!text || text.trim() === '') throw new Error('n8n devolvió respuesta vacía. Ollama puede haber fallado — revisa los logs del nodo en n8n.');
+
+  let parsed;
+  try { parsed = JSON.parse(text); }
+  catch(e) { throw new Error('Respuesta inválida de n8n: ' + text.substring(0, 100)); }
+
+  if (!parsed.equipo) {
+    // Use fallback if Ollama returned something but without equipo
+    parsed.equipo = 'fuerza_de_venta';
+    logAi('⚠ No se detectó equipo — usando playbook por defecto (fuerza de venta). Puedes cambiarlo manualmente.');
+  }
   applyPlaybook(parsed);
 }
 
@@ -520,11 +522,18 @@ function applyPlaybook(parsed) {
   const playbook = PLAYBOOKS[equipoKey] || PLAYBOOKS['fuerza_de_venta'];
   document.getElementById('detectedLabel').textContent = 'Equipo detectado: ' + playbook.label;
   document.getElementById('detectedStrip').classList.add('show');
-  logAi('✅ Playbook "' + playbook.label + '" listo. Completa los datos base y genera el roadmap.');
+  logAi('✅ Playbook "' + playbook.label + '" cargado con KPIs extraídos del PPT.');
   if (parsed.cliente && !document.getElementById('clientName').value) {
     document.getElementById('clientName').value = parsed.cliente;
   }
-  window._detectedPlaybook = { key: equipoKey, dolores: parsed.dolores || [] };
+  // Store full parsed data including per-phase info from PPT
+  window._detectedPlaybook = {
+    key: equipoKey,
+    dolores: parsed.dolores || [],
+    t14: parsed.t14 || { dolor: null, kpis: [], meta_cliente: null },
+    t30: parsed.t30 || { dolor: null, kpis: [], meta_cliente: null },
+    t90: parsed.t90 || { dolor: null, kpis: [], meta_cliente: null }
+  };
   hideAiSpinner();
 }
 
@@ -557,10 +566,10 @@ function generateRoadmap() {
   const ks = document.getElementById('dateKickoff').value;
   const gs = document.getElementById('dateGoLive').value;
   const hc = parseInt(document.getElementById('headcount').value) || 0;
-  const metaAdopcion = document.getElementById('metaAdopcion').value.trim();
-  const metaVentas = document.getElementById('metaVentas').value.trim();
-  const metaRotacion = document.getElementById('metaRotacion').value.trim();
-  const metaPropia = document.getElementById('metaPropia').value.trim();
+  // Phase data extracted from PPT by Ollama
+  const pptT14 = pb.t14 || {};
+  const pptT30 = pb.t30 || {};
+  const pptT90 = pb.t90 || {};
   if (!cN || !ks || !gs) { alert('Completa al menos: cliente, fecha kick-off y fecha Go-Live.'); return; }
 
   const kickoff = parseDate(ks), goLive = parseDate(gs);
@@ -639,16 +648,7 @@ function generateRoadmap() {
   });
 
   // ── POST GO-LIVE ──
-  const d7abs = daysToGL + 7;
-  addBlockToZone('post', {
-    day: String(d7abs), dayLbl: 'DÍA',
-    tag: 'Seguimiento continuo', tagColor: 'var(--bg-2)', tagTextColor: 'var(--text-2)',
-    title: 'Reporte de activación — D+7',
-    desc: 'Confirmación de que los colaboradores entraron, hicieron su primer uso y no hay bloqueos técnicos. Detección temprana de fricción antes de que escale al T-14.',
-    roles: ['CSM','Cliente'],
-    acciones: playbook.t14.acciones.slice(0,2),
-    reportes: [playbook.t14.reportes[0]]
-  });
+
 
   const t14abs = daysToGL + 14;
   addBlockToZone('post', {
@@ -660,23 +660,14 @@ function generateRoadmap() {
     acciones: playbook.t14.acciones,
     reportes: playbook.t14.reportes,
     objetivo: {
-      dolor: dolores.length ? dolores[0] : 'Definir con el cliente en kick-off',
-      comoMedimos: 'Reporte de activación D+7 + revisión T-14 (reunión 60 min)',
-      metrica: (metaAdopcion || (hc ? Math.round(hc*0.4)+' colaboradores activos (40%)' : '40% del equipo activo')) + ' · ' + playbook.t14.kpis_text,
-      meta: metaAdopcion || (hc ? Math.round(hc*0.4) + ' personas activas mínimo' : 'Por definir con el cliente')
+      dolor: pptT14.dolor || (dolores.length ? dolores[0] : 'Definir con el cliente en kick-off'),
+      comoMedimos: 'Reporte de activación D+7 · revisión T-14 (reunión 60 min) · health score interno CSM',
+      metrica: (pptT14.kpis && pptT14.kpis.length ? pptT14.kpis.join(' · ') : playbook.t14.kpis_text) + (hc ? ' · mín ' + Math.round(hc*0.4) + ' personas activas' : ''),
+      meta: pptT14.meta_cliente || (hc ? Math.round(hc*0.4) + ' colaboradores activos (40% de ' + hc + ')' : 'Por definir con el cliente')
     }
   });
 
-  const d21abs = daysToGL + 21;
-  addBlockToZone('post', {
-    day: String(d21abs), dayLbl: 'DÍA',
-    tag: 'Reporte quincenal', tagColor: 'var(--orange-light)', tagTextColor: 'var(--orange)',
-    title: 'Reporte quincenal de tramos',
-    desc: 'Reporte ejecutivo de uso por tramo. Se repite cada 15 días durante toda la vida del cliente.',
-    roles: ['CSM','Admins'],
-    acciones: ['Análisis de tramos completado', 'PDF enviado al jefe'],
-    reportes: [{ nombre: 'Quincenal de tramos', meta: 'PDF ejecutivo 5 slides', dest: 'Jefe comercial · D+21 y cada 15 días' }]
-  });
+
 
   const t30abs = daysToGL + 30;
   addBlockToZone('post', {
@@ -688,10 +679,10 @@ function generateRoadmap() {
     acciones: playbook.t30.acciones,
     reportes: playbook.t30.reportes,
     objetivo: {
-      dolor: dolores.length > 1 ? dolores[1] : (dolores[0] || 'Definir con el cliente'),
-      comoMedimos: 'Reporte quincenal de tramos + revisión T-30 (reunión 60 min)',
-      metrica: (metaAdopcion ? 'Adopción: '+metaAdopcion : (hc ? Math.round(hc*0.65)+' activos (65%)' : '65% activos')) + (metaVentas ? ' · Ventas: '+metaVentas : '') + (metaRotacion ? ' · Rotación: '+metaRotacion : ''),
-      meta: [metaVentas, metaRotacion, metaPropia].filter(Boolean).join(' · ') || 'Por definir con el cliente'
+      dolor: pptT30.dolor || (dolores.length > 1 ? dolores[1] : dolores[0] || 'Definir con el cliente'),
+      comoMedimos: 'Reporte quincenal de tramos · revisión T-30 (reunión 60 min) · NPS de producto · health score CSM',
+      metrica: (pptT30.kpis && pptT30.kpis.length ? pptT30.kpis.join(' · ') : playbook.t30.kpis_text) + (hc ? ' · mín ' + Math.round(hc*0.65) + ' personas activas' : ''),
+      meta: pptT30.meta_cliente || (hc ? Math.round(hc*0.65) + ' colaboradores activos (65% de ' + hc + ')' : 'Por definir con el cliente')
     }
   });
 
@@ -705,10 +696,10 @@ function generateRoadmap() {
     acciones: playbook.t90.acciones,
     reportes: playbook.t90.reportes,
     objetivo: {
-      dolor: dolores.length > 2 ? dolores.slice(0,2).join(' + ') : (dolores.join(' + ') || 'Dolores levantados en kick-off'),
-      comoMedimos: 'Business Review 90 min · análisis de actividad sostenida, engagement por tramo y comparativa vs línea base',
-      metrica: 'Actividad sostenida 3 meses · engagement por tramo' + (metaRotacion ? ' · Rotación: '+metaRotacion : '') + (metaVentas ? ' · Ventas: '+metaVentas : '') + (metaPropia ? ' · '+metaPropia : ''),
-      meta: '⚠ A 90 días no medimos ROI directo. Medimos los insumos: ' + [metaAdopcion ? 'adopción '+metaAdopcion : '', metaVentas || '', metaRotacion || '', metaPropia || ''].filter(Boolean).join(' · ') || 'comportamiento sostenido del equipo'
+      dolor: pptT90.dolor || (dolores.join(' · ') || 'Dolores levantados en kick-off'),
+      comoMedimos: 'Business Review 90 min · actividad sostenida 3 meses · engagement por tramo · comparativa vs línea base del cliente',
+      metrica: (pptT90.kpis && pptT90.kpis.length ? pptT90.kpis.join(' · ') : playbook.t90.kpis_text),
+      meta: '⚠ A 90 días medimos los insumos, no el ROI directo: ' + (pptT90.meta_cliente || 'plataforma integrada al flujo diario · barrera de salida generada · colaboradores sin uso activados')
     }
   });
 
@@ -986,7 +977,7 @@ function downloadPDF() {
 
 function resetAll() {
   if (!confirm('¿Limpiar todo?')) return;
-  ['clientName','programName','csmName','execName','dateKickoff','dateGoLive','headcount','metaAdopcion','metaVentas','metaRotacion','metaPropia'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
+  ['clientName','programName','csmName','execName','dateKickoff','dateGoLive','headcount'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
   document.getElementById('output').style.display = 'none';
   document.getElementById('aiStatus').style.display = 'none';
   document.getElementById('aiLog').innerHTML = '';
