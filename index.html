@@ -628,7 +628,7 @@ async function analyzeFile() {
   showAiStatus('Extrayendo texto del PPT...');
   try {
     const text = await extractPptxText(_selectedFile);
-    logAi('Texto extraído · Enviando a n8n...');
+    logAi('Analizando con IA...');
     await analyzeWithN8n(text);
   } catch(err) {
     showAiStatus('Error: ' + err.message, true);
