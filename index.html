@@ -276,6 +276,7 @@ body.present-mode #step-upload,
 body.present-mode #step-config,
 body.present-mode .rm-block-controls,
 body.present-mode .btn-block-move,
+body.present-mode .no-print,
 body.present-mode .btn-add-block,
 body.present-mode .btn-add-role,
 body.present-mode .btn-add-accion,
@@ -288,7 +289,7 @@ body.present-mode [contenteditable]{outline:none!important;pointer-events:none;}
 body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opacity:1;}
 
 @media print{
-  #topbar,.step-wrap,.rm-block-controls,.btn-add-block,.btn-add-role,.btn-add-accion,.btn-add-reporte,.accion-check,.accion-del,.role-pill-del,.reporte-del{display:none!important;}
+  #topbar,.step-wrap,.rm-block-controls,.btn-add-block,.btn-add-role,.btn-add-accion,.btn-add-reporte,.accion-check,.accion-del,.role-pill-del,.reporte-del,.no-print{display:none!important;}
   #output{display:block!important;padding:0;max-width:100%;}
   body{background:#fff;}
   .rm-block{page-break-inside:avoid;break-inside:avoid;margin-bottom:10px;}
@@ -358,7 +359,7 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
     <div class="btn-row">
       <button class="btn-primary" onclick="generateRoadmap()">Generar roadmap</button>
       <button class="btn-secondary" onclick="downloadPDF()">⬇ PDF</button>
-      <button class="btn-danger" onclick="resetAll()">Limpiar</button>
+      <button class="btn-danger" onclick="resetAll()">🗑 Limpiar todo</button>
     </div>
   </div>
 </div>
@@ -366,10 +367,13 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
 <!-- OUTPUT -->
 <div id="output">
   <!-- DOC HEADER -->
-  <div class="rm-doc-header">
-    <img class="rm-doc-logo" src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio" onerror="this.style.display='none'">
-    <div class="rm-doc-title">Roadmap <span id="out-client-name">Cliente</span></div>
-    <div class="rm-doc-sub" id="out-doc-sub">PROTOCOLO DE IMPLEMENTACIÓN</div>
+  <div class="rm-doc-header" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+    <div>
+      <img class="rm-doc-logo" src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio" onerror="this.style.display='none'">
+      <div class="rm-doc-title">Roadmap <span id="out-client-name">Cliente</span></div>
+      <div class="rm-doc-sub" id="out-doc-sub">PROTOCOLO DE IMPLEMENTACIÓN</div>
+    </div>
+    <button onclick="resetRoadmapOnly()" style="font-family:var(--font);font-size:11px;font-weight:700;padding:7px 14px;background:transparent;color:#c0392b;border:1px solid #f5c6cb;border-radius:var(--r-md);cursor:pointer;white-space:nowrap;margin-top:4px;" class="no-print">🗑 Limpiar roadmap</button>
   </div>
 
   <!-- STAT CARDS -->
@@ -631,7 +635,7 @@ async function analyzeFile() {
   showAiStatus('Extrayendo texto del PPT...');
   try {
     const text = await extractPptxText(_selectedFile);
-    logAi('Analizando con IA...');
+    logAi('Texto extraído · Enviando a n8n...');
     await analyzeWithN8n(text);
   } catch(err) {
     showAiStatus('Error: ' + err.message, true);
@@ -672,7 +676,7 @@ async function analyzeWithN8n(pptText) {
   if (!parsed.equipo) {
     // Use fallback if Ollama returned something but without equipo
     parsed.equipo = 'fuerza_de_venta';
-    logAi('⚠ No se detectó equipo usando playbook por defecto (fuerza de venta). Puedes cambiarlo manualmente.');
+    logAi('⚠ No se detectó equipo — usando playbook por defecto (fuerza de venta). Puedes cambiarlo manualmente.');
   }
   applyPlaybook(parsed);
 }
@@ -761,7 +765,7 @@ function generateRoadmap() {
     alert: dolores.length ? '⚠ Dolores identificados: ' + dolores.join(' · ') : null,
     roles: ['CSM','Cliente'],
     acciones: ['Email onboarding enviado', 'Acta kick-off firmada', 'Camino crítico explicado'],
-    reportes: [{ nombre: 'Email de onboarding', meta: 'Template personalizado', dest: 'Cliente' }, { nombre: 'Acta kick-off', meta: 'Documento firmado', dest: 'CSM + Cliente' }]
+    reportes: []
   });
 
   addBlockToZone('pre', {
@@ -792,7 +796,7 @@ function generateRoadmap() {
     desc: 'Verificación final: nómina cargada, configuración aprobada, accesos activos, comunicación al equipo lista. Todo OK = se confirma go-live.',
     roles: ['CSM','TechOps'],
     acciones: ['Nómina cargada ✓', 'Configuración aprobada ✓', 'Accesos activos ✓', 'Comunicado interno listo ✓'],
-    reportes: [{ nombre: 'Checklist pre go-live', meta: 'Documento interno', dest: 'CSM + TechOps' }]
+    reportes: []
   });
 
   // ── GO-LIVE ──
@@ -817,7 +821,7 @@ function generateRoadmap() {
     desc: 'Revisión de adopción temprana: accesos activos, primeras transacciones, dudas del equipo. Objetivo: detectar fricciones y confirmar que el valor prometido está siendo percibido.' + (hc ? ' Meta mínima Apprecio: ' + Math.round(hc * 0.4) + ' colaboradores activos (40% de ' + hc + ').' : ''),
     roles: playbook.t14.roles,
     acciones: playbook.t14.acciones,
-    reportes: playbook.t14.reportes,
+    reportes: [],
     phaseKey: 't14',
     objetivo: {
       dolor: dolores.length ? dolores.join(' · ') : 'Definir con el cliente en kick-off',
