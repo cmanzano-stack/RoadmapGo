@@ -165,6 +165,9 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .objetivo-item-val{font-size:13px;font-weight:600;color:var(--text-1);outline:none;line-height:1.4;}
 .objetivo-item-val.meta{color:var(--brand-dark);font-weight:700;}
 .objetivo-disclaimer{font-size:10px;color:var(--text-3);font-style:italic;margin-top:10px;padding-top:8px;border-top:1px dashed var(--border-l);}
+.objetivo-item-val.empty:empty:before{content:attr(data-placeholder);color:var(--text-3);font-style:italic;pointer-events:none;}
+.objetivo-item-val.meta{color:var(--text-1);}
+.objetivo-item-val.meta.empty:empty:before{color:var(--brand-text);font-style:italic;}
 
 /* ═══ RUBRIC DRAWER ═══ */
 .rubric-drawer-overlay{
@@ -669,7 +672,7 @@ async function analyzeWithN8n(pptText) {
   if (!parsed.equipo) {
     // Use fallback if Ollama returned something but without equipo
     parsed.equipo = 'fuerza_de_venta';
-    logAi('⚠ No se detectó equipo — usando playbook por defecto (fuerza de venta). Puedes cambiarlo manualmente.');
+    logAi('⚠ No se detectó equipo usando playbook por defecto (fuerza de venta). Puedes cambiarlo manualmente.');
   }
   applyPlaybook(parsed);
 }
@@ -817,10 +820,9 @@ function generateRoadmap() {
     reportes: playbook.t14.reportes,
     phaseKey: 't14',
     objetivo: {
-      dolor: pptT14.dolor || (dolores.length ? dolores[0] : 'Definir con el cliente en kick-off'),
-      comoMedimos: 'Reporte de activación D+7 · revisión T-14 (reunión 60 min) · health score interno CSM',
-      metrica: (pptT14.kpis && pptT14.kpis.length ? pptT14.kpis.join(' · ') : playbook.t14.kpis_text) + (hc ? ' · mín ' + Math.round(hc*0.4) + ' personas activas' : ''),
-      meta: pptT14.meta_cliente || (hc ? Math.round(hc*0.4) + ' colaboradores activos (40% de ' + hc + ')' : 'Por definir con el cliente')
+      dolor: dolores.length ? dolores.join(' · ') : 'Definir con el cliente en kick-off',
+      comoMedimos: pptT14.acciones && pptT14.acciones.length ? pptT14.acciones.join(' · ') : 'Reporte de activación D+7 · revisión T-14 (reunión 60 min) · health score interno CSM',
+      metrica: pptT14.kpis && pptT14.kpis.length ? pptT14.kpis.join(' · ') : playbook.t14.kpis_text + (hc ? ' · mín ' + Math.round(hc*0.4) + ' personas activas' : '')
     }
   });
 
@@ -837,10 +839,9 @@ function generateRoadmap() {
     reportes: playbook.t30.reportes,
     phaseKey: 't30',
     objetivo: {
-      dolor: pptT30.dolor || (dolores.length > 1 ? dolores[1] : dolores[0] || 'Definir con el cliente'),
-      comoMedimos: 'Reporte quincenal de tramos · revisión T-30 (reunión 60 min) · NPS de producto · health score CSM',
-      metrica: (pptT30.kpis && pptT30.kpis.length ? pptT30.kpis.join(' · ') : playbook.t30.kpis_text) + (hc ? ' · mín ' + Math.round(hc*0.65) + ' personas activas' : ''),
-      meta: pptT30.meta_cliente || (hc ? Math.round(hc*0.65) + ' colaboradores activos (65% de ' + hc + ')' : 'Por definir con el cliente')
+      dolor: dolores.length ? dolores.join(' · ') : 'Definir con el cliente en kick-off',
+      comoMedimos: pptT30.acciones && pptT30.acciones.length ? pptT30.acciones.join(' · ') : 'Reporte quincenal de tramos · revisión T-30 (reunión 60 min) · NPS de producto · health score CSM',
+      metrica: pptT30.kpis && pptT30.kpis.length ? pptT30.kpis.join(' · ') : playbook.t30.kpis_text + (hc ? ' · mín ' + Math.round(hc*0.65) + ' personas activas' : '')
     }
   });
 
@@ -855,10 +856,9 @@ function generateRoadmap() {
     reportes: playbook.t90.reportes,
     phaseKey: 't90',
     objetivo: {
-      dolor: pptT90.dolor || (dolores.join(' · ') || 'Dolores levantados en kick-off'),
-      comoMedimos: 'Business Review 90 min · actividad sostenida 3 meses · engagement por tramo · comparativa vs línea base del cliente',
-      metrica: (pptT90.kpis && pptT90.kpis.length ? pptT90.kpis.join(' · ') : playbook.t90.kpis_text),
-      meta: '⚠ A 90 días medimos los insumos, no el ROI directo: ' + (pptT90.meta_cliente || 'plataforma integrada al flujo diario · barrera de salida generada · colaboradores sin uso activados')
+      dolor: dolores.length ? dolores.join(' · ') : 'Definir con el cliente en kick-off',
+      comoMedimos: pptT90.acciones && pptT90.acciones.length ? pptT90.acciones.join(' · ') : 'Business Review 90 min · actividad sostenida 3 meses · engagement por tramo · comparativa vs línea base del cliente',
+      metrica: pptT90.kpis && pptT90.kpis.length ? pptT90.kpis.join(' · ') : playbook.t90.kpis_text
     }
   });
 
@@ -869,7 +869,7 @@ function generateRoadmap() {
 // ═══════════════════════════════════════════════════════════
 // OBJETIVO DE FASE BUILDER
 // ═══════════════════════════════════════════════════════════
-function buildObjetivoFase(phase, dolor, metricaLabel, metaCliente, comoMedimos) {
+function buildObjetivoFase(dolor, comoMedimos, indicador) {
   const wrap = document.createElement('div');
   wrap.className = 'objetivo-fase';
 
@@ -882,23 +882,35 @@ function buildObjetivoFase(phase, dolor, metricaLabel, metaCliente, comoMedimos)
   grid.className = 'objetivo-grid';
 
   const items = [
-    { lbl: 'Dolor que atacamos', val: dolor, cls: '' },
-    { lbl: 'Cómo lo medimos', val: comoMedimos, cls: '' },
-    { lbl: 'Indicador de éxito', val: metricaLabel, cls: '' },
-    { lbl: 'Meta del cliente *', val: metaCliente, cls: 'meta' },
+    { lbl: 'Dolor que atacamos', val: dolor, placeholder: 'Definir con el cliente en kick-off', cls: '' },
+    { lbl: 'Cómo lo medimos', val: comoMedimos, placeholder: 'Acciones y seguimiento de esta fase', cls: '' },
+    { lbl: 'Indicador de éxito', val: indicador, placeholder: 'KPIs de esta fase', cls: '' },
+    { lbl: 'Meta del cliente *', val: '', placeholder: 'Completar en reunión con el cliente...', cls: 'meta' },
   ];
 
   items.forEach(item => {
     const cell = document.createElement('div');
     cell.className = 'objetivo-item';
-    cell.innerHTML = `<div class="objetivo-item-lbl">${item.lbl}</div><div class="objetivo-item-val ${item.cls}" contenteditable="true" spellcheck="false">${item.val}</div>`;
+    const valEl = document.createElement('div');
+    valEl.className = 'objetivo-item-val ' + item.cls;
+    valEl.contentEditable = 'true';
+    valEl.spellcheck = false;
+    if (item.val) {
+      valEl.textContent = item.val;
+    } else {
+      // Empty with placeholder style
+      valEl.setAttribute('data-placeholder', item.placeholder);
+      valEl.classList.add('empty');
+    }
+    cell.innerHTML = `<div class="objetivo-item-lbl">${item.lbl}</div>`;
+    cell.appendChild(valEl);
     grid.appendChild(cell);
   });
   wrap.appendChild(grid);
 
   const disclaimer = document.createElement('div');
   disclaimer.className = 'objetivo-disclaimer';
-  disclaimer.textContent = '* Meta definida por el cliente en base a su historial y contexto. Apprecio acompaña el proceso; los resultados dependen de la adopción del equipo y de factores externos al programa.';
+  disclaimer.textContent = '* A completar en reunión con el cliente. Las metas deben basarse en el historial real del equipo. Apprecio acompaña el proceso; los resultados dependen de la adopción del equipo y de factores externos al programa.';
   wrap.appendChild(disclaimer);
 
   return wrap;
@@ -1015,11 +1027,9 @@ function buildBlock(cfg) {
   // Objetivo de fase (T14/T30/T90 only)
   if (cfg.objetivo) {
     const obj = buildObjetivoFase(
-      cfg.tag,
       cfg.objetivo.dolor,
-      cfg.objetivo.metrica,
-      cfg.objetivo.meta,
-      cfg.objetivo.comoMedimos
+      cfg.objetivo.comoMedimos,
+      cfg.objetivo.metrica
     );
     body.appendChild(obj);
   }
