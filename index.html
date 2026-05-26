@@ -566,10 +566,6 @@ function generateRoadmap() {
   const ks = document.getElementById('dateKickoff').value;
   const gs = document.getElementById('dateGoLive').value;
   const hc = parseInt(document.getElementById('headcount').value) || 0;
-  // Phase data extracted from PPT by Ollama
-  const pptT14 = pb.t14 || {};
-  const pptT30 = pb.t30 || {};
-  const pptT90 = pb.t90 || {};
   if (!cN || !ks || !gs) { alert('Completa al menos: cliente, fecha kick-off y fecha Go-Live.'); return; }
 
   const kickoff = parseDate(ks), goLive = parseDate(gs);
@@ -586,9 +582,12 @@ function generateRoadmap() {
   document.getElementById('post-days-label').textContent = 'Días ' + daysToGL + '–' + (daysToGL + 90) + ' · 3 hitos fijos · reportes paralelos · seguimiento CSM';
   document.getElementById('out-footer').textContent = 'Generado para ' + cN + ' · Go-Live: ' + fmtLong(goLive) + ' · D+90: ' + fmtShort(d90) + ' · Documento interno APPRECIO';
 
-  const pb = window._detectedPlaybook || { key: 'fuerza_de_venta', dolores: [] };
+  const pb = window._detectedPlaybook || { key: 'fuerza_de_venta', dolores: [], t14: {}, t30: {}, t90: {} };
   const playbook = PLAYBOOKS[pb.key] || PLAYBOOKS['fuerza_de_venta'];
-  const dolores = pb.dolores;
+  const dolores = pb.dolores || [];
+  const pptT14 = pb.t14 || {};
+  const pptT30 = pb.t30 || {};
+  const pptT90 = pb.t90 || {};
 
   // Clear existing blocks
   ['pre','golive','post'].forEach(z => document.getElementById('blocks-' + z).innerHTML = '');
