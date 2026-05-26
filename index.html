@@ -609,7 +609,7 @@ function generateRoadmap() {
     tag: 'Ruta crítica', tagColor: '#FEE2E2', tagTextColor: '#991B1B',
     title: 'Entrega de nómina + configuración',
     desc: 'Cliente entrega nómina al CSM. El CSM valida el formato y hace el traspaso interno a TechOps para la configuración de empleados y reglas de negocio. TechOps configura en segundo plano.',
-    alert: '⚠ Ruta crítica — el cliente debe entregar la nómina en este bloque. Sin ella se detiene todo el proceso.',
+    alert: '⚠ Ruta crítica: el cliente debe entregar la nómina en este bloque. Sin ella se detiene todo el proceso.',
     roles: ['CSM','TechOps','Cliente'],
     acciones: ['Nómina recibida y validada', 'Traspaso a TechOps realizado', 'Scorecard configurado', 'Tramos y metas cargados'],
     reportes: []
@@ -619,7 +619,7 @@ function generateRoadmap() {
     day: '8–12', dayLbl: 'DÍAS',
     tag: 'Demo y validación', tagColor: 'var(--green-light)', tagTextColor: 'var(--green)',
     title: 'Demo + validación con el cliente',
-    desc: 'CSM presenta la plataforma configurada al cliente. Se validan flujos y experiencia. CSM levanta requerimientos de ajuste interno a TechOps — el cliente no tiene contacto directo con el equipo técnico.',
+    desc: 'CSM presenta la plataforma configurada al cliente. Se validan flujos y experiencia. CSM levanta requerimientos de ajuste interno a TechOps, el cliente no tiene contacto directo con el equipo técnico.',
     roles: ['CSM','Cliente'],
     acciones: ['Demo realizada', 'Ajustes enviados a TechOps', 'Aprobación formal obtenida'],
     reportes: []
