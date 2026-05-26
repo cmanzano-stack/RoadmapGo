@@ -493,39 +493,46 @@ const PLAYBOOKS = {
   }
 };
 
-// ── N8N PROMPT (updated for SHORT acciones) ───────────────
-// PROMPT TO USE IN N8N (copy this into your n8n node):
+// ── PROMPT PARA N8N — copia esto en tu nodo ───────────────
 /*
 Eres un asistente especializado en analizar presentaciones comerciales de Apprecio.
-Apprecio trabaja bajo esta lógica de 3 fases. El DOLOR del cliente es el mismo — lo que cambia es CÓMO se trabaja:
-T14: Generar alto engagement. Primer uso, activación, certificación.
-T30: Autonomía. El colaborador conoce sus metas sin persecución. Uso sostenido, cambio de comportamiento.
-T90: Flujo diario. La plataforma es parte del trabajo. Barrera de salida. Activar rezagados.
+Apprecio trabaja bajo esta lógica de 3 fases:
+T14: Primer uso, activación, certificación. Engagement inicial.
+T30: Autonomía y cambio de comportamiento. Uso sostenido, metas comprendidas.
+T90: Flujo diario consolidado. Barrera de salida. ROI documentado.
 
 Analiza el texto y responde SOLO con este JSON sin texto adicional ni backticks:
 {
   "equipo": "fuerza_de_venta | rrhh | marketing | operaciones",
   "cliente": "nombre del cliente o null",
-  "dolores": ["dolor 1 (frase corta, máx 8 palabras)", "dolor 2", "dolor 3"],
+  "dolores": ["problema concreto en máx 6 palabras", "problema 2", "problema 3"],
   "t14": {
-    "como_medimos": "1 frase corta máx 15 palabras describiendo cómo se mide el éxito en T14",
-    "kpis": ["KPI 1 de T14 del PPT (número o % concreto)", "KPI 2"]
+    "como_medimos": "frase de máx 12 palabras sobre el mecanismo de medición en T14",
+    "kpis": ["KPI con número o % de T14, ej: 40% equipo activo al D+14", "KPI 2"]
   },
   "t30": {
-    "como_medimos": "1 frase corta máx 15 palabras describiendo cómo se mide el éxito en T30",
-    "kpis": ["KPI 1 de T30 del PPT", "KPI 2"]
+    "como_medimos": "frase de máx 12 palabras sobre el mecanismo de medición en T30",
+    "kpis": ["KPI con número o % de T30, ej: 65% dotación activa", "KPI 2"]
   },
   "t90": {
-    "como_medimos": "1 frase corta máx 15 palabras describiendo cómo se mide el éxito en T90",
-    "kpis": ["KPI 1 de T90 del PPT", "KPI 2"]
+    "como_medimos": "frase de máx 12 palabras sobre el mecanismo de medición en T90",
+    "kpis": ["KPI con número o % de T90, ej: ROI documentado vs baseline", "KPI 2"]
   }
 }
-Reglas:
-- dolores = problemas del cliente, frases cortas (máx 8 palabras cada una)
-- como_medimos = UNA frase corta (máx 15 palabras), no una lista
-- kpis = métricas de éxito concretas con números o porcentajes del PPT
-- Si algo no aparece explícito, inferir desde el contexto
-- Responde ÚNICAMENTE con el JSON
+
+REGLAS CRÍTICAS — léelas antes de responder:
+1. dolores = problemas del negocio del CLIENTE, NO acciones de Apprecio. Máx 6 palabras.
+2. como_medimos = UNA frase corta (máx 12 palabras). Describe el mecanismo, no el resultado.
+   ✓ Correcto: "Reporte D+7 y revisión quincenal con admins"
+   ✗ Incorrecto: "Introducir Challenges Gamificados para motivar la participación temprana · Implementar Scorecards..."
+3. kpis = SOLO métricas con números, porcentajes o indicadores medibles. NUNCA acciones.
+   ✓ Correcto: "40% equipo activo al D+14" / "≥70% certificación aprobada" / "ROI documentado"
+   ✗ Incorrecto: "Introducir challenges gamificados" / "Implementar scorecards" / "Reconocimiento por logros"
+4. Si no encuentras un KPI numérico para una fase, devuelve [] (array vacío).
+5. Responde ÚNICAMENTE con el JSON, sin texto antes ni después.
+
+TEXTO DEL PPT:
+{{ $json.pptText.substring(0, 3000) }}
 */
 
 // ── PPT UPLOAD ────────────────────────────────────────────
@@ -724,19 +731,29 @@ function generateRoadmap(){
     reportes:[]
   });
 
-  // Helper: build "cómo lo medimos" — use n8n value if short, else use playbook fallback
+  // Helper: "cómo lo medimos" — use n8n value only if it's short enough, else playbook fallback
   function buildComoMedimos(pptPhase, pbPhase){
     const n8nVal = pptPhase.como_medimos;
-    if(n8nVal && n8nVal.length < 120) return n8nVal;
+    if(n8nVal && typeof n8nVal === 'string' && n8nVal.length > 4 && n8nVal.length < 120) return n8nVal;
     return pbPhase.como_medimos;
   }
 
-  // Helper: build "indicador de éxito" from PPT KPIs (primary source)
-  function buildIndicador(pptPhase, pbPhase){
+  // KPI validation: reject strings that look like actions, not metrics
+  // A real KPI contains a %, number, ↑, ↓, or common metric keyword
+  function isValidKpi(str){
+    if(!str || typeof str !== 'string') return false;
+    return /[%↑↓\d]|activ|adopc|certif|rotaci|conversi|cumpli|retenci|churn|roi|revenue|transacci/i.test(str);
+  }
+
+  // Helper: "indicador de éxito" — PPT KPIs validated, then phase-specific playbook fallback
+  function buildIndicador(pptPhase, pbPhase, dotacionPct){
     if(pptPhase.kpis && pptPhase.kpis.length){
-      return pptPhase.kpis.join(' · ');
+      const validKpis = pptPhase.kpis.filter(isValidKpi);
+      if(validKpis.length) return validKpis.join(' · ');
     }
-    return pbPhase.kpis_fallback + (hc ? ' · mín '+(Math.round(hc*0.4))+' personas activas' : '');
+    // Use the phase-specific fallback with the correct dotación percentage
+    const dotacionStr = hc && dotacionPct ? ' · mín '+Math.round(hc*dotacionPct)+' personas activas' : '';
+    return pbPhase.kpis_fallback + dotacionStr;
   }
 
   // T14
@@ -753,7 +770,7 @@ function generateRoadmap(){
     objetivo:{
       dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',
       comoMedimos:buildComoMedimos(pptT14, playbook.t14),
-      indicador:buildIndicador(pptT14, playbook.t14)
+      indicador:buildIndicador(pptT14, playbook.t14, 0.40)
     }
   });
 
@@ -771,7 +788,7 @@ function generateRoadmap(){
     objetivo:{
       dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',
       comoMedimos:buildComoMedimos(pptT30, playbook.t30),
-      indicador:buildIndicador(pptT30, playbook.t30)
+      indicador:buildIndicador(pptT30, playbook.t30, 0.65)
     }
   });
 
@@ -789,7 +806,7 @@ function generateRoadmap(){
     objetivo:{
       dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',
       comoMedimos:buildComoMedimos(pptT90, playbook.t90),
-      indicador:buildIndicador(pptT90, playbook.t90)
+      indicador:buildIndicador(pptT90, playbook.t90, null)
     }
   });
 
