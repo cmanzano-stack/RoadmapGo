@@ -169,6 +169,21 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .objetivo-item-val.meta{color:var(--text-1);}
 .objetivo-item-val.meta.empty:empty:before{color:var(--brand-text);font-style:italic;}
 
+/* DATE BADGE */
+.block-dates{
+  display:flex;align-items:center;gap:6px;
+  margin-bottom:10px;
+}
+.block-date-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:600;
+  padding:4px 10px;border-radius:10px;
+  background:var(--bg-2);border:1px solid var(--border-m);
+  color:var(--text-2);
+}
+.block-date-badge .date-icon{font-size:12px;}
+.block-date-sep{font-size:11px;color:var(--text-3);}
+
 /* ═══ RUBRIC DRAWER ═══ */
 .rubric-drawer-overlay{
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:500;
@@ -351,8 +366,8 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
       <div class="field"><label>Cliente</label><input type="text" id="clientName" placeholder="Ej: Mercado Pago"></div>
       <div class="field"><label>Programa</label><input type="text" id="programName" placeholder="Ej: Apprecio Beat"></div>
 <div class="field"><label>Contraparte cliente</label><input type="text" id="execName" placeholder="Ej: Valentina Torres"></div>
-      <div class="field"><label>Fecha kick-off</label><input type="date" id="dateKickoff"></div>
-      <div class="field"><label>Fecha Go-Live</label><input type="date" id="dateGoLive"></div>
+      <div class="field"><label>Fecha kick-off</label><input type="date" id="dateKickoff" onchange="updateGoLiveMin()"></div>
+      <div class="field"><label>Fecha Go-Live <span style="font-size:9px;color:var(--text-3);font-weight:400;">(mín. 30 días desde kick-off)</span></label><input type="date" id="dateGoLive"></div>
       <div class="field"><label>Dotación total</label><input type="number" id="headcount" placeholder="Ej: 240" min="1"></div>
     </div>
     <div class="btn-row">
@@ -721,6 +736,18 @@ function diffDays(a, b) { return Math.round((b - a) / 86400000); }
 // ═══════════════════════════════════════════════════════════
 // GENERATE ROADMAP
 // ═══════════════════════════════════════════════════════════
+function updateGoLiveMin() {
+  const ks = document.getElementById('dateKickoff').value;
+  if (!ks) return;
+  const minGL = addDays(parseDate(ks), 30);
+  document.getElementById('dateGoLive').min = toISO(minGL);
+  // If current go-live is before min, clear it
+  const curGL = document.getElementById('dateGoLive').value;
+  if (curGL && parseDate(curGL) < minGL) {
+    document.getElementById('dateGoLive').value = '';
+  }
+}
+
 function generateRoadmap() {
   const cN = document.getElementById('clientName').value.trim();
   const pN = document.getElementById('programName').value.trim();
@@ -731,7 +758,11 @@ const exec = document.getElementById('execName').value.trim();
   if (!cN || !ks || !gs) { alert('Completa al menos: cliente, fecha kick-off y fecha Go-Live.'); return; }
 
   const kickoff = parseDate(ks), goLive = parseDate(gs);
-  if (goLive <= kickoff) { alert('La fecha de Go-Live debe ser posterior al kick-off.'); return; }
+  const minGoLive = addDays(kickoff, 30);
+  if (goLive < minGoLive) {
+    alert('La fecha de Go-Live debe ser al menos 30 días después del kick-off.\nMínimo: ' + fmtLong(minGoLive));
+    return;
+  }
 
   const d14 = addDays(goLive, 14), d30 = addDays(goLive, 30), d90 = addDays(goLive, 90);
   const daysToGL = diffDays(kickoff, goLive);
@@ -754,9 +785,22 @@ const exec = document.getElementById('execName').value.trim();
   // Clear existing blocks
   ['pre','golive','post'].forEach(z => document.getElementById('blocks-' + z).innerHTML = '');
 
+  // Precompute all calendar date ranges
+  const dateRanges = {
+    kickoff:   { start: kickoff, end: kickoff },
+    nomina:    { start: addDays(kickoff, 1),  end: addDays(kickoff, 10) },
+    demo:      { start: addDays(kickoff, 11), end: addDays(kickoff, 22) },
+    checklist: { start: addDays(kickoff, 29), end: addDays(kickoff, 29) },
+    golive:    { start: goLive, end: goLive },
+    t14:       { start: addDays(goLive, 1),   end: addDays(goLive, 14) },
+    t30:       { start: addDays(goLive, 15),  end: addDays(goLive, 30) },
+    t90:       { start: addDays(goLive, 31),  end: addDays(goLive, 90) },
+  };
+
   // ── PRE GO-LIVE BLOCKS ──
   addBlockToZone('pre', {
     day: '0', dayLbl: 'DÍA',
+    dateRange: dateRanges.kickoff,
     tag: 'Kick-off de onboarding', tagColor: 'var(--brand-light)', tagTextColor: 'var(--brand-text)',
     title: 'Kick-off call de onboarding',
     desc: 'CSM conduce la llamada de inicio. Presenta los roles, establece el plan de implementación y explica el camino crítico al cliente. Se deja en acta: sin nómina no hay configuración, sin configuración no hay demo, sin demo no hay go-live.',
@@ -768,6 +812,7 @@ const exec = document.getElementById('execName').value.trim();
 
   addBlockToZone('pre', {
     day: '1–10', dayLbl: 'DÍAS',
+    dateRange: dateRanges.nomina,
     tag: 'Ruta crítica', tagColor: '#FEE2E2', tagTextColor: '#991B1B',
     title: 'Entrega de nómina + configuración',
     desc: 'Cliente entrega nómina al CSM. El CSM valida el formato y hace el traspaso interno a TechOps para la configuración de empleados y reglas de negocio. TechOps configura en segundo plano.',
@@ -779,6 +824,7 @@ const exec = document.getElementById('execName').value.trim();
 
   addBlockToZone('pre', {
     day: '11–22', dayLbl: 'DÍAS',
+    dateRange: dateRanges.demo,
     tag: 'Demo y validación', tagColor: 'var(--green-light)', tagTextColor: 'var(--green)',
     title: 'Demo + validación con el cliente',
     desc: 'CSM presenta la plataforma configurada al cliente. Se validan flujos y experiencia. CSM levanta requerimientos de ajuste interno a TechOps — el cliente no tiene contacto directo con el equipo técnico.',
@@ -789,6 +835,7 @@ const exec = document.getElementById('execName').value.trim();
 
   addBlockToZone('pre', {
     day: String(daysToGL - 1), dayLbl: 'DÍA',
+    dateRange: dateRanges.checklist,
     tag: 'Checklist pre go-live', tagColor: 'var(--orange-light)', tagTextColor: 'var(--orange)',
     title: 'Checklist pre go-live',
     desc: 'Verificación final (día 29): nómina cargada, configuración aprobada, accesos activos, comunicación al equipo lista. Todo OK = se confirma go-live para el día 30.',
@@ -800,6 +847,7 @@ const exec = document.getElementById('execName').value.trim();
   // ── GO-LIVE ──
   addBlockToZone('golive', {
     day: String(daysToGL), dayLbl: 'DÍA',
+    dateRange: dateRanges.golive,
     tag: 'Lanzamiento', tagColor: 'var(--brand)', tagTextColor: '#fff',
     title: 'Lanzamiento oficial de la plataforma',
     desc: 'TechOps activa la plataforma en back-office. CSM comunica el lanzamiento al cliente y queda disponible como primera línea para incidencias de los colaboradores.',
@@ -814,6 +862,7 @@ const exec = document.getElementById('execName').value.trim();
   const t14abs = daysToGL + 14;
   addBlockToZone('post', {
     day: String(t14abs), dayLbl: 'DÍA',
+    dateRange: dateRanges.t14,
     tag: 'T-14', tagColor: 'var(--orange-light)', tagTextColor: 'var(--orange)',
     title: 'T-14 — Primeras dos semanas',
     desc: 'Revisión de adopción temprana: accesos activos, primeras transacciones, dudas del equipo. Objetivo: detectar fricciones y confirmar que el valor prometido está siendo percibido.' + (hc ? ' Meta mínima Apprecio: ' + Math.round(hc * 0.4) + ' colaboradores activos (40% de ' + hc + ').' : ''),
@@ -833,6 +882,7 @@ const exec = document.getElementById('execName').value.trim();
   const t30abs = daysToGL + 30;
   addBlockToZone('post', {
     day: String(t30abs), dayLbl: 'DÍA',
+    dateRange: dateRanges.t30,
     tag: 'T-30', tagColor: 'var(--green-light)', tagTextColor: 'var(--green)',
     title: 'T-30 — Primer mes completo',
     desc: 'Revisión de resultados del primer mes completo post go-live. Cierre del ciclo inicial y apertura de la conversación de expansión o ajuste de contrato.' + (hc ? ' Meta mínima Apprecio: ' + Math.round(hc * 0.65) + ' colaboradores activos (65% de ' + hc + ').' : ''),
@@ -850,6 +900,7 @@ const exec = document.getElementById('execName').value.trim();
   const t90abs = daysToGL + 90;
   addBlockToZone('post', {
     day: String(t90abs), dayLbl: 'DÍA',
+    dateRange: dateRanges.t90,
     tag: 'T-90', tagColor: 'var(--brand-light)', tagTextColor: 'var(--brand-text)',
     title: 'T-90 — Trimestre de éxito',
     desc: 'Presentación ejecutiva de resultados del trimestre. Se revisa el avance hacia las metas del cliente, se propone renovación o expansión y se sientan las bases del año 2. Los datos de este período son los insumos para proyectar el impacto futuro.',
@@ -947,10 +998,37 @@ function buildBlock(cfg) {
   const body = document.createElement('div');
   body.className = 'rm-block-body';
 
-  // Day inline header
+  // Day inline header + calendar date badge
   const dayCol = document.createElement('div');
   dayCol.className = 'rm-block-day';
-  dayCol.innerHTML = `<div class="rm-block-day-num" contenteditable="true" spellcheck="false">${cfg.day}</div><div class="rm-block-day-lbl" contenteditable="true" spellcheck="false">${cfg.dayLbl}</div>`;
+
+  const dayNumEl = document.createElement('div');
+  dayNumEl.className = 'rm-block-day-num';
+  dayNumEl.contentEditable = 'true';
+  dayNumEl.spellcheck = false;
+  dayNumEl.textContent = cfg.day;
+  dayCol.appendChild(dayNumEl);
+
+  const dayLblEl = document.createElement('div');
+  dayLblEl.className = 'rm-block-day-lbl';
+  dayLblEl.contentEditable = 'true';
+  dayLblEl.spellcheck = false;
+  dayLblEl.textContent = cfg.dayLbl;
+  dayCol.appendChild(dayLblEl);
+
+  // Calendar date badge
+  if (cfg.dateRange) {
+    const dr = cfg.dateRange;
+    const sameDay = toISO(dr.start) === toISO(dr.end);
+    const dateText = sameDay
+      ? fmtLong(dr.start)
+      : fmtShort(dr.start) + ' → ' + fmtShort(dr.end);
+    const badge = document.createElement('div');
+    badge.className = 'block-date-badge';
+    badge.innerHTML = `<span class="date-icon">📅</span><span>${dateText}</span>`;
+    dayCol.appendChild(badge);
+  }
+
   body.appendChild(dayCol);
 
   // Tag
