@@ -57,27 +57,10 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,220px));gap:12px;margin-bottom:1.25rem;}
 .field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3);margin-bottom:5px;}
 .field label{display:flex;align-items:center;gap:5px;}
-.tooltip-icon{
-  display:inline-flex;align-items:center;justify-content:center;
-  width:14px;height:14px;border-radius:50%;
-  background:var(--border-m);color:var(--text-3);
-  font-size:9px;font-weight:700;cursor:default;
-  position:relative;flex-shrink:0;
-}
+.tooltip-icon{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:var(--border-m);color:var(--text-3);font-size:9px;font-weight:700;cursor:default;position:relative;flex-shrink:0;}
 .tooltip-icon:hover .tooltip-text{display:block;}
-.tooltip-text{
-  display:none;position:absolute;bottom:calc(100% + 6px);left:50%;
-  transform:translateX(-50%);
-  background:var(--text-1);color:#fff;
-  font-size:10px;font-weight:500;
-  padding:5px 9px;border-radius:6px;
-  white-space:nowrap;z-index:99;
-  pointer-events:none;letter-spacing:0;text-transform:none;
-}
-.tooltip-text::after{
-  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
-  border:4px solid transparent;border-top-color:var(--text-1);
-}
+.tooltip-text{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--text-1);color:#fff;font-size:10px;font-weight:500;padding:5px 9px;border-radius:6px;white-space:nowrap;z-index:99;pointer-events:none;letter-spacing:0;text-transform:none;}
+.tooltip-text::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--text-1);}
 .field input{width:100%;padding:9px 12px;border:1px solid var(--border-m);border-radius:var(--r-md);font-family:var(--font);font-size:13px;color:var(--text-1);background:var(--bg-1);outline:none;transition:border-color .15s;}
 .field input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(250,52,94,.12);}
 .btn-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
@@ -88,36 +71,26 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .btn-danger{background:transparent;color:#c0392b;border:1px solid #f5c6cb;padding:11px 18px;border-radius:var(--r-md);font-family:var(--font);font-size:13px;cursor:pointer;}
 .btn-danger:hover{background:#fff0f0;}
 
-/* ═══ ROADMAP OUTPUT — PDF STYLE ═══ */
+/* ═══ ROADMAP OUTPUT ═══ */
 #output{max-width:860px;margin:0 auto;padding:0 2rem 3rem;display:none;}
-
-/* HEADER */
 .rm-doc-header{border-bottom:2px solid var(--brand);padding-bottom:1.5rem;margin-bottom:2rem;}
 .rm-doc-logo{height:22px;margin-bottom:1rem;}
 .rm-doc-title{font-size:28px;font-weight:800;line-height:1.1;}
 .rm-doc-title span{color:var(--brand);}
 .rm-doc-sub{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text-3);margin-top:4px;}
-
-/* STAT CARDS */
 .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem;page-break-inside:avoid;break-inside:avoid;}
 .stat-card{background:var(--bg-1);border:1px solid var(--border-l);border-radius:var(--r-lg);padding:16px;text-align:center;}
 .stat-num{font-size:36px;font-weight:800;color:var(--brand);line-height:1;}
 .stat-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-top:6px;}
-
-/* LEGEND */
 .rm-legend{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:2rem;padding:12px 16px;background:var(--bg-1);border:1px solid var(--border-l);border-radius:var(--r-md);page-break-inside:avoid;break-inside:avoid;}
 .legend-item{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:var(--text-2);}
 .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
-
-/* PHASE HEADER */
 .phase-hdr{display:flex;align-items:center;gap:0;margin:2rem 0 1.25rem;border-radius:var(--r-md);overflow:hidden;}
 .phase-hdr-label{background:var(--brand);color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:8px 16px;white-space:nowrap;}
 .phase-hdr-label.pre{background:var(--brand-light);color:var(--brand-text);}
 .phase-hdr-label.golive{background:var(--brand);}
 .phase-hdr-meta{background:var(--bg-1);border:1px solid var(--border-l);border-left:none;flex:1;padding:8px 14px;font-size:11px;color:var(--text-3);font-style:italic;}
 .phase-hdr-meta[contenteditable]:focus{outline:none;color:var(--text-1);}
-
-/* TIMELINE BLOCK */
 .rm-block{margin-bottom:14px;background:var(--bg-1);border:1px solid var(--border-l);border-radius:var(--r-lg);overflow:hidden;page-break-inside:avoid;break-inside:avoid;}
 .rm-block-day{display:flex;align-items:baseline;gap:6px;margin-bottom:10px;}
 .rm-block-day-num{font-size:26px;font-weight:800;color:var(--brand);line-height:1;outline:none;}
@@ -126,19 +99,13 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .rm-block-tag{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:2px 10px;border-radius:10px;margin-bottom:8px;}
 .rm-block-title{font-size:15px;font-weight:700;margin-bottom:4px;outline:none;}
 .rm-block-desc{font-size:12px;color:var(--text-2);line-height:1.6;outline:none;margin-bottom:12px;}
-
-/* ALERT BOX inside block */
 .rm-alert{background:var(--brand-light);border:1px solid #f8b4c4;border-radius:var(--r-md);padding:8px 12px;font-size:12px;color:var(--brand-text);margin-bottom:10px;outline:none;}
-
-/* ROLES PILLS */
 .roles-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
 .role-pill{font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;border:1px solid var(--border-m);color:var(--text-2);background:var(--bg-1);display:inline-flex;align-items:center;gap:5px;cursor:default;}
 .role-pill .role-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .role-pill-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:12px;margin-left:2px;padding:0;line-height:1;}
 .role-pill-del:hover{color:var(--brand);}
 .btn-add-role{font-size:10px;font-weight:700;color:var(--brand);background:var(--brand-light);border:none;padding:3px 10px;border-radius:10px;cursor:pointer;}
-
-/* ACCIONES PILLS */
 .acciones-area{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
 .accion-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:4px 10px;border-radius:10px;border:1px solid var(--border-l);color:var(--text-2);background:var(--bg-2);}
 .accion-pill-text{outline:none;min-width:30px;}
@@ -148,8 +115,6 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .accion-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:13px;padding:0;line-height:1;}
 .accion-del:hover{color:var(--brand);}
 .btn-add-accion{font-size:10px;font-weight:700;color:var(--brand);background:var(--brand-light);border:none;padding:4px 10px;border-radius:10px;cursor:pointer;}
-
-/* REPORTES inside block */
 .rm-reportes{margin-top:10px;border-top:1px solid var(--border-l);padding-top:10px;}
 .rm-reportes-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:8px;}
 .reporte-row{display:flex;align-items:flex-start;gap:10px;padding:7px 10px;background:var(--bg-2);border-radius:var(--r-md);margin-bottom:5px;border-left:3px solid var(--brand-light);}
@@ -160,8 +125,6 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .reporte-del:hover{color:var(--brand);}
 .btn-add-reporte{font-size:10px;font-weight:700;color:var(--brand);background:transparent;border:1px dashed var(--border-m);padding:4px 12px;border-radius:var(--r-md);cursor:pointer;width:100%;text-align:center;margin-top:4px;}
 .btn-add-reporte:hover{border-color:var(--brand);background:var(--brand-light);}
-
-/* BLOCK CONTROLS */
 .rm-block-controls{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-l);}
 .btn-block-add-section{font-size:10px;font-weight:700;color:var(--text-3);background:transparent;border:1px dashed var(--border-m);padding:3px 10px;border-radius:var(--r-md);cursor:pointer;}
 .btn-block-add-section:hover{border-color:var(--brand);color:var(--brand);}
@@ -170,12 +133,8 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .btn-block-move{font-size:13px;background:transparent;border:1px solid var(--border-m);padding:3px 8px;border-radius:var(--r-md);cursor:pointer;color:var(--text-2);line-height:1;}
 .btn-block-move:hover{background:var(--bg-2);border-color:var(--brand);color:var(--brand);}
 .btn-block-move:disabled{opacity:.3;cursor:default;}
-
-/* ADD BLOCK */
 .btn-add-block{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:transparent;border:2px dashed var(--border-m);border-radius:var(--r-lg);cursor:pointer;font-family:var(--font);font-size:12px;font-weight:700;color:var(--text-3);margin-bottom:12px;transition:all .15s;}
 .btn-add-block:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-light);}
-
-/* OBJETIVO DE FASE */
 .objetivo-fase{background:linear-gradient(135deg,var(--brand-light) 0%,#fff 100%);border:1px solid rgba(250,52,94,.2);border-radius:var(--r-lg);padding:14px 16px;margin-bottom:14px;page-break-inside:avoid;break-inside:avoid;display:block;}
 .objetivo-fase-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--brand-text);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
 .objetivo-fase-title::before{content:'';display:inline-block;width:16px;height:2px;background:var(--brand);border-radius:2px;}
@@ -188,8 +147,6 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .objetivo-item-val.empty:empty:before{content:attr(data-placeholder);color:var(--text-3);font-style:italic;pointer-events:none;}
 .objetivo-item-val.meta{color:var(--text-1);}
 .objetivo-item-val.meta.empty:empty:before{color:var(--brand-text);font-style:italic;}
-
-/* DATE BADGE */
 .block-dates{display:flex;align-items:center;gap:6px;margin-bottom:10px;}
 .block-date-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:10px;background:var(--bg-2);border:1px solid var(--border-m);color:var(--text-2);}
 .block-date-badge .date-icon{font-size:12px;}
@@ -212,29 +169,51 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .drawer-body{flex:1;overflow-y:auto;padding:16px;}
 .dr-section{margin-bottom:18px;}
 .dr-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border-l);}
-.dr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.dr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
 .dr-card{border:1.5px solid var(--border-l);border-radius:var(--r-md);padding:10px 12px;cursor:pointer;position:relative;background:var(--bg-1);transition:all .12s;}
 .dr-card:hover{border-color:#bbb;box-shadow:0 2px 6px rgba(0,0,0,.07);}
 .dr-card.sel-v{border-color:var(--brand);background:var(--brand-light);}
 .dr-card.sel-e{border-color:var(--blue);background:var(--blue-light);}
-.dr-pts{position:absolute;top:8px;right:8px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:var(--bg-2);color:var(--text-3);}
-.dr-card.sel-v .dr-pts{background:var(--brand-light);color:var(--brand-dark);}
-.dr-card.sel-e .dr-pts{background:var(--blue-light);color:var(--blue);}
-.dr-check{width:16px;height:16px;border-radius:3px;border:2px solid var(--border-m);display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;margin-bottom:6px;transition:all .12s;}
+.dr-card-actions{position:absolute;top:6px;right:6px;display:flex;gap:4px;opacity:0;transition:opacity .15s;}
+.dr-card:hover .dr-card-actions{opacity:1;}
+.dr-card.sel-v .dr-card-actions,.dr-card.sel-e .dr-card-actions{opacity:1;}
+.dr-card-btn{width:22px;height:22px;border-radius:4px;border:none;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;}
+.dr-card-btn.edit{background:rgba(255,255,255,.85);color:var(--text-2);}
+.dr-card-btn.edit:hover{background:#fff;color:var(--blue);}
+.dr-card-btn.del{background:rgba(255,255,255,.85);color:var(--text-3);}
+.dr-card-btn.del:hover{background:#fff0f0;color:#c0392b;}
+.dr-check{width:16px;height:16px;border-radius:3px;border:2px solid var(--border-m);display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;margin-bottom:6px;transition:all .12s;flex-shrink:0;}
 .dr-card.sel-v .dr-check{background:var(--brand);border-color:var(--brand);}
 .dr-card.sel-e .dr-check{background:var(--blue);border-color:var(--blue);}
 .dr-title{font-size:11px;font-weight:600;padding-right:52px;line-height:1.3;margin-bottom:3px;}
 .dr-desc{font-size:10px;color:var(--text-3);line-height:1.4;}
+
+/* New rubric form inside drawer */
+.dr-new-form{background:var(--bg-2);border:1.5px dashed var(--border-m);border-radius:var(--r-md);padding:12px;margin-top:4px;}
+.dr-new-form.hidden{display:none;}
+.dr-new-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-bottom:4px;}
+.dr-new-input{width:100%;padding:7px 10px;border:1px solid var(--border-m);border-radius:var(--r-md);font-family:var(--font);font-size:12px;color:var(--text-1);background:var(--bg-1);outline:none;margin-bottom:8px;transition:border-color .15s;}
+.dr-new-input:focus{border-color:var(--brand);}
+.dr-new-textarea{width:100%;padding:7px 10px;border:1px solid var(--border-m);border-radius:var(--r-md);font-family:var(--font);font-size:12px;color:var(--text-1);background:var(--bg-1);outline:none;margin-bottom:8px;resize:vertical;min-height:56px;transition:border-color .15s;}
+.dr-new-textarea:focus{border-color:var(--brand);}
+.dr-new-actions{display:flex;gap:8px;}
+.dr-new-save{font-family:var(--font);font-size:11px;font-weight:700;padding:6px 14px;background:var(--brand);color:#fff;border:none;border-radius:var(--r-md);cursor:pointer;}
+.dr-new-save:hover{background:var(--brand-dark);}
+.dr-new-cancel{font-family:var(--font);font-size:11px;font-weight:700;padding:6px 14px;background:transparent;color:var(--text-2);border:1px solid var(--border-m);border-radius:var(--r-md);cursor:pointer;}
+.btn-new-rubric{width:100%;padding:9px;background:transparent;border:1.5px dashed var(--border-m);border-radius:var(--r-md);cursor:pointer;font-family:var(--font);font-size:11px;font-weight:700;color:var(--text-3);transition:all .15s;text-align:center;}
+.btn-new-rubric:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-light);}
+
 .drawer-footer{border-top:1px solid var(--border-l);padding:14px 16px;flex-shrink:0;background:var(--bg-1);}
 .drawer-summary{font-size:11px;color:var(--text-2);margin-bottom:10px;}
 .drawer-summary strong{color:var(--brand);}
 .btn-apply-rubrics{width:100%;padding:12px;background:var(--brand);color:#fff;border:none;border-radius:var(--r-md);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;}
 .btn-apply-rubrics:hover{background:var(--brand-dark);}
 .btn-apply-rubrics:disabled{background:var(--border-m);cursor:default;}
+
+/* Rubrica pills (no points) */
 .rubrica-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 10px;border-radius:10px;border:1px solid var(--border-l);background:var(--bg-2);color:var(--text-2);}
 .rubrica-pill.tipo-v{border-color:#f8b4c4;background:var(--brand-light);color:var(--brand-text);}
 .rubrica-pill.tipo-e{border-color:#bfdbfe;background:var(--blue-light);color:var(--blue);}
-.rubrica-pts{font-size:10px;font-weight:700;opacity:.7;}
 .rubrica-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:12px;padding:0;}
 .rubrica-del:hover{color:var(--brand);}
 .rubricas-section{margin-top:10px;padding-top:10px;border-top:1px solid var(--border-l);}
@@ -264,55 +243,18 @@ body.present-mode .reporte-del{display:none!important;}
 body.present-mode [contenteditable]{outline:none!important;pointer-events:none;}
 body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opacity:1;}
 
-/* ═══ PRINT / PDF STYLES ═══ */
+/* PRINT */
 @media print {
-  /* Hide everything except the output */
-  #topbar,
-  .step-wrap,
-  .rm-block-controls,
-  .btn-add-block,
-  .btn-add-role,
-  .btn-add-accion,
-  .btn-add-reporte,
-  .accion-check,
-  .accion-del,
-  .role-pill-del,
-  .reporte-del,
-  .no-print,
-  .rubric-drawer-overlay,
-  .rubric-drawer,
-  .btn-open-drawer {
-    display: none !important;
-  }
-
-  /* Reset page layout */
-  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  body { background: #fff !important; margin: 0; padding: 0; }
-
-  /* Output fills the page */
-  #output {
-    display: block !important;
-    max-width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  /* Page margins */
-  @page {
-    margin: 14mm 14mm 16mm 14mm;
-    size: A4 portrait;
-  }
-
-  /* Prevent orphaned blocks */
-  .rm-block        { page-break-inside: avoid; break-inside: avoid; margin-bottom: 10px; }
-  .stat-row        { page-break-inside: avoid; break-inside: avoid; }
-  .objetivo-fase   { page-break-inside: avoid; break-inside: avoid; }
-  .rm-legend       { page-break-inside: avoid; break-inside: avoid; }
-  .phase-hdr       { page-break-after: avoid; break-after: avoid; }
-
-  /* Keep text editable appearance clean */
-  [contenteditable] { outline: none !important; }
-  .accion-pill.done .accion-pill-text { text-decoration: none; opacity: 1; }
+  #topbar,.step-wrap,.rm-block-controls,.btn-add-block,.btn-add-role,.btn-add-accion,.btn-add-reporte,.accion-check,.accion-del,.role-pill-del,.reporte-del,.no-print,.rubric-drawer-overlay,.rubric-drawer,.btn-open-drawer{display:none!important;}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+  body{background:#fff!important;margin:0;padding:0;}
+  #output{display:block!important;max-width:100%!important;padding:0!important;margin:0!important;}
+  @page{margin:14mm 14mm 16mm 14mm;size:A4 portrait;}
+  .rm-block{page-break-inside:avoid;break-inside:avoid;margin-bottom:10px;}
+  .stat-row,.objetivo-fase,.rm-legend{page-break-inside:avoid;break-inside:avoid;}
+  .phase-hdr{page-break-after:avoid;break-after:avoid;}
+  [contenteditable]{outline:none!important;}
+  .accion-pill.done .accion-pill-text{text-decoration:none;opacity:1;}
 }
 </style>
 </head>
@@ -327,7 +269,6 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
   </div>
 </div>
 
-<!-- STEP 1 -->
 <div class="step-wrap">
   <div id="step-upload">
     <div class="step-eyebrow">Paso 1 · Presentación del cliente</div>
@@ -359,7 +300,6 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
     </div>
   </div>
 
-  <!-- STEP 2 -->
   <div id="step-config">
     <div class="step-eyebrow">Paso 2 · Datos base</div>
     <div class="step-title">Configura el plan</div>
@@ -380,7 +320,6 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
   </div>
 </div>
 
-<!-- OUTPUT -->
 <div id="output">
   <div class="rm-doc-header" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
     <div>
@@ -433,15 +372,13 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
   </div>
 </div>
 
-<div id="pdf-output" style="display:none;"></div>
-
 <!-- RUBRIC DRAWER -->
 <div class="rubric-drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 <div class="rubric-drawer" id="rubricDrawer">
   <div class="drawer-header">
     <div class="drawer-header-text">
       <div class="drawer-title" id="drawerTitle">Rúbricas T14</div>
-      <div class="drawer-sub">Selecciona las rúbricas para esta fase</div>
+      <div class="drawer-sub">Selecciona · edita · agrega las rúbricas de esta fase</div>
     </div>
     <button class="drawer-close" onclick="closeDrawer()">×</button>
   </div>
@@ -461,14 +398,9 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
 // ROLE COLORS
 // ═══════════════════════════════════════════════════════════
 const ROLE_COLORS = {
-  'CSM': 'var(--brand)',
-  'TechOps': 'var(--blue)',
-  'Cliente': 'var(--green)',
-  'KAM': 'var(--purple)',
-  'Admins': 'var(--orange)',
-  'C-Level': 'var(--brand-text)',
-  'Sponsor': 'var(--text-2)',
-  'Todos': 'var(--text-3)'
+  'CSM':'var(--brand)','TechOps':'var(--blue)','Cliente':'var(--green)',
+  'KAM':'var(--purple)','Admins':'var(--orange)','C-Level':'var(--brand-text)',
+  'Sponsor':'var(--text-2)','Todos':'var(--text-3)'
 };
 function roleColor(r) {
   for (const [k,v] of Object.entries(ROLE_COLORS)) {
@@ -482,125 +414,78 @@ function roleColor(r) {
 // ═══════════════════════════════════════════════════════════
 const PLAYBOOKS = {
   fuerza_de_venta: {
-    label: 'Fuerza de venta',
-    t14: {
-      kpis_text: '40% fuerza de venta activa · ≥70% cert. "Venta de Valor"',
-      acciones: ['Insignias Activador', 'Certificación Venta de Valor', 'Bono sprint cierre (últimos 3 días)'],
-      roles: ['CSM','Cliente','Admins'],
-      reportes: [
-        { nombre: 'Reporte de activación D+7', meta: 'PDF ejecutivo', dest: 'Admins operativos' },
-        { nombre: 'Revisión T-14 · % adopción y certificación', meta: 'Reunión 60 min + resumen', dest: 'Admins + jefe comercial' }
-      ]
-    },
-    t30: {
-      kpis_text: '60-70% dotación activa · >2 challenges por vendedor · transaccionalidad ↑',
-      acciones: ['Bono de Salto de tramo', 'Reto de Calidad (0% anulaciones)', 'Encuesta D+30 premiada'],
-      roles: ['CSM','KAM','Admins','Sponsor'],
-      reportes: [
-        { nombre: 'Quincenal de tramos', meta: 'PDF 5 slides', dest: 'Jefe comercial' },
-        { nombre: 'Revisión T-30', meta: 'Reunión 60 min + reporte PDF', dest: 'Admins + sponsor' }
-      ]
-    },
-    t90: {
-      kpis_text: 'Rotación tramos Oro/Plata · actividad sostenida 3m+ · ROI documentado',
-      acciones: ['Gran Pozo Oro trimestral', 'Encuesta de clima D+90', 'Premios trimestrales formales', 'Propuesta de renovación'],
-      roles: ['CSM','KAM','C-Level','Sponsor'],
-      reportes: [
-        { nombre: 'Business Review trimestral D+90', meta: 'Sesión 90 min + deck T-90', dest: 'C-Level + sponsor' },
-        { nombre: 'ROI del programa', meta: 'Reporte ejecutivo PDF', dest: 'C-Level' },
-        { nombre: 'Benchmark de industria', meta: 'Comparativa vs. promedio segmento', dest: 'C-Level' }
-      ]
-    }
+    label:'Fuerza de venta',
+    t14:{kpis_text:'40% fuerza de venta activa · ≥70% cert. "Venta de Valor"',acciones:['Insignias Activador','Certificación Venta de Valor','Bono sprint cierre (últimos 3 días)'],roles:['CSM','Cliente','Admins'],reportes:[{nombre:'Reporte de activación D+7',meta:'PDF ejecutivo',dest:'Admins operativos'},{nombre:'Revisión T-14 · % adopción y certificación',meta:'Reunión 60 min + resumen',dest:'Admins + jefe comercial'}]},
+    t30:{kpis_text:'60-70% dotación activa · >2 challenges por vendedor · transaccionalidad ↑',acciones:['Bono de Salto de tramo','Reto de Calidad (0% anulaciones)','Encuesta D+30 premiada'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Quincenal de tramos',meta:'PDF 5 slides',dest:'Jefe comercial'},{nombre:'Revisión T-30',meta:'Reunión 60 min + reporte PDF',dest:'Admins + sponsor'}]},
+    t90:{kpis_text:'Rotación tramos Oro/Plata · actividad sostenida 3m+ · ROI documentado',acciones:['Gran Pozo Oro trimestral','Encuesta de clima D+90','Premios trimestrales formales','Propuesta de renovación'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review trimestral D+90',meta:'Sesión 90 min + deck T-90',dest:'C-Level + sponsor'},{nombre:'ROI del programa',meta:'Reporte ejecutivo PDF',dest:'C-Level'},{nombre:'Benchmark de industria',meta:'Comparativa vs. promedio segmento',dest:'C-Level'}]}
   },
   rrhh: {
-    label: 'RRHH / Personas',
-    t14: {
-      kpis_text: '40% colaboradores activos · ≥70% cert. "Cultura y Beneficios"',
-      acciones: ['Insignias de Bienvenida', 'Certificación cultura organizacional', 'Encuesta pulso inicial'],
-      roles: ['CSM','Cliente','Admins'],
-      reportes: [
-        { nombre: 'Reporte de activación D+7', meta: 'PDF ejecutivo', dest: 'Admins RRHH' },
-        { nombre: 'Revisión T-14 · adopción por área', meta: 'Reunión 60 min', dest: 'Gerente RRHH + líderes' }
-      ]
-    },
-    t30: {
-      kpis_text: '60-70% dotación activa · rotación ↓ vs mes anterior · >2 usos de beneficios/persona',
-      acciones: ['Bono de permanencia por tramo', 'Reto de clima + acción', 'Reconocimiento público D+30'],
-      roles: ['CSM','KAM','Admins','Sponsor'],
-      reportes: [
-        { nombre: 'Reporte de retención quincenal', meta: 'PDF 5 slides', dest: 'Gerente RRHH' },
-        { nombre: 'Análisis de clima D+30', meta: 'Reunión 60 min + PDF', dest: 'Directivos' }
-      ]
-    },
-    t90: {
-      kpis_text: 'Reducción rotación vs línea base · NPS clima ↑ · ROI en ahorro de reemplazo',
-      acciones: ['Premio trimestral de permanencia', 'Encuesta clima D+90', 'Análisis de cohortes', 'Propuesta renovación con ROI'],
-      roles: ['CSM','KAM','C-Level','Sponsor'],
-      reportes: [
-        { nombre: 'Business Review RRHH D+90', meta: 'Sesión 90 min + deck', dest: 'Directivos + RRHH' },
-        { nombre: 'ROI (costo rotación evitado)', meta: 'Reporte ejecutivo PDF', dest: 'Gerente General' }
-      ]
-    }
+    label:'RRHH / Personas',
+    t14:{kpis_text:'40% colaboradores activos · ≥70% cert. "Cultura y Beneficios"',acciones:['Insignias de Bienvenida','Certificación cultura organizacional','Encuesta pulso inicial'],roles:['CSM','Cliente','Admins'],reportes:[{nombre:'Reporte de activación D+7',meta:'PDF ejecutivo',dest:'Admins RRHH'},{nombre:'Revisión T-14 · adopción por área',meta:'Reunión 60 min',dest:'Gerente RRHH + líderes'}]},
+    t30:{kpis_text:'60-70% dotación activa · rotación ↓ vs mes anterior · >2 usos de beneficios/persona',acciones:['Bono de permanencia por tramo','Reto de clima + acción','Reconocimiento público D+30'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Reporte de retención quincenal',meta:'PDF 5 slides',dest:'Gerente RRHH'},{nombre:'Análisis de clima D+30',meta:'Reunión 60 min + PDF',dest:'Directivos'}]},
+    t90:{kpis_text:'Reducción rotación vs línea base · NPS clima ↑ · ROI en ahorro de reemplazo',acciones:['Premio trimestral de permanencia','Encuesta clima D+90','Análisis de cohortes','Propuesta renovación con ROI'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review RRHH D+90',meta:'Sesión 90 min + deck',dest:'Directivos + RRHH'},{nombre:'ROI (costo rotación evitado)',meta:'Reporte ejecutivo PDF',dest:'Gerente General'}]}
   },
   marketing: {
-    label: 'Marketing / Comercial',
-    t14: {
-      kpis_text: '40% equipo activo · ≥70% cert. "Metodología de campañas"',
-      acciones: ['Insignias Activador de Campaña', 'Certificación metodología', 'Sprint de ideas (2 semanas)'],
-      roles: ['CSM','Cliente','Admins'],
-      reportes: [
-        { nombre: 'Reporte activación campaña D+7', meta: 'PDF ejecutivo', dest: 'Líder marketing' },
-        { nombre: 'Revisión T-14 · primeras conversiones', meta: 'Reunión 60 min', dest: 'Gerente marketing' }
-      ]
-    },
-    t30: {
-      kpis_text: '60-70% equipo activo · conversión ↑ vs baseline · >2 campañas/persona',
-      acciones: ['Bono por conversión de tramo', 'Reto de performance (mejor campaña)', 'Encuesta D+30'],
-      roles: ['CSM','KAM','Admins','Sponsor'],
-      reportes: [
-        { nombre: 'Reporte quincenal de campañas', meta: 'PDF 5 slides', dest: 'Gerente marketing' },
-        { nombre: 'Análisis de conversión T-30', meta: 'Reunión 60 min + PDF', dest: 'Directivos' }
-      ]
-    },
-    t90: {
-      kpis_text: 'Conversión ↑ vs baseline · churn clientes ↓ · revenue atribuible documentado',
-      acciones: ['Premio trimestral performer', 'Análisis cohortes conversión', 'Encuesta satisfacción D+90', 'Propuesta renovación ROI'],
-      roles: ['CSM','KAM','C-Level','Sponsor'],
-      reportes: [
-        { nombre: 'Business Review Marketing D+90', meta: 'Sesión 90 min + deck', dest: 'C-Level' },
-        { nombre: 'ROI (revenue atribuido)', meta: 'Reporte ejecutivo PDF', dest: 'CEO / CFO' }
-      ]
-    }
+    label:'Marketing / Comercial',
+    t14:{kpis_text:'40% equipo activo · ≥70% cert. "Metodología de campañas"',acciones:['Insignias Activador de Campaña','Certificación metodología','Sprint de ideas (2 semanas)'],roles:['CSM','Cliente','Admins'],reportes:[{nombre:'Reporte activación campaña D+7',meta:'PDF ejecutivo',dest:'Líder marketing'},{nombre:'Revisión T-14 · primeras conversiones',meta:'Reunión 60 min',dest:'Gerente marketing'}]},
+    t30:{kpis_text:'60-70% equipo activo · conversión ↑ vs baseline · >2 campañas/persona',acciones:['Bono por conversión de tramo','Reto de performance (mejor campaña)','Encuesta D+30'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Reporte quincenal de campañas',meta:'PDF 5 slides',dest:'Gerente marketing'},{nombre:'Análisis de conversión T-30',meta:'Reunión 60 min + PDF',dest:'Directivos'}]},
+    t90:{kpis_text:'Conversión ↑ vs baseline · churn clientes ↓ · revenue atribuible documentado',acciones:['Premio trimestral performer','Análisis cohortes conversión','Encuesta satisfacción D+90','Propuesta renovación ROI'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review Marketing D+90',meta:'Sesión 90 min + deck',dest:'C-Level'},{nombre:'ROI (revenue atribuido)',meta:'Reporte ejecutivo PDF',dest:'CEO / CFO'}]}
   },
   operaciones: {
-    label: 'Operaciones',
-    t14: {
-      kpis_text: '40% operadores activos · ≥70% cert. "Estándares de calidad"',
-      acciones: ['Insignias Calidad y Proceso', 'Certificación estándares operacionales', 'Sprint cumplimiento'],
-      roles: ['CSM','TechOps','Cliente','Admins'],
-      reportes: [
-        { nombre: 'Reporte activación D+7 por área', meta: 'PDF ejecutivo', dest: 'Supervisores / Jefe ops' },
-        { nombre: 'Revisión T-14 · cumplimiento y calidad', meta: 'Reunión 60 min', dest: 'Gerente operaciones' }
-      ]
-    },
-    t30: {
-      kpis_text: '60-70% dotación activa · cumplimiento ↑ vs baseline · tasa error ↓',
-      acciones: ['Bono cumplimiento por tramo', 'Reto de calidad (0% reprocesos)', 'Encuesta D+30 procesos'],
-      roles: ['CSM','KAM','Admins','Sponsor'],
-      reportes: [
-        { nombre: 'Reporte quincenal cumplimiento', meta: 'PDF 5 slides', dest: 'Jefe operaciones' },
-        { nombre: 'Análisis de calidad T-30', meta: 'Reunión 60 min + PDF', dest: 'Directivos' }
-      ]
-    },
-    t90: {
-      kpis_text: 'Tasa error ↓ vs baseline · cumplimiento sostenido · ROI en ahorro reprocesos',
-      acciones: ['Premio trimestral mejor equipo', 'Análisis cohortes calidad', 'Encuesta clima operacional D+90', 'Propuesta renovación ROI'],
-      roles: ['CSM','KAM','C-Level','Sponsor'],
-      reportes: [
-        { nombre: 'Business Review Operaciones D+90', meta: 'Sesión 90 min + deck', dest: 'Directivos' },
-        { nombre: 'ROI (ahorro en reprocesos)', meta: 'Reporte ejecutivo PDF', dest: 'Gerente General / CFO' }
-      ]
-    }
+    label:'Operaciones',
+    t14:{kpis_text:'40% operadores activos · ≥70% cert. "Estándares de calidad"',acciones:['Insignias Calidad y Proceso','Certificación estándares operacionales','Sprint cumplimiento'],roles:['CSM','TechOps','Cliente','Admins'],reportes:[{nombre:'Reporte activación D+7 por área',meta:'PDF ejecutivo',dest:'Supervisores / Jefe ops'},{nombre:'Revisión T-14 · cumplimiento y calidad',meta:'Reunión 60 min',dest:'Gerente operaciones'}]},
+    t30:{kpis_text:'60-70% dotación activa · cumplimiento ↑ vs baseline · tasa error ↓',acciones:['Bono cumplimiento por tramo','Reto de calidad (0% reprocesos)','Encuesta D+30 procesos'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Reporte quincenal cumplimiento',meta:'PDF 5 slides',dest:'Jefe operaciones'},{nombre:'Análisis de calidad T-30',meta:'Reunión 60 min + PDF',dest:'Directivos'}]},
+    t90:{kpis_text:'Tasa error ↓ vs baseline · cumplimiento sostenido · ROI en ahorro reprocesos',acciones:['Premio trimestral mejor equipo','Análisis cohortes calidad','Encuesta clima operacional D+90','Propuesta renovación ROI'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review Operaciones D+90',meta:'Sesión 90 min + deck',dest:'Directivos'},{nombre:'ROI (ahorro en reprocesos)',meta:'Reporte ejecutivo PDF',dest:'Gerente General / CFO'}]}
+  }
+};
+
+// ═══════════════════════════════════════════════════════════
+// RUBRICS — sin puntos, editable en runtime
+// ═══════════════════════════════════════════════════════════
+const RUBRICS = {
+  t14: {
+    venta: [
+      {title:'Acelerador semana 1',desc:'Bono por 4 acciones clave en la primera semana de Go-Live.'},
+      {title:'Reto Primera Acción + Certificación',desc:'Completar la primera acción con certificación 100%.'},
+      {title:'Calidad de Onboarding',desc:'Meta de 0% errores en el proceso inicial al cierre del mes.'},
+      {title:'Sprint Cierre T14',desc:'Bono extra por completar metas en los últimos 3 días del período.'}
+    ],
+    engage: [
+      {title:'Entrenamiento Bienvenida',desc:'Completar el módulo de onboarding de Apprecio (5–7 pasos).'},
+      {title:'Certificación Producto',desc:'Completar el entrenamiento con nota ≥70%.'},
+      {title:'Perfil Completo',desc:'Completar foto y datos básicos del perfil.'},
+      {title:'Encuesta de Diagnóstico Inicial',desc:'Responder encuesta de conocimiento y contexto inicial.'}
+    ]
+  },
+  t30: {
+    venta: [
+      {title:'Bono Salto de Cuartil',desc:'Incentivo por subir de cuartil respecto al período anterior.'},
+      {title:'Bono Rescate',desc:'Incentivo para colaboradores que reactiven acciones caídas.'},
+      {title:'Misión Horario Activo',desc:'Extra por acciones completadas en horario punta.'},
+      {title:'Sorteo Q1/Q2',desc:'Sorteo entre colaboradores Q1/Q2 sin errores.'}
+    ],
+    engage: [
+      {title:'Check-in Semanal (×4)',desc:'Ingresar al portal cada semana. Máx 4 veces al mes.'},
+      {title:'Trivia Mensual',desc:'Responder la trivia de conocimiento del mes.'},
+      {title:'Compartir Tip',desc:'Publicar un tip útil en la comunidad.'},
+      {title:'Ver Progreso de Meta',desc:'Ingresar y revisar el scorecard mensual propio.'},
+      {title:'Encuesta Comprensión de Metas',desc:'¿Entiendes tu meta? Disparada al ver metas por primera vez.'}
+    ]
+  },
+  t90: {
+    venta: [
+      {title:'Constancia de Nivel',desc:'Mantener Q1 o Q2 durante 3 meses consecutivos.'},
+      {title:'Sprint Q4',desc:'Bono por acciones en semana específica del período.'},
+      {title:'Sorteo Primera Acción Mes',desc:'Primera acción de cada mes = ticket para sorteo.'},
+      {title:'Hito Trimestral',desc:'Completar el objetivo trimestral de la fase.'}
+    ],
+    engage: [
+      {title:'Gran Pozo Oro',desc:'Reparto proporcional entre todos los colaboradores Q1 al cierre.'},
+      {title:'Encuesta de Terreno',desc:'Feedback real sobre barreras y logros. Trimestral.'},
+      {title:'Encuesta Clima Laboral',desc:'Mide sentido de pertenencia y riesgo de rotación.'},
+      {title:'Nominar Partner del Trimestre',desc:'Reconocer a un compañero por apoyo destacado.'},
+      {title:'Feedback Cierre de Período',desc:'Encuesta de evaluación del programa al cierre.'}
+    ]
   }
 };
 
@@ -619,8 +504,7 @@ function fileSelected(file) {
   _selectedFile = file;
   document.getElementById('previewName').textContent = file.name;
   document.getElementById('previewSize').textContent = (file.size / 1024).toFixed(0) + ' KB';
-  const preview = document.getElementById('filePreview');
-  preview.style.display = 'flex';
+  document.getElementById('filePreview').style.display = 'flex';
   document.getElementById('aiStatus').style.display = 'none';
   document.getElementById('aiLog').innerHTML = '';
   document.getElementById('detectedStrip').classList.remove('show');
@@ -643,9 +527,7 @@ async function analyzeFile() {
     const text = await extractPptxText(_selectedFile);
     logAi('Texto extraído · Enviando a n8n...');
     await analyzeWithN8n(text);
-  } catch(err) {
-    showAiStatus('Error: ' + err.message, true);
-  }
+  } catch(err) { showAiStatus('Error: ' + err.message, true); }
 }
 
 async function extractPptxText(file) {
@@ -664,21 +546,13 @@ async function extractPptxText(file) {
 
 async function analyzeWithN8n(pptText) {
   const N8N_WEBHOOK = 'https://n8n.openip.cl/webhook/apprecio-ppt-analyze';
-  const res = await fetch(N8N_WEBHOOK, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ pptText: pptText.substring(0, 3000) })
-  });
+  const res = await fetch(N8N_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ pptText: pptText.substring(0,3000) }) });
   if (!res.ok) throw new Error('Error ' + res.status + ' — verifica que el workflow esté activo en n8n.');
   const text = await res.text();
   if (!text || text.trim() === '') throw new Error('n8n devolvió respuesta vacía.');
   let parsed;
-  try { parsed = JSON.parse(text); }
-  catch(e) { throw new Error('Respuesta inválida de n8n: ' + text.substring(0, 100)); }
-  if (!parsed.equipo) {
-    parsed.equipo = 'fuerza_de_venta';
-    logAi('⚠ No se detectó equipo — usando playbook por defecto (fuerza de venta).');
-  }
+  try { parsed = JSON.parse(text); } catch(e) { throw new Error('Respuesta inválida de n8n: ' + text.substring(0,100)); }
+  if (!parsed.equipo) { parsed.equipo = 'fuerza_de_venta'; logAi('⚠ No se detectó equipo — usando playbook por defecto.'); }
   applyPlaybook(parsed);
 }
 
@@ -688,20 +562,12 @@ function applyPlaybook(parsed) {
   document.getElementById('detectedLabel').textContent = 'Equipo detectado: ' + playbook.label;
   document.getElementById('detectedStrip').classList.add('show');
   logAi('✅ Playbook "' + playbook.label + '" cargado.');
-  if (parsed.cliente && !document.getElementById('clientName').value) {
-    document.getElementById('clientName').value = parsed.cliente;
-  }
-  window._detectedPlaybook = {
-    key: equipoKey,
-    dolores: parsed.dolores || [],
-    t14: parsed.t14 || { dolor: null, kpis: [], meta_cliente: null },
-    t30: parsed.t30 || { dolor: null, kpis: [], meta_cliente: null },
-    t90: parsed.t90 || { dolor: null, kpis: [], meta_cliente: null }
-  };
+  if (parsed.cliente && !document.getElementById('clientName').value) document.getElementById('clientName').value = parsed.cliente;
+  window._detectedPlaybook = { key: equipoKey, dolores: parsed.dolores||[], t14: parsed.t14||{}, t30: parsed.t30||{}, t90: parsed.t90||{} };
   hideAiSpinner();
 }
 
-function showAiStatus(msg, isError = false) {
+function showAiStatus(msg, isError=false) {
   const el = document.getElementById('aiStatus'); el.style.display = 'block';
   if (isError) el.style.background = '#fff0f0';
   document.getElementById('aiStatusLabel').textContent = msg;
@@ -715,8 +581,8 @@ function hideAiSpinner() { document.getElementById('aiSpinner').style.display = 
 function addDays(d, n) { var r = new Date(d); r.setDate(r.getDate() + n); return r; }
 function toISO(d) { return d.toISOString().split('T')[0]; }
 function parseDate(s) { return s ? new Date(s + 'T12:00:00') : null; }
-function fmtLong(d) { return d.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' }); }
-function fmtShort(d) { return d.toLocaleDateString('es-CL', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function fmtLong(d) { return d.toLocaleDateString('es-CL', {day:'numeric',month:'long',year:'numeric'}); }
+function fmtShort(d) { return d.toLocaleDateString('es-CL', {day:'numeric',month:'short',year:'numeric'}); }
 function diffDays(a, b) { return Math.round((b - a) / 86400000); }
 
 // ═══════════════════════════════════════════════════════════
@@ -739,16 +605,11 @@ function generateRoadmap() {
   const gs = document.getElementById('dateGoLive').value;
   const hc = parseInt(document.getElementById('headcount').value) || 0;
   if (!cN || !ks || !gs) { alert('Completa al menos: cliente, fecha kick-off y fecha Go-Live.'); return; }
-
   const kickoff = parseDate(ks), goLive = parseDate(gs);
   const minGoLive = addDays(kickoff, 30);
-  if (goLive < minGoLive) {
-    alert('La fecha de Go-Live debe ser al menos 30 días después del kick-off.\nMínimo: ' + fmtLong(minGoLive));
-    return;
-  }
-
-  const d14 = addDays(goLive, 14), d30 = addDays(goLive, 30), d90 = addDays(goLive, 90);
+  if (goLive < minGoLive) { alert('La fecha de Go-Live debe ser al menos 30 días después del kick-off.\nMínimo: ' + fmtLong(minGoLive)); return; }
   const daysToGL = diffDays(kickoff, goLive);
+  const d90 = addDays(goLive, 90);
 
   document.getElementById('out-client-name').textContent = cN + (pN ? ' · ' + pN : '');
   document.getElementById('out-doc-sub').textContent = 'PROTOCOLO DE IMPLEMENTACIÓN' + (exec ? ' · Contraparte: ' + exec : '');
@@ -757,168 +618,69 @@ function generateRoadmap() {
   document.getElementById('post-days-label').textContent = 'Días ' + daysToGL + '–' + (daysToGL + 90) + ' · 3 hitos fijos (T14, T30, T90) · reportes paralelos · seguimiento CSM';
   document.getElementById('out-footer').textContent = 'Generado para ' + cN + ' · Go-Live: ' + fmtLong(goLive) + ' · D+90: ' + fmtShort(d90) + ' · Documento interno APPRECIO';
 
-  const pb = window._detectedPlaybook || { key: 'fuerza_de_venta', dolores: [], t14: {}, t30: {}, t90: {} };
+  const pb = window._detectedPlaybook || { key:'fuerza_de_venta', dolores:[], t14:{}, t30:{}, t90:{} };
   const playbook = PLAYBOOKS[pb.key] || PLAYBOOKS['fuerza_de_venta'];
   const dolores = pb.dolores || [];
-  const pptT14 = pb.t14 || {};
-  const pptT30 = pb.t30 || {};
-  const pptT90 = pb.t90 || {};
+  const pptT14 = pb.t14 || {}, pptT30 = pb.t30 || {}, pptT90 = pb.t90 || {};
 
   ['pre','golive','post'].forEach(z => document.getElementById('blocks-' + z).innerHTML = '');
 
-  const dateRanges = {
+  const dr = {
     kickoff:   { start: kickoff, end: kickoff },
-    nomina:    { start: addDays(kickoff, 1),  end: addDays(kickoff, 10) },
-    demo:      { start: addDays(kickoff, 11), end: addDays(kickoff, 22) },
-    checklist: { start: addDays(kickoff, 29), end: addDays(kickoff, 29) },
+    nomina:    { start: addDays(kickoff,1),  end: addDays(kickoff,10) },
+    demo:      { start: addDays(kickoff,11), end: addDays(kickoff,22) },
+    checklist: { start: addDays(kickoff,29), end: addDays(kickoff,29) },
     golive:    { start: goLive, end: goLive },
-    t14:       { start: addDays(goLive, 1),   end: addDays(goLive, 14) },
-    t30:       { start: addDays(goLive, 15),  end: addDays(goLive, 30) },
-    t90:       { start: addDays(goLive, 31),  end: addDays(goLive, 90) },
+    t14:       { start: addDays(goLive,1),   end: addDays(goLive,14) },
+    t30:       { start: addDays(goLive,15),  end: addDays(goLive,30) },
+    t90:       { start: addDays(goLive,31),  end: addDays(goLive,90) }
   };
 
-  addBlockToZone('pre', {
-    day: '0', dayLbl: 'DÍA', dateRange: dateRanges.kickoff,
-    tag: 'Kick-off de onboarding', tagColor: 'var(--brand-light)', tagTextColor: 'var(--brand-text)',
-    title: 'Kick-off call de onboarding',
-    desc: 'CSM conduce la llamada de inicio. Presenta los roles, establece el plan de implementación y explica el camino crítico al cliente. Se deja en acta: sin nómina no hay configuración, sin configuración no hay demo, sin demo no hay go-live.',
-    alert: dolores.length ? '⚠ Dolores identificados: ' + dolores.join(' · ') : null,
-    roles: ['CSM','Cliente'],
-    acciones: ['Email onboarding enviado', 'Acta kick-off firmada', 'Camino crítico explicado'],
-    reportes: []
-  });
-
-  addBlockToZone('pre', {
-    day: '1–10', dayLbl: 'DÍAS', dateRange: dateRanges.nomina,
-    tag: 'Ruta crítica', tagColor: '#FEE2E2', tagTextColor: '#991B1B',
-    title: 'Entrega de nómina + configuración',
-    desc: 'Cliente entrega nómina al CSM. El CSM valida el formato y hace el traspaso interno a TechOps para la configuración de empleados y reglas de negocio. TechOps configura en segundo plano.',
-    alert: '⚠ Ruta crítica — el cliente debe entregar la nómina en este bloque. Sin ella se detiene todo el proceso.',
-    roles: ['CSM','TechOps','Cliente'],
-    acciones: ['Nómina recibida y validada', 'Traspaso a TechOps realizado', 'Scorecard configurado', 'Tramos y metas cargados'],
-    reportes: []
-  });
-
-  addBlockToZone('pre', {
-    day: '11–22', dayLbl: 'DÍAS', dateRange: dateRanges.demo,
-    tag: 'Demo y validación', tagColor: 'var(--green-light)', tagTextColor: 'var(--green)',
-    title: 'Demo + validación con el cliente',
-    desc: 'CSM presenta la plataforma configurada al cliente. Se validan flujos y experiencia. CSM levanta requerimientos de ajuste interno a TechOps — el cliente no tiene contacto directo con el equipo técnico.',
-    roles: ['CSM','Cliente'],
-    acciones: ['Demo realizada', 'Ajustes enviados a TechOps', 'Aprobación formal obtenida'],
-    reportes: []
-  });
-
-  addBlockToZone('pre', {
-    day: String(daysToGL - 1), dayLbl: 'DÍA', dateRange: dateRanges.checklist,
-    tag: 'Checklist pre go-live', tagColor: 'var(--orange-light)', tagTextColor: 'var(--orange)',
-    title: 'Checklist pre go-live',
-    desc: 'Verificación final (día 29): nómina cargada, configuración aprobada, accesos activos, comunicación al equipo lista. Todo OK = se confirma go-live para el día 30.',
-    roles: ['CSM','TechOps'],
-    acciones: ['Nómina cargada ✓', 'Configuración aprobada ✓', 'Accesos activos ✓', 'Comunicado interno listo ✓'],
-    reportes: []
-  });
-
-  addBlockToZone('golive', {
-    day: String(daysToGL), dayLbl: 'DÍA', dateRange: dateRanges.golive,
-    tag: 'Lanzamiento', tagColor: 'var(--brand)', tagTextColor: '#fff',
-    title: 'Lanzamiento oficial de la plataforma',
-    desc: 'TechOps activa la plataforma en back-office. CSM comunica el lanzamiento al cliente y queda disponible como primera línea para incidencias de los colaboradores.',
-    roles: ['CSM','TechOps','Todos'],
-    acciones: ['Plataforma activada', 'Comunicado interno enviado', 'CSM disponible para incidencias'],
-    reportes: []
-  });
+  addBlockToZone('pre',{day:'0',dayLbl:'DÍA',dateRange:dr.kickoff,tag:'Kick-off de onboarding',tagColor:'var(--brand-light)',tagTextColor:'var(--brand-text)',title:'Kick-off call de onboarding',desc:'CSM conduce la llamada de inicio. Presenta los roles, establece el plan de implementación y explica el camino crítico al cliente. Se deja en acta: sin nómina no hay configuración, sin configuración no hay demo, sin demo no hay go-live.',alert:dolores.length?'⚠ Dolores identificados: '+dolores.join(' · '):null,roles:['CSM','Cliente'],acciones:['Email onboarding enviado','Acta kick-off firmada','Camino crítico explicado'],reportes:[]});
+  addBlockToZone('pre',{day:'1–10',dayLbl:'DÍAS',dateRange:dr.nomina,tag:'Ruta crítica',tagColor:'#FEE2E2',tagTextColor:'#991B1B',title:'Entrega de nómina + configuración',desc:'Cliente entrega nómina al CSM. El CSM valida el formato y hace el traspaso interno a TechOps para la configuración de empleados y reglas de negocio.',alert:'⚠ Ruta crítica — el cliente debe entregar la nómina en este bloque. Sin ella se detiene todo el proceso.',roles:['CSM','TechOps','Cliente'],acciones:['Nómina recibida y validada','Traspaso a TechOps realizado','Scorecard configurado','Tramos y metas cargados'],reportes:[]});
+  addBlockToZone('pre',{day:'11–22',dayLbl:'DÍAS',dateRange:dr.demo,tag:'Demo y validación',tagColor:'var(--green-light)',tagTextColor:'var(--green)',title:'Demo + validación con el cliente',desc:'CSM presenta la plataforma configurada al cliente. Se validan flujos y experiencia. CSM levanta requerimientos de ajuste interno a TechOps.',roles:['CSM','Cliente'],acciones:['Demo realizada','Ajustes enviados a TechOps','Aprobación formal obtenida'],reportes:[]});
+  addBlockToZone('pre',{day:String(daysToGL-1),dayLbl:'DÍA',dateRange:dr.checklist,tag:'Checklist pre go-live',tagColor:'var(--orange-light)',tagTextColor:'var(--orange)',title:'Checklist pre go-live',desc:'Verificación final (día 29): nómina cargada, configuración aprobada, accesos activos, comunicación al equipo lista.',roles:['CSM','TechOps'],acciones:['Nómina cargada ✓','Configuración aprobada ✓','Accesos activos ✓','Comunicado interno listo ✓'],reportes:[]});
+  addBlockToZone('golive',{day:String(daysToGL),dayLbl:'DÍA',dateRange:dr.golive,tag:'Lanzamiento',tagColor:'var(--brand)',tagTextColor:'#fff',title:'Lanzamiento oficial de la plataforma',desc:'TechOps activa la plataforma en back-office. CSM comunica el lanzamiento al cliente y queda disponible como primera línea para incidencias.',roles:['CSM','TechOps','Todos'],acciones:['Plataforma activada','Comunicado interno enviado','CSM disponible para incidencias'],reportes:[]});
 
   const t14abs = daysToGL + 14;
-  addBlockToZone('post', {
-    day: String(t14abs), dayLbl: 'DÍA', dateRange: dateRanges.t14,
-    tag: 'T-14', tagColor: 'var(--orange-light)', tagTextColor: 'var(--orange)',
-    title: 'T-14 — Primeras dos semanas',
-    desc: 'Revisión de adopción temprana: accesos activos, primeras transacciones, dudas del equipo. Objetivo: detectar fricciones y confirmar que el valor prometido está siendo percibido.' + (hc ? ' Meta mínima Apprecio: ' + Math.round(hc * 0.4) + ' colaboradores activos (40% de ' + hc + ').' : ''),
-    roles: playbook.t14.roles,
-    acciones: playbook.t14.acciones,
-    reportes: [],
-    phaseKey: 't14',
-    objetivo: {
-      dolor: dolores.length ? dolores.join(' · ') : 'Definir con el cliente en kick-off',
-      comoMedimos: pptT14.acciones && pptT14.acciones.length ? pptT14.acciones.join(' · ') : 'Reporte de activación D+7 · revisión T-14 (reunión 60 min) · health score interno CSM',
-      metrica: pptT14.kpis && pptT14.kpis.length ? pptT14.kpis.join(' · ') : playbook.t14.kpis_text + (hc ? ' · mín ' + Math.round(hc*0.4) + ' personas activas' : '')
-    }
-  });
+  addBlockToZone('post',{day:String(t14abs),dayLbl:'DÍA',dateRange:dr.t14,tag:'T-14',tagColor:'var(--orange-light)',tagTextColor:'var(--orange)',title:'T-14 — Primeras dos semanas',desc:'Revisión de adopción temprana: accesos activos, primeras transacciones, dudas del equipo.'+(hc?' Meta mínima Apprecio: '+Math.round(hc*0.4)+' colaboradores activos (40% de '+hc+').':''),roles:playbook.t14.roles,acciones:playbook.t14.acciones,reportes:[],phaseKey:'t14',objetivo:{dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',comoMedimos:pptT14.acciones&&pptT14.acciones.length?pptT14.acciones.join(' · '):'Reporte de activación D+7 · revisión T-14 (reunión 60 min) · health score interno CSM',metrica:pptT14.kpis&&pptT14.kpis.length?pptT14.kpis.join(' · '):playbook.t14.kpis_text+(hc?' · mín '+Math.round(hc*0.4)+' personas activas':'')}});
 
   const t30abs = daysToGL + 30;
-  addBlockToZone('post', {
-    day: String(t30abs), dayLbl: 'DÍA', dateRange: dateRanges.t30,
-    tag: 'T-30', tagColor: 'var(--green-light)', tagTextColor: 'var(--green)',
-    title: 'T-30 — Primer mes completo',
-    desc: 'Revisión de resultados del primer mes completo post go-live. Cierre del ciclo inicial y apertura de la conversación de expansión o ajuste de contrato.' + (hc ? ' Meta mínima Apprecio: ' + Math.round(hc * 0.65) + ' colaboradores activos (65% de ' + hc + ').' : ''),
-    roles: playbook.t30.roles,
-    acciones: playbook.t30.acciones,
-    reportes: playbook.t30.reportes,
-    phaseKey: 't30',
-    objetivo: {
-      dolor: dolores.length ? dolores.join(' · ') : 'Definir con el cliente en kick-off',
-      comoMedimos: pptT30.acciones && pptT30.acciones.length ? pptT30.acciones.join(' · ') : 'Reporte quincenal de tramos · revisión T-30 (reunión 60 min) · NPS de producto · health score CSM',
-      metrica: pptT30.kpis && pptT30.kpis.length ? pptT30.kpis.join(' · ') : playbook.t30.kpis_text + (hc ? ' · mín ' + Math.round(hc*0.65) + ' personas activas' : '')
-    }
-  });
+  addBlockToZone('post',{day:String(t30abs),dayLbl:'DÍA',dateRange:dr.t30,tag:'T-30',tagColor:'var(--green-light)',tagTextColor:'var(--green)',title:'T-30 — Primer mes completo',desc:'Revisión de resultados del primer mes completo post go-live.'+(hc?' Meta mínima Apprecio: '+Math.round(hc*0.65)+' colaboradores activos (65% de '+hc+').':''),roles:playbook.t30.roles,acciones:playbook.t30.acciones,reportes:playbook.t30.reportes,phaseKey:'t30',objetivo:{dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',comoMedimos:pptT30.acciones&&pptT30.acciones.length?pptT30.acciones.join(' · '):'Reporte quincenal de tramos · revisión T-30 (reunión 60 min) · NPS de producto',metrica:pptT30.kpis&&pptT30.kpis.length?pptT30.kpis.join(' · '):playbook.t30.kpis_text+(hc?' · mín '+Math.round(hc*0.65)+' personas activas':'')}});
 
   const t90abs = daysToGL + 90;
-  addBlockToZone('post', {
-    day: String(t90abs), dayLbl: 'DÍA', dateRange: dateRanges.t90,
-    tag: 'T-90', tagColor: 'var(--brand-light)', tagTextColor: 'var(--brand-text)',
-    title: 'T-90 — Trimestre de éxito',
-    desc: 'Presentación ejecutiva de resultados del trimestre. Se revisa el avance hacia las metas del cliente, se propone renovación o expansión y se sientan las bases del año 2.',
-    roles: playbook.t90.roles,
-    acciones: playbook.t90.acciones,
-    reportes: playbook.t90.reportes,
-    phaseKey: 't90',
-    objetivo: {
-      dolor: dolores.length ? dolores.join(' · ') : 'Definir con el cliente en kick-off',
-      comoMedimos: pptT90.acciones && pptT90.acciones.length ? pptT90.acciones.join(' · ') : 'Business Review 90 min · actividad sostenida 3 meses · engagement por tramo · comparativa vs línea base del cliente',
-      metrica: pptT90.kpis && pptT90.kpis.length ? pptT90.kpis.join(' · ') : playbook.t90.kpis_text
-    }
-  });
+  addBlockToZone('post',{day:String(t90abs),dayLbl:'DÍA',dateRange:dr.t90,tag:'T-90',tagColor:'var(--brand-light)',tagTextColor:'var(--brand-text)',title:'T-90 — Trimestre de éxito',desc:'Presentación ejecutiva de resultados del trimestre. Se revisa el avance hacia las metas, se propone renovación o expansión.',roles:playbook.t90.roles,acciones:playbook.t90.acciones,reportes:playbook.t90.reportes,phaseKey:'t90',objetivo:{dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',comoMedimos:pptT90.acciones&&pptT90.acciones.length?pptT90.acciones.join(' · '):'Business Review 90 min · actividad sostenida 3 meses · comparativa vs línea base del cliente',metrica:pptT90.kpis&&pptT90.kpis.length?pptT90.kpis.join(' · '):playbook.t90.kpis_text}});
 
   document.getElementById('output').style.display = 'block';
-  document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('output').scrollIntoView({ behavior:'smooth' });
 }
 
 // ═══════════════════════════════════════════════════════════
 // OBJETIVO DE FASE BUILDER
 // ═══════════════════════════════════════════════════════════
 function buildObjetivoFase(dolor, comoMedimos, indicador) {
-  const wrap = document.createElement('div');
-  wrap.className = 'objetivo-fase';
-  const title = document.createElement('div');
-  title.className = 'objetivo-fase-title';
-  title.textContent = 'Objetivo de esta fase';
+  const wrap = document.createElement('div'); wrap.className = 'objetivo-fase';
+  const title = document.createElement('div'); title.className = 'objetivo-fase-title'; title.textContent = 'Objetivo de esta fase';
   wrap.appendChild(title);
-  const grid = document.createElement('div');
-  grid.className = 'objetivo-grid';
+  const grid = document.createElement('div'); grid.className = 'objetivo-grid';
   const items = [
-    { lbl: 'Dolor que atacamos', val: dolor, placeholder: 'Definir con el cliente en kick-off', cls: '' },
-    { lbl: 'Cómo lo medimos', val: comoMedimos, placeholder: 'Acciones y seguimiento de esta fase', cls: '' },
-    { lbl: 'Indicador de éxito', val: indicador, placeholder: 'KPIs de esta fase', cls: '' },
-    { lbl: 'Meta del cliente *', val: '', placeholder: 'Completar en reunión con el cliente...', cls: 'meta' },
+    {lbl:'Dolor que atacamos',val:dolor,placeholder:'Definir con el cliente en kick-off',cls:''},
+    {lbl:'Cómo lo medimos',val:comoMedimos,placeholder:'Acciones y seguimiento de esta fase',cls:''},
+    {lbl:'Indicador de éxito',val:indicador,placeholder:'KPIs de esta fase',cls:''},
+    {lbl:'Meta del cliente *',val:'',placeholder:'Completar en reunión con el cliente...',cls:'meta'}
   ];
   items.forEach(item => {
-    const cell = document.createElement('div');
-    cell.className = 'objetivo-item';
-    const valEl = document.createElement('div');
-    valEl.className = 'objetivo-item-val ' + item.cls;
-    valEl.contentEditable = 'true';
-    valEl.spellcheck = false;
+    const cell = document.createElement('div'); cell.className = 'objetivo-item';
+    const valEl = document.createElement('div'); valEl.className = 'objetivo-item-val ' + item.cls;
+    valEl.contentEditable = 'true'; valEl.spellcheck = false;
     if (item.val) { valEl.textContent = item.val; }
     else { valEl.setAttribute('data-placeholder', item.placeholder); valEl.classList.add('empty'); }
     cell.innerHTML = `<div class="objetivo-item-lbl">${item.lbl}</div>`;
-    cell.appendChild(valEl);
-    grid.appendChild(cell);
+    cell.appendChild(valEl); grid.appendChild(cell);
   });
   wrap.appendChild(grid);
-  const disclaimer = document.createElement('div');
-  disclaimer.className = 'objetivo-disclaimer';
-  disclaimer.textContent = '* A completar en reunión con el cliente. Las metas deben basarse en el historial real del equipo. Apprecio acompaña el proceso; los resultados dependen de la adopción del equipo y de factores externos al programa.';
+  const disclaimer = document.createElement('div'); disclaimer.className = 'objetivo-disclaimer';
+  disclaimer.textContent = '* A completar en reunión con el cliente. Las metas deben basarse en el historial real del equipo.';
   wrap.appendChild(disclaimer);
   return wrap;
 }
@@ -927,153 +689,94 @@ function buildObjetivoFase(dolor, comoMedimos, indicador) {
 // BLOCK BUILDER
 // ═══════════════════════════════════════════════════════════
 function addBlockToZone(zone, cfg) {
-  const container = document.getElementById('blocks-' + zone);
-  const block = buildBlock(cfg);
-  container.appendChild(block);
+  document.getElementById('blocks-' + zone).appendChild(buildBlock(cfg));
 }
 
 function addBlock(zone) {
-  addBlockToZone(zone, {
-    day: '?', dayLbl: 'DÍA',
-    tag: 'Nuevo hito', tagColor: 'var(--bg-2)', tagTextColor: 'var(--text-2)',
-    title: 'Nuevo bloque',
-    desc: 'Describe la actividad de este hito.',
-    roles: ['CSM'],
-    acciones: ['Nueva acción'],
-    reportes: []
-  });
+  addBlockToZone(zone, { day:'?', dayLbl:'DÍA', tag:'Nuevo hito', tagColor:'var(--bg-2)', tagTextColor:'var(--text-2)', title:'Nuevo bloque', desc:'Describe la actividad de este hito.', roles:['CSM'], acciones:['Nueva acción'], reportes:[] });
 }
 
 function buildBlock(cfg) {
-  const wrap = document.createElement('div');
-  wrap.className = 'rm-block';
-  const body = document.createElement('div');
-  body.className = 'rm-block-body';
+  const wrap = document.createElement('div'); wrap.className = 'rm-block';
+  const body = document.createElement('div'); body.className = 'rm-block-body';
 
-  const dayCol = document.createElement('div');
-  dayCol.className = 'rm-block-day';
-  const dayNumEl = document.createElement('div');
-  dayNumEl.className = 'rm-block-day-num';
-  dayNumEl.contentEditable = 'true'; dayNumEl.spellcheck = false;
-  dayNumEl.textContent = cfg.day;
-  dayCol.appendChild(dayNumEl);
-  const dayLblEl = document.createElement('div');
-  dayLblEl.className = 'rm-block-day-lbl';
-  dayLblEl.contentEditable = 'true'; dayLblEl.spellcheck = false;
-  dayLblEl.textContent = cfg.dayLbl;
-  dayCol.appendChild(dayLblEl);
-
+  const dayCol = document.createElement('div'); dayCol.className = 'rm-block-day';
+  const dayNumEl = document.createElement('div'); dayNumEl.className = 'rm-block-day-num'; dayNumEl.contentEditable = 'true'; dayNumEl.spellcheck = false; dayNumEl.textContent = cfg.day;
+  const dayLblEl = document.createElement('div'); dayLblEl.className = 'rm-block-day-lbl'; dayLblEl.contentEditable = 'true'; dayLblEl.spellcheck = false; dayLblEl.textContent = cfg.dayLbl;
+  dayCol.appendChild(dayNumEl); dayCol.appendChild(dayLblEl);
   if (cfg.dateRange) {
     const dr = cfg.dateRange;
     const sameDay = toISO(dr.start) === toISO(dr.end);
     const dateText = sameDay ? fmtLong(dr.start) : fmtShort(dr.start) + ' → ' + fmtShort(dr.end);
-    const badge = document.createElement('div');
-    badge.className = 'block-date-badge';
+    const badge = document.createElement('div'); badge.className = 'block-date-badge';
     badge.innerHTML = `<span class="date-icon">📅</span><span>${dateText}</span>`;
     dayCol.appendChild(badge);
   }
   body.appendChild(dayCol);
 
-  const tag = document.createElement('div');
-  tag.className = 'rm-block-tag';
+  const tag = document.createElement('div'); tag.className = 'rm-block-tag';
   tag.style.cssText = `background:${cfg.tagColor};color:${cfg.tagTextColor};`;
-  tag.contentEditable = 'true'; tag.spellcheck = false;
-  tag.textContent = cfg.tag;
+  tag.contentEditable = 'true'; tag.spellcheck = false; tag.textContent = cfg.tag;
   body.appendChild(tag);
 
-  const title = document.createElement('div');
-  title.className = 'rm-block-title';
-  title.contentEditable = 'true'; title.spellcheck = false;
-  title.textContent = cfg.title;
+  const title = document.createElement('div'); title.className = 'rm-block-title'; title.contentEditable = 'true'; title.spellcheck = false; title.textContent = cfg.title;
   body.appendChild(title);
 
-  const desc = document.createElement('div');
-  desc.className = 'rm-block-desc';
-  desc.contentEditable = 'true'; desc.spellcheck = false;
-  desc.textContent = cfg.desc;
+  const desc = document.createElement('div'); desc.className = 'rm-block-desc'; desc.contentEditable = 'true'; desc.spellcheck = false; desc.textContent = cfg.desc;
   body.appendChild(desc);
 
   if (cfg.alert) {
-    const alert = document.createElement('div');
-    alert.className = 'rm-alert';
-    alert.contentEditable = 'true'; alert.spellcheck = false;
-    alert.textContent = cfg.alert;
+    const alert = document.createElement('div'); alert.className = 'rm-alert'; alert.contentEditable = 'true'; alert.spellcheck = false; alert.textContent = cfg.alert;
     body.appendChild(alert);
   }
 
-  const rolesWrap = document.createElement('div');
-  rolesWrap.className = 'roles-row';
+  const rolesWrap = document.createElement('div'); rolesWrap.className = 'roles-row';
   (cfg.roles || []).forEach(r => rolesWrap.appendChild(makeRolePill(r)));
-  const btnAddRole = document.createElement('button');
-  btnAddRole.className = 'btn-add-role';
-  btnAddRole.textContent = '+ Rol';
+  const btnAddRole = document.createElement('button'); btnAddRole.className = 'btn-add-role'; btnAddRole.textContent = '+ Rol';
   btnAddRole.onclick = () => { const r = prompt('Nombre del rol:'); if (r) rolesWrap.insertBefore(makeRolePill(r), btnAddRole); };
-  rolesWrap.appendChild(btnAddRole);
-  body.appendChild(rolesWrap);
+  rolesWrap.appendChild(btnAddRole); body.appendChild(rolesWrap);
 
   if (cfg.acciones && cfg.acciones.length) {
-    const acArea = document.createElement('div');
-    acArea.className = 'acciones-area';
+    const acArea = document.createElement('div'); acArea.className = 'acciones-area';
     cfg.acciones.forEach(a => acArea.appendChild(makeAccionPill(a)));
-    const btnAc = document.createElement('button');
-    btnAc.className = 'btn-add-accion';
-    btnAc.textContent = '+ Acción';
+    const btnAc = document.createElement('button'); btnAc.className = 'btn-add-accion'; btnAc.textContent = '+ Acción';
     btnAc.onclick = () => acArea.insertBefore(makeAccionPill('Nueva acción'), btnAc);
-    acArea.appendChild(btnAc);
-    body.appendChild(acArea);
+    acArea.appendChild(btnAc); body.appendChild(acArea);
   }
 
   if (cfg.reportes && cfg.reportes.length) {
-    const repWrap = document.createElement('div');
-    repWrap.className = 'rm-reportes';
+    const repWrap = document.createElement('div'); repWrap.className = 'rm-reportes';
     repWrap.innerHTML = '<div class="rm-reportes-title">Reportes</div>';
     cfg.reportes.forEach(r => repWrap.appendChild(makeReporteRow(r)));
-    const btnRep = document.createElement('button');
-    btnRep.className = 'btn-add-reporte';
-    btnRep.textContent = '+ Agregar reporte';
-    btnRep.onclick = () => repWrap.insertBefore(makeReporteRow({ nombre: 'Nuevo reporte', meta: 'Formato', dest: 'Destinatario' }), btnRep);
-    repWrap.appendChild(btnRep);
-    body.appendChild(repWrap);
+    const btnRep = document.createElement('button'); btnRep.className = 'btn-add-reporte'; btnRep.textContent = '+ Agregar reporte';
+    btnRep.onclick = () => repWrap.insertBefore(makeReporteRow({nombre:'Nuevo reporte',meta:'Formato',dest:'Destinatario'}), btnRep);
+    repWrap.appendChild(btnRep); body.appendChild(repWrap);
   }
 
-  if (cfg.objetivo) {
-    body.appendChild(buildObjetivoFase(cfg.objetivo.dolor, cfg.objetivo.comoMedimos, cfg.objetivo.metrica));
-  }
+  if (cfg.objetivo) body.appendChild(buildObjetivoFase(cfg.objetivo.dolor, cfg.objetivo.comoMedimos, cfg.objetivo.metrica));
 
   if (cfg.phaseKey) {
-    const rubSec = document.createElement('div');
-    rubSec.className = 'rubricas-section';
-    rubSec.dataset.phase = cfg.phaseKey;
-    rubSec.innerHTML = `<div class="rubricas-section-title">
-      <span>Rúbricas activas</span>
-      <button class="btn-open-drawer" onclick="openDrawer('${cfg.phaseKey}', this.closest('.rm-block'))">+ Seleccionar rúbricas</button>
-    </div><div class="rubricas-pills" id="rubricas-${cfg.phaseKey}"></div>`;
+    const rubSec = document.createElement('div'); rubSec.className = 'rubricas-section'; rubSec.dataset.phase = cfg.phaseKey;
+    rubSec.innerHTML = `<div class="rubricas-section-title"><span>Rúbricas activas</span><button class="btn-open-drawer" onclick="openDrawer('${cfg.phaseKey}', this.closest('.rm-block'))">+ Seleccionar rúbricas</button></div><div class="rubricas-pills" id="rubricas-${cfg.phaseKey}"></div>`;
     body.appendChild(rubSec);
   }
 
-  const ctrl = document.createElement('div');
-  ctrl.className = 'rm-block-controls';
-  const btnUp = document.createElement('button');
-  btnUp.className = 'btn-block-move'; btnUp.title = 'Subir bloque'; btnUp.textContent = '↑';
+  const ctrl = document.createElement('div'); ctrl.className = 'rm-block-controls';
+  const btnUp = document.createElement('button'); btnUp.className = 'btn-block-move'; btnUp.title = 'Subir bloque'; btnUp.textContent = '↑';
   btnUp.onclick = () => { const prev = wrap.previousElementSibling; if (prev && prev.classList.contains('rm-block')) wrap.parentNode.insertBefore(wrap, prev); };
-  const btnDown = document.createElement('button');
-  btnDown.className = 'btn-block-move'; btnDown.title = 'Bajar bloque'; btnDown.textContent = '↓';
+  const btnDown = document.createElement('button'); btnDown.className = 'btn-block-move'; btnDown.title = 'Bajar bloque'; btnDown.textContent = '↓';
   btnDown.onclick = () => { const next = wrap.nextElementSibling; if (next && next.classList.contains('rm-block')) wrap.parentNode.insertBefore(next, wrap); };
-  const btnAddRep = document.createElement('button');
-  btnAddRep.className = 'btn-block-add-section'; btnAddRep.textContent = '+ Sección de reportes';
+  const btnAddRep = document.createElement('button'); btnAddRep.className = 'btn-block-add-section'; btnAddRep.textContent = '+ Sección de reportes';
   btnAddRep.onclick = () => {
-    const rw = document.createElement('div'); rw.className = 'rm-reportes';
-    rw.innerHTML = '<div class="rm-reportes-title">Reportes</div>';
+    const rw = document.createElement('div'); rw.className = 'rm-reportes'; rw.innerHTML = '<div class="rm-reportes-title">Reportes</div>';
     const btnR = document.createElement('button'); btnR.className = 'btn-add-reporte'; btnR.textContent = '+ Agregar reporte';
-    btnR.onclick = () => rw.insertBefore(makeReporteRow({ nombre: 'Nuevo reporte', meta: 'Formato', dest: 'Destinatario' }), btnR);
+    btnR.onclick = () => rw.insertBefore(makeReporteRow({nombre:'Nuevo reporte',meta:'Formato',dest:'Destinatario'}), btnR);
     rw.appendChild(btnR); body.insertBefore(rw, ctrl);
   };
-  const btnDel = document.createElement('button');
-  btnDel.className = 'btn-block-del'; btnDel.textContent = '🗑 Eliminar';
+  const btnDel = document.createElement('button'); btnDel.className = 'btn-block-del'; btnDel.textContent = '🗑 Eliminar';
   btnDel.onclick = () => { if (confirm('¿Eliminar este bloque?')) wrap.remove(); };
   ctrl.appendChild(btnUp); ctrl.appendChild(btnDown); ctrl.appendChild(btnAddRep); ctrl.appendChild(btnDel);
-  body.appendChild(ctrl);
-  wrap.appendChild(body);
+  body.appendChild(ctrl); wrap.appendChild(body);
   return wrap;
 }
 
@@ -1082,8 +785,7 @@ function makeRolePill(r) {
   const dot = document.createElement('span'); dot.className = 'role-dot'; dot.style.background = roleColor(r);
   const txt = document.createElement('span'); txt.contentEditable = 'true'; txt.spellcheck = false; txt.textContent = r;
   const del = document.createElement('button'); del.className = 'role-pill-del'; del.textContent = '×'; del.onclick = () => span.remove();
-  span.appendChild(dot); span.appendChild(txt); span.appendChild(del);
-  return span;
+  span.appendChild(dot); span.appendChild(txt); span.appendChild(del); return span;
 }
 
 function makeAccionPill(text) {
@@ -1092,8 +794,7 @@ function makeAccionPill(text) {
   chk.onclick = () => { const done = !span.classList.contains('done'); span.classList.toggle('done', done); chk.textContent = done ? '✓' : '○'; chk.classList.toggle('done', done); };
   const txt = document.createElement('span'); txt.className = 'accion-pill-text'; txt.contentEditable = 'true'; txt.spellcheck = false; txt.textContent = text;
   const del = document.createElement('button'); del.className = 'accion-del'; del.textContent = '×'; del.onclick = () => span.remove();
-  span.appendChild(chk); span.appendChild(txt); span.appendChild(del);
-  return span;
+  span.appendChild(chk); span.appendChild(txt); span.appendChild(del); return span;
 }
 
 function makeReporteRow(r) {
@@ -1103,57 +804,11 @@ function makeReporteRow(r) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// RUBRIC DRAWER
+// RUBRIC DRAWER — con gestión del pool (editar / eliminar / agregar)
 // ═══════════════════════════════════════════════════════════
-const RUBRICS = {
-  t14: {
-    venta: [
-      {pts:5000,title:'Acelerador semana 1',desc:'Bono por 4 acciones clave en la primera semana de Go-Live.',month:'T14'},
-      {pts:1000,title:'Reto Primera Acción + Certificación',desc:'Puntos por completar la primera acción con certificación 100%.',month:'T14'},
-      {pts:2000,title:'Calidad de Onboarding',desc:'Puntos si el mes cierra con 0% de errores en el proceso inicial.',month:'T14'},
-      {pts:1500,title:'Sprint Cierre T14',desc:'Puntos extra por completar metas en los últimos 3 días del período.',month:'T14'},
-    ],
-    engage: [
-      {pts:500,title:'Entrenamiento Bienvenida',desc:'Completar el módulo de onboarding de Apprecio (5–7 pasos).',month:'T14'},
-      {pts:800,title:'Certificación Producto',desc:'Completar el entrenamiento con nota ≥70%.',month:'T14'},
-      {pts:300,title:'Perfil Completo',desc:'Completar foto y datos básicos del perfil.',month:'T14'},
-      {pts:250,title:'Encuesta de Diagnóstico Inicial',desc:'Responder encuesta de conocimiento y contexto inicial.',month:'T14'},
-    ]
-  },
-  t30: {
-    venta: [
-      {pts:4000,title:'Bono Salto de Cuartil',desc:'Puntos por subir de cuartil respecto al período anterior.',month:'T30'},
-      {pts:3000,title:'Bono Rescate',desc:'Puntos para colaboradores que reactiven acciones caídas.',month:'T30'},
-      {pts:500,title:'Misión Horario Activo',desc:'Puntos extra por acciones completadas en horario punta.',month:'T30'},
-      {pts:30000,title:'Sorteo Q1/Q2',desc:'Puntos sorteados entre colaboradores Q1/Q2 sin errores.',month:'T30'},
-    ],
-    engage: [
-      {pts:100,title:'Check-in Semanal (×4)',desc:'100 pts por ingresar al portal cada semana. Máx 400 pts/mes.',month:'T30'},
-      {pts:300,title:'Trivia Mensual',desc:'Responder la trivia de conocimiento del mes.',month:'T30'},
-      {pts:200,title:'Compartir Tip',desc:'Publicar un tip útil en la comunidad.',month:'T30'},
-      {pts:150,title:'Ver Progreso de Meta',desc:'Ingresar y revisar el scorecard mensual propio.',month:'T30'},
-      {pts:400,title:'Encuesta Comprensión de Metas',desc:'¿Entiendes tu meta? Disparada al ver metas por primera vez.',month:'T30'},
-    ]
-  },
-  t90: {
-    venta: [
-      {pts:3000,title:'Constancia de Nivel',desc:'Puntos por mantener Q1 o Q2 durante 3 meses consecutivos.',month:'T90'},
-      {pts:2000,title:'Sprint Q4',desc:'Bono por acciones en semana específica del período.',month:'T90'},
-      {pts:20000,title:'Sorteo Primera Acción Mes',desc:'Primera acción de cada mes = ticket para sorteo.',month:'T90'},
-      {pts:10000,title:'Hito Trimestral',desc:'Puntos por completar el objetivo trimestral de la fase.',month:'T90'},
-    ],
-    engage: [
-      {pts:83000,title:'Gran Pozo Oro',desc:'Reparto proporcional entre todos los colaboradores Q1 al cierre.',month:'T90'},
-      {pts:500,title:'Encuesta de Terreno',desc:'Feedback real sobre barreras y logros. Trimestral.',month:'T90'},
-      {pts:600,title:'Encuesta Clima Laboral',desc:'Mide sentido de pertenencia y riesgo de rotación.',month:'T90'},
-      {pts:800,title:'Nominar Partner del Trimestre',desc:'Reconocer a un compañero por apoyo destacado.',month:'T90'},
-      {pts:600,title:'Feedback Cierre de Período',desc:'Encuesta de evaluación del programa al cierre.',month:'T90'},
-    ]
-  }
-};
-
 let _drawerPhase = 't14', _drawerBlock = null, _drawerTab = 'venta';
-let _drawerSel = { t14: [], t30: [], t90: [] };
+let _drawerSel = { t14:[], t30:[], t90:[] };
+let _editingIndex = null; // index in RUBRICS array being edited, null = new
 
 function openDrawer(phase, block) {
   _drawerPhase = phase; _drawerBlock = block; _drawerTab = 'venta';
@@ -1178,23 +833,111 @@ function switchDrawerTab(tab, btn) {
 
 function renderDrawerCards() {
   const body = document.getElementById('drawerBody');
-  const phaseRubs = RUBRICS[_drawerPhase] || {};
-  const items = phaseRubs[_drawerTab] || [];
+  const items = (RUBRICS[_drawerPhase] || {})[_drawerTab] || [];
   const selSet = new Set(_drawerSel[_drawerPhase].filter(r => r.type === _drawerTab).map(r => r.title));
   body.innerHTML = '';
-  if (!items.length) { body.innerHTML = '<p style="color:var(--text-3);font-size:13px;margin-top:12px;">No hay rúbricas de este tipo para esta fase.</p>'; return; }
-  const grid = document.createElement('div'); grid.className = 'dr-grid';
-  items.forEach(r => {
-    const isSel = selSet.has(r.title);
-    const cls = _drawerTab === 'venta' ? 'sel-v' : 'sel-e';
-    const card = document.createElement('div');
-    card.className = 'dr-card' + (isSel ? ' ' + cls : '');
-    card.innerHTML = `<div class="dr-check">${isSel ? '✓' : ''}</div><div class="dr-pts">${Number(r.pts).toLocaleString('es-CL')} pts</div><div class="dr-title">${r.title}</div><div class="dr-desc">${r.desc}</div>`;
-    card.onclick = () => toggleDrawerCard(card, r, cls);
-    grid.appendChild(card);
-  });
-  body.appendChild(grid);
+
+  if (items.length) {
+    const grid = document.createElement('div'); grid.className = 'dr-grid';
+    items.forEach((r, idx) => {
+      const isSel = selSet.has(r.title);
+      const cls = _drawerTab === 'venta' ? 'sel-v' : 'sel-e';
+      const card = document.createElement('div');
+      card.className = 'dr-card' + (isSel ? ' ' + cls : '');
+      card.innerHTML = `
+        <div class="dr-card-actions">
+          <button class="dr-card-btn edit" title="Editar rúbrica" onclick="event.stopPropagation();showEditForm(${idx})">✎</button>
+          <button class="dr-card-btn del" title="Eliminar rúbrica" onclick="event.stopPropagation();deleteRubric(${idx})">×</button>
+        </div>
+        <div class="dr-check">${isSel ? '✓' : ''}</div>
+        <div class="dr-title">${r.title}</div>
+        <div class="dr-desc">${r.desc}</div>`;
+      card.addEventListener('click', () => toggleDrawerCard(card, r, cls));
+      grid.appendChild(card);
+    });
+    body.appendChild(grid);
+  } else {
+    body.innerHTML = '<p style="font-size:12px;color:var(--text-3);margin-bottom:12px;">No hay rúbricas en esta categoría aún.</p>';
+  }
+
+  // New rubric button + form
+  const btnNew = document.createElement('button'); btnNew.className = 'btn-new-rubric'; btnNew.id = 'btnNewRubric';
+  btnNew.textContent = '+ Nueva rúbrica'; btnNew.onclick = () => showEditForm(null);
+  body.appendChild(btnNew);
+
+  const form = document.createElement('div'); form.className = 'dr-new-form hidden'; form.id = 'drawerForm';
+  form.innerHTML = `
+    <div class="dr-new-label">Título</div>
+    <input class="dr-new-input" id="formTitle" placeholder="Nombre de la rúbrica">
+    <div class="dr-new-label">Descripción</div>
+    <textarea class="dr-new-textarea" id="formDesc" placeholder="Descripción breve de la rúbrica"></textarea>
+    <div class="dr-new-actions">
+      <button class="dr-new-save" onclick="saveRubric()">Guardar</button>
+      <button class="dr-new-cancel" onclick="hideEditForm()">Cancelar</button>
+    </div>`;
+  body.appendChild(form);
+
   updateDrawerFooter();
+}
+
+function showEditForm(idx) {
+  _editingIndex = idx;
+  const form = document.getElementById('drawerForm');
+  const btnNew = document.getElementById('btnNewRubric');
+  if (idx !== null) {
+    const r = RUBRICS[_drawerPhase][_drawerTab][idx];
+    document.getElementById('formTitle').value = r.title;
+    document.getElementById('formDesc').value = r.desc;
+  } else {
+    document.getElementById('formTitle').value = '';
+    document.getElementById('formDesc').value = '';
+  }
+  form.classList.remove('hidden');
+  btnNew.style.display = 'none';
+  document.getElementById('formTitle').focus();
+}
+
+function hideEditForm() {
+  const form = document.getElementById('drawerForm');
+  const btnNew = document.getElementById('btnNewRubric');
+  if (form) form.classList.add('hidden');
+  if (btnNew) btnNew.style.display = '';
+  _editingIndex = null;
+}
+
+function saveRubric() {
+  const title = document.getElementById('formTitle').value.trim();
+  const desc = document.getElementById('formDesc').value.trim();
+  if (!title) { alert('El título no puede estar vacío.'); return; }
+
+  if (!RUBRICS[_drawerPhase]) RUBRICS[_drawerPhase] = {};
+  if (!RUBRICS[_drawerPhase][_drawerTab]) RUBRICS[_drawerPhase][_drawerTab] = [];
+
+  const list = RUBRICS[_drawerPhase][_drawerTab];
+
+  if (_editingIndex !== null) {
+    // Update existing — preserve selection state with new title
+    const oldTitle = list[_editingIndex].title;
+    list[_editingIndex] = { title, desc };
+    // Update selection if title changed
+    const selList = _drawerSel[_drawerPhase];
+    const selIdx = selList.findIndex(r => r.type === _drawerTab && r.title === oldTitle);
+    if (selIdx !== -1) selList[selIdx] = { title, desc, type: _drawerTab };
+  } else {
+    list.push({ title, desc });
+  }
+
+  renderDrawerCards();
+}
+
+function deleteRubric(idx) {
+  const list = RUBRICS[_drawerPhase][_drawerTab];
+  const title = list[idx].title;
+  if (!confirm('¿Eliminar la rúbrica "' + title + '"?')) return;
+  list.splice(idx, 1);
+  // Remove from selection if it was selected
+  _drawerSel[_drawerPhase] = _drawerSel[_drawerPhase].filter(r => !(r.type === _drawerTab && r.title === title));
+  renderDrawerCards();
 }
 
 function toggleDrawerCard(card, rubric, cls) {
@@ -1211,11 +954,14 @@ function toggleDrawerCard(card, rubric, cls) {
 
 function updateDrawerFooter() {
   const sel = _drawerSel[_drawerPhase];
-  const total = sel.reduce((s, r) => s + r.pts, 0);
   const summary = document.getElementById('drawerSummary');
   const btn = document.getElementById('btnApplyRubrics');
-  if (!sel.length) { summary.innerHTML = 'Ninguna rúbrica seleccionada'; btn.disabled = true; }
-  else { summary.innerHTML = `<strong>${sel.length} rúbrica${sel.length>1?'s':''} seleccionada${sel.length>1?'s':''}</strong> · ${total.toLocaleString('es-CL')} pts / colaborador`; btn.disabled = false; }
+  if (!sel.length) {
+    summary.innerHTML = 'Ninguna rúbrica seleccionada'; btn.disabled = true;
+  } else {
+    summary.innerHTML = `<strong>${sel.length} rúbrica${sel.length>1?'s':''} seleccionada${sel.length>1?'s':''}</strong>`;
+    btn.disabled = false;
+  }
 }
 
 function applyRubrics() {
@@ -1227,14 +973,14 @@ function applyRubrics() {
   sel.forEach(r => {
     const pill = document.createElement('span');
     pill.className = 'rubrica-pill ' + (r.type === 'venta' ? 'tipo-v' : 'tipo-e');
-    pill.innerHTML = `<span>${r.type === 'venta' ? '🎯' : '💡'}</span><span>${r.title}</span><span class="rubrica-pts">${Number(r.pts).toLocaleString('es-CL')} pts</span><button class="rubrica-del" onclick="this.closest('.rubrica-pill').remove()">×</button>`;
+    pill.innerHTML = `<span>${r.type === 'venta' ? '🎯' : '💡'}</span><span>${r.title}</span><button class="rubrica-del" onclick="this.closest('.rubrica-pill').remove()">×</button>`;
     pillsContainer.appendChild(pill);
   });
   closeDrawer();
 }
 
 // ═══════════════════════════════════════════════════════════
-// MODE
+// MODE / PDF / RESET
 // ═══════════════════════════════════════════════════════════
 function setMode(mode) {
   const isPresent = mode === 'present';
@@ -1243,20 +989,11 @@ function setMode(mode) {
   document.getElementById('btnPresent').classList.toggle('active', isPresent);
 }
 
-// ═══════════════════════════════════════════════════════════
-// PDF — usa window.print() nativo (texto real, sin canvas)
-// ═══════════════════════════════════════════════════════════
 function downloadPDF() {
-  if (document.getElementById('output').style.display === 'none') {
-    alert('Primero genera el roadmap.');
-    return;
-  }
+  if (document.getElementById('output').style.display === 'none') { alert('Primero genera el roadmap.'); return; }
   window.print();
 }
 
-// ═══════════════════════════════════════════════════════════
-// RESET
-// ═══════════════════════════════════════════════════════════
 function resetAll() {
   if (!confirm('¿Limpiar todo?')) return;
   ['clientName','programName','execName','dateKickoff','dateGoLive','headcount'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
