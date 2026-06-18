@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Apprecio — Roadmap Generator</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 :root {
@@ -18,19 +18,29 @@
   --border-l:rgba(0,0,0,0.09); --border-m:rgba(0,0,0,0.16);
   --r-md:8px; --r-lg:12px;
   --font:'Montserrat',-apple-system,BlinkMacSystemFont,sans-serif;
+  --dm:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-height:1.5;}
 
-/* TOPBAR */
+/* ═══ TOPBAR ═══ */
 #topbar{background:var(--brand);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:56px;gap:8px;position:sticky;top:0;z-index:100;}
 #topbar img{height:28px;filter:brightness(0) invert(1);}
+.topbar-left{display:flex;align-items:center;gap:16px;}
+.topbar-nav{display:flex;align-items:center;gap:4px;}
+.btn-nav{font-family:var(--font);font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;cursor:pointer;border:1.5px solid rgba(255,255,255,.4);background:transparent;color:rgba(255,255,255,.85);transition:all .15s;white-space:nowrap;}
+.btn-nav.active{background:#fff;color:var(--brand);border-color:#fff;}
+.btn-nav:hover:not(.active){background:rgba(255,255,255,.15);color:#fff;}
 .topbar-actions{display:flex;align-items:center;gap:8px;}
 .btn-mode{font-family:var(--font);font-size:11px;font-weight:700;padding:5px 13px;border-radius:20px;cursor:pointer;border:1.5px solid rgba(255,255,255,.5);background:transparent;color:#fff;transition:all .15s;}
 .btn-mode.active{background:#fff;color:var(--brand);border-color:#fff;}
 .btn-mode:hover:not(.active){background:rgba(255,255,255,.15);}
 
-/* STEPS */
+/* ═══ VIEWS ═══ */
+.view{display:none;}
+.view.active{display:block;}
+
+/* ═══ ROADMAP STEPS ═══ */
 .step-wrap{max-width:860px;margin:0 auto;padding:2rem 2rem 0;}
 #step-upload{background:var(--bg-1);border:1px solid var(--border-l);border-radius:var(--r-lg);padding:2rem 2.5rem;margin-bottom:1.5rem;}
 .step-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brand);margin-bottom:.4rem;}
@@ -42,7 +52,6 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .upload-icon{font-size:32px;margin-bottom:.75rem;}
 .upload-label{font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:.25rem;}
 .upload-hint{font-size:11px;color:var(--text-3);}
-.upload-filename{font-size:13px;font-weight:700;color:var(--brand);margin-top:.75rem;display:none;}
 .ai-status{display:none;margin-top:1.25rem;padding:14px 16px;background:var(--brand-light);border-radius:var(--r-md);border:1px solid rgba(250,52,94,.2);}
 .ai-label{font-size:12px;font-weight:700;color:var(--brand-text);margin-bottom:.5rem;display:flex;align-items:center;gap:8px;}
 .ai-log{font-size:11px;color:var(--brand-text);line-height:1.7;}
@@ -132,7 +141,6 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .btn-block-del:hover{background:#fff0f0;}
 .btn-block-move{font-size:13px;background:transparent;border:1px solid var(--border-m);padding:3px 8px;border-radius:var(--r-md);cursor:pointer;color:var(--text-2);line-height:1;}
 .btn-block-move:hover{background:var(--bg-2);border-color:var(--brand);color:var(--brand);}
-.btn-block-move:disabled{opacity:.3;cursor:default;}
 .btn-add-block{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:transparent;border:2px dashed var(--border-m);border-radius:var(--r-lg);cursor:pointer;font-family:var(--font);font-size:12px;font-weight:700;color:var(--text-3);margin-bottom:12px;transition:all .15s;}
 .btn-add-block:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-light);}
 .objetivo-fase{background:linear-gradient(135deg,var(--brand-light) 0%,#fff 100%);border:1px solid rgba(250,52,94,.2);border-radius:var(--r-lg);padding:14px 16px;margin-bottom:14px;page-break-inside:avoid;break-inside:avoid;display:block;}
@@ -145,7 +153,6 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .objetivo-item-val.meta{color:var(--brand-dark);font-weight:700;}
 .objetivo-disclaimer{font-size:10px;color:var(--text-3);font-style:italic;margin-top:10px;padding-top:8px;border-top:1px dashed var(--border-l);}
 .objetivo-item-val.empty:empty:before{content:attr(data-placeholder);color:var(--text-3);font-style:italic;pointer-events:none;}
-.objetivo-item-val.meta{color:var(--text-1);}
 .objetivo-item-val.meta.empty:empty:before{color:var(--brand-text);font-style:italic;}
 .block-dates{display:flex;align-items:center;gap:6px;margin-bottom:10px;}
 .block-date-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:10px;background:var(--bg-2);border:1px solid var(--border-m);color:var(--text-2);}
@@ -187,8 +194,6 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .dr-card.sel-e .dr-check{background:var(--blue);border-color:var(--blue);}
 .dr-title{font-size:11px;font-weight:600;padding-right:52px;line-height:1.3;margin-bottom:3px;}
 .dr-desc{font-size:10px;color:var(--text-3);line-height:1.4;}
-
-/* New rubric form inside drawer */
 .dr-new-form{background:var(--bg-2);border:1.5px dashed var(--border-m);border-radius:var(--r-md);padding:12px;margin-top:4px;}
 .dr-new-form.hidden{display:none;}
 .dr-new-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3);margin-bottom:4px;}
@@ -202,15 +207,12 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .dr-new-cancel{font-family:var(--font);font-size:11px;font-weight:700;padding:6px 14px;background:transparent;color:var(--text-2);border:1px solid var(--border-m);border-radius:var(--r-md);cursor:pointer;}
 .btn-new-rubric{width:100%;padding:9px;background:transparent;border:1.5px dashed var(--border-m);border-radius:var(--r-md);cursor:pointer;font-family:var(--font);font-size:11px;font-weight:700;color:var(--text-3);transition:all .15s;text-align:center;}
 .btn-new-rubric:hover{border-color:var(--brand);color:var(--brand);background:var(--brand-light);}
-
 .drawer-footer{border-top:1px solid var(--border-l);padding:14px 16px;flex-shrink:0;background:var(--bg-1);}
 .drawer-summary{font-size:11px;color:var(--text-2);margin-bottom:10px;}
 .drawer-summary strong{color:var(--brand);}
 .btn-apply-rubrics{width:100%;padding:12px;background:var(--brand);color:#fff;border:none;border-radius:var(--r-md);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;}
 .btn-apply-rubrics:hover{background:var(--brand-dark);}
 .btn-apply-rubrics:disabled{background:var(--border-m);cursor:default;}
-
-/* Rubrica pills (no points) */
 .rubrica-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 10px;border-radius:10px;border:1px solid var(--border-l);background:var(--bg-2);color:var(--text-2);}
 .rubrica-pill.tipo-v{border-color:#f8b4c4;background:var(--brand-light);color:var(--brand-text);}
 .rubrica-pill.tipo-e{border-color:#bfdbfe;background:var(--blue-light);color:var(--blue);}
@@ -220,13 +222,62 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .rubricas-section-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
 .btn-open-drawer{font-size:10px;font-weight:700;color:var(--brand);background:var(--brand-light);border:none;padding:3px 10px;border-radius:10px;cursor:pointer;}
 .rubricas-pills{display:flex;flex-wrap:wrap;gap:5px;}
-
-/* FOOTER */
 .rm-footer{margin-top:2.5rem;padding-top:1.5rem;border-top:2px solid var(--brand-light);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
 .rm-footer img{height:20px;}
 .rm-footer-note{font-size:10px;color:var(--text-3);font-style:italic;}
 
-/* PRESENT MODE */
+/* ═══ CLUB COURIER VIEW ═══ */
+#view-courier{font-family:var(--dm);}
+.cc-wrap{max-width:900px;margin:0 auto;padding:2rem 2rem 3rem;}
+.cc-hero{background:var(--brand);color:#fff;border-radius:16px;padding:2.5rem 2rem 2rem;margin-bottom:2rem;position:relative;overflow:hidden;}
+.cc-hero::before{content:'';position:absolute;right:-40px;top:-40px;width:220px;height:220px;background:rgba(255,255,255,.07);border-radius:50%;}
+.cc-hero::after{content:'';position:absolute;left:-60px;bottom:-60px;width:180px;height:180px;background:rgba(255,255,255,.04);border-radius:50%;}
+.cc-hero-eyebrow{font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:.75;margin-bottom:8px;position:relative;z-index:1;}
+.cc-hero-title{font-family:var(--font);font-size:26px;font-weight:700;margin:0 0 6px;line-height:1.2;position:relative;z-index:1;}
+.cc-hero-sub{font-size:14px;opacity:.85;position:relative;z-index:1;}
+.cc-timeline{display:flex;margin-bottom:2rem;}
+.cc-tl-item{flex:1;display:flex;flex-direction:column;align-items:center;}
+.cc-tl-item:first-child{align-items:flex-start;}
+.cc-tl-item:last-child{align-items:flex-end;}
+.cc-tl-row{display:flex;align-items:center;width:100%;}
+.cc-tl-dot{width:14px;height:14px;border-radius:50%;background:var(--brand);border:3px solid var(--brand-light);flex-shrink:0;}
+.cc-tl-dot.d2{background:var(--brand-dark);}
+.cc-tl-dot.d3{background:#0F172A;}
+.cc-tl-line{flex:1;height:2px;background:var(--brand);}
+.cc-tl-line.l2{background:var(--brand-dark);}
+.cc-tl-line.l3{background:#0F172A;}
+.cc-tl-label{font-family:var(--font);font-size:11px;font-weight:700;color:var(--text-3);margin-top:6px;text-align:center;}
+.cc-tl-desc{font-size:11px;color:var(--text-3);text-align:center;margin-top:2px;}
+.cc-phase{margin-bottom:1.75rem;}
+.cc-phase-header{display:flex;align-items:center;gap:12px;margin-bottom:1rem;}
+.cc-badge{background:var(--brand);color:#fff;font-family:var(--font);font-size:12px;font-weight:700;padding:4px 14px;border-radius:20px;white-space:nowrap;}
+.cc-badge.t30{background:var(--brand-dark);}
+.cc-badge.t90{background:#0F172A;}
+.cc-phase-title{font-family:var(--font);font-size:15px;font-weight:700;color:var(--text-1);}
+.cc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
+.cc-card{background:var(--bg-1);border:0.5px solid var(--border-l);border-radius:12px;padding:1rem 1.1rem;}
+.cc-card-head{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.cc-card-icon{width:30px;height:30px;border-radius:8px;background:var(--brand-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;}
+.cc-card-icon.mid{background:#fce4e9;}
+.cc-card-icon.dark{background:#0F172A;}
+.cc-card-label{font-family:var(--font);font-size:12px;font-weight:700;color:var(--text-1);}
+.cc-list{list-style:none;}
+.cc-list li{font-size:13px;color:var(--text-2);padding:3px 0;display:flex;gap:7px;align-items:flex-start;line-height:1.5;}
+.cc-list li::before{content:'·';color:var(--brand);font-weight:700;flex-shrink:0;margin-top:1px;}
+.cc-divider{height:0.5px;background:var(--border-l);margin:1.5rem 0;}
+.cc-special{background:var(--brand-light);border:0.5px solid rgba(250,52,94,.25);border-radius:12px;padding:.9rem 1.1rem;margin-top:10px;}
+.cc-special-label{font-size:11px;font-family:var(--font);font-weight:700;color:var(--brand-dark);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.cc-special-text{font-size:13px;color:var(--brand-dark);line-height:1.5;}
+.cc-insignias{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:10px;margin-top:12px;}
+.cc-ins{background:var(--bg-2);border-radius:10px;padding:.75rem 1rem;}
+.cc-ins-name{font-size:12px;font-weight:500;font-family:var(--font);color:var(--text-1);margin-bottom:6px;}
+.cc-ins-items{font-size:12px;color:var(--text-2);line-height:1.6;}
+.cc-note{background:#0F172A;border-radius:12px;padding:1.25rem 1.5rem;margin-top:1rem;display:flex;align-items:flex-start;gap:14px;}
+.cc-note-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+.cc-note-title{font-family:var(--font);font-size:12px;font-weight:700;color:#fff;margin-bottom:3px;}
+.cc-note-text{font-size:13px;color:rgba(255,255,255,.65);line-height:1.5;}
+
+/* ═══ PRESENT MODE ═══ */
 body.present-mode #step-upload,
 body.present-mode #step-config,
 body.present-mode .rm-block-controls,
@@ -243,8 +294,8 @@ body.present-mode .reporte-del{display:none!important;}
 body.present-mode [contenteditable]{outline:none!important;pointer-events:none;}
 body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opacity:1;}
 
-/* PRINT */
-@media print {
+/* ═══ PRINT ═══ */
+@media print{
   #topbar,.step-wrap,.rm-block-controls,.btn-add-block,.btn-add-role,.btn-add-accion,.btn-add-reporte,.accion-check,.accion-del,.role-pill-del,.reporte-del,.no-print,.rubric-drawer-overlay,.rubric-drawer,.btn-open-drawer{display:none!important;}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
   body{background:#fff!important;margin:0;padding:0;}
@@ -255,120 +306,327 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
   .phase-hdr{page-break-after:avoid;break-after:avoid;}
   [contenteditable]{outline:none!important;}
   .accion-pill.done .accion-pill-text{text-decoration:none;opacity:1;}
+  /* Courier print: show courier, hide roadmap */
+  body.print-courier #view-roadmap{display:none!important;}
+  body.print-courier #view-courier{display:block!important;}
+  body.print-courier .cc-wrap{max-width:100%!important;padding:0!important;}
+  body.print-courier .cc-phase{page-break-inside:avoid;break-inside:avoid;}
+  body.print-courier .cc-note{page-break-inside:avoid;break-inside:avoid;}
+  /* Roadmap print: hide courier */
+  body:not(.print-courier) #view-courier{display:none!important;}
 }
 </style>
 </head>
 <body>
 
 <div id="topbar">
-  <img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio" onerror="this.style.display='none'">
-  <div class="topbar-actions">
+  <div class="topbar-left">
+    <img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio" onerror="this.style.display='none'">
+    <nav class="topbar-nav">
+      <button class="btn-nav active" id="navRoadmap" onclick="switchView('roadmap')">🗺 Roadmap</button>
+      <button class="btn-nav" id="navCourier" onclick="switchView('courier')"> Mi Programa</button>
+    </nav>
+  </div>
+  <div class="topbar-actions" id="roadmapActions">
     <button class="btn-mode active" id="btnEdit" onclick="setMode('edit')">Edición</button>
     <button class="btn-mode" id="btnPresent" onclick="setMode('present')">Presentación</button>
     <button style="font-family:var(--font);font-size:11px;font-weight:700;padding:5px 13px;border-radius:20px;cursor:pointer;border:1.5px solid rgba(255,255,255,.5);background:transparent;color:#fff;" onclick="downloadPDF()">⬇ PDF</button>
   </div>
+  <div class="topbar-actions" id="courierActions" style="display:none;">
+    <button style="font-family:var(--font);font-size:11px;font-weight:700;padding:5px 13px;border-radius:20px;cursor:pointer;border:1.5px solid rgba(255,255,255,.5);background:transparent;color:#fff;" onclick="downloadCourierPDF()">⬇ PDF</button>
+  </div>
 </div>
 
-<div class="step-wrap">
-  <div id="step-upload">
-    <div class="step-eyebrow">Paso 1 · Presentación del cliente</div>
-    <div class="step-title">Sube el PPT del cliente</div>
-    <div class="step-sub">La IA detecta el tipo de equipo y los dolores específicos del cliente, y carga el playbook correspondiente.</div>
-    <div class="upload-zone" id="dropZone">
-      <input type="file" id="pptFile" accept=".pptx" onchange="fileSelected(this.files[0])">
-      <div class="upload-icon">📊</div>
-      <div class="upload-label">Arrastra el .pptx aquí o haz clic para seleccionar</div>
-      <div class="upload-hint">Solo archivos .pptx · El archivo no sale de tu navegador</div>
-    </div>
-    <div id="filePreview" style="display:none;margin-top:12px;padding:12px 16px;background:var(--bg-2);border:1px solid var(--border-m);border-radius:var(--r-md);align-items:center;gap:12px;">
-      <span style="font-size:20px;">📎</span>
-      <div style="flex:1;">
-        <div id="previewName" style="font-size:13px;font-weight:700;color:var(--text-1);"></div>
-        <div id="previewSize" style="font-size:11px;color:var(--text-3);margin-top:1px;"></div>
+<!-- ═══════════ VIEW: ROADMAP ═══════════ -->
+<div id="view-roadmap" class="view active">
+  <div class="step-wrap">
+    <div id="step-upload">
+      <div class="step-eyebrow">Paso 1 · Presentación del cliente</div>
+      <div class="step-title">Sube el PPT del cliente</div>
+      <div class="step-sub">La IA detecta el tipo de equipo y los dolores específicos del cliente, y carga el playbook correspondiente.</div>
+      <div class="upload-zone" id="dropZone">
+        <input type="file" id="pptFile" accept=".pptx" onchange="fileSelected(this.files[0])">
+        <div class="upload-icon">📊</div>
+        <div class="upload-label">Arrastra el .pptx aquí o haz clic para seleccionar</div>
+        <div class="upload-hint">Solo archivos .pptx · El archivo no sale de tu navegador</div>
       </div>
-      <button onclick="analyzeFile()" style="font-family:var(--font);font-size:12px;font-weight:700;padding:8px 16px;background:var(--brand);color:#fff;border:none;border-radius:var(--r-md);cursor:pointer;">Analizar →</button>
-      <button onclick="clearFile()" style="font-family:var(--font);font-size:12px;font-weight:700;padding:8px 12px;background:transparent;color:#c0392b;border:1px solid #f5c6cb;border-radius:var(--r-md);cursor:pointer;">🗑 Borrar</button>
+      <div id="filePreview" style="display:none;margin-top:12px;padding:12px 16px;background:var(--bg-2);border:1px solid var(--border-m);border-radius:var(--r-md);align-items:center;gap:12px;">
+        <span style="font-size:20px;">📎</span>
+        <div style="flex:1;">
+          <div id="previewName" style="font-size:13px;font-weight:700;color:var(--text-1);"></div>
+          <div id="previewSize" style="font-size:11px;color:var(--text-3);margin-top:1px;"></div>
+        </div>
+        <button onclick="analyzeFile()" style="font-family:var(--font);font-size:12px;font-weight:700;padding:8px 16px;background:var(--brand);color:#fff;border:none;border-radius:var(--r-md);cursor:pointer;">Analizar →</button>
+        <button onclick="clearFile()" style="font-family:var(--font);font-size:12px;font-weight:700;padding:8px 12px;background:transparent;color:#c0392b;border:1px solid #f5c6cb;border-radius:var(--r-md);cursor:pointer;">🗑 Borrar</button>
+      </div>
+      <div class="ai-status" id="aiStatus">
+        <div class="ai-label"><div class="spinner" id="aiSpinner"></div><span id="aiStatusLabel">Leyendo presentación...</span></div>
+        <div class="ai-log" id="aiLog"></div>
+      </div>
+      <div class="detected-strip" id="detectedStrip">
+        <div class="detected-dot"></div>
+        <div class="detected-label" id="detectedLabel">—</div>
+        <div class="detected-sub">Playbook cargado automáticamente</div>
+      </div>
     </div>
-    <div class="ai-status" id="aiStatus">
-      <div class="ai-label"><div class="spinner" id="aiSpinner"></div><span id="aiStatusLabel">Leyendo presentación...</span></div>
-      <div class="ai-log" id="aiLog"></div>
-    </div>
-    <div class="detected-strip" id="detectedStrip">
-      <div class="detected-dot"></div>
-      <div class="detected-label" id="detectedLabel">—</div>
-      <div class="detected-sub">Playbook cargado automáticamente</div>
+
+    <div id="step-config">
+      <div class="step-eyebrow">Paso 2 · Datos base</div>
+      <div class="step-title">Configura el plan</div>
+      <div class="step-sub">Completa los campos. Las fechas de T14, T30 y T90 se calculan automáticamente desde el Go-Live.</div>
+      <div class="form-grid">
+        <div class="field"><label>Cliente</label><input type="text" id="clientName" placeholder="Ej: Mercado Pago"></div>
+        <div class="field"><label>Programa</label><input type="text" id="programName" placeholder="Ej: Apprecio Beat"></div>
+        <div class="field"><label>Contraparte cliente</label><input type="text" id="execName" placeholder="Ej: Valentina Torres"></div>
+        <div class="field"><label>Fecha kick-off</label><input type="date" id="dateKickoff" onchange="updateGoLiveMin()"></div>
+        <div class="field"><label>Fecha Go-Live <span class="tooltip-icon">?<span class="tooltip-text">Mínimo 30 días desde el kick-off</span></span></label><input type="date" id="dateGoLive"></div>
+        <div class="field"><label>Dotación total</label><input type="number" id="headcount" placeholder="Ej: 240" min="1"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="generateRoadmap()">Generar roadmap</button>
+        <button class="btn-secondary" onclick="downloadPDF()">⬇ PDF</button>
+        <button class="btn-danger" onclick="resetAll()">🗑 Limpiar todo</button>
+      </div>
     </div>
   </div>
 
-  <div id="step-config">
-    <div class="step-eyebrow">Paso 2 · Datos base</div>
-    <div class="step-title">Configura el plan</div>
-    <div class="step-sub">Completa los campos. Las fechas de T14, T30 y T90 se calculan automáticamente desde el Go-Live.</div>
-    <div class="form-grid">
-      <div class="field"><label>Cliente</label><input type="text" id="clientName" placeholder="Ej: Mercado Pago"></div>
-      <div class="field"><label>Programa</label><input type="text" id="programName" placeholder="Ej: Apprecio Beat"></div>
-      <div class="field"><label>Contraparte cliente</label><input type="text" id="execName" placeholder="Ej: Valentina Torres"></div>
-      <div class="field"><label>Fecha kick-off</label><input type="date" id="dateKickoff" onchange="updateGoLiveMin()"></div>
-      <div class="field"><label>Fecha Go-Live <span class="tooltip-icon">?<span class="tooltip-text">Mínimo 30 días desde el kick-off</span></span></label><input type="date" id="dateGoLive"></div>
-      <div class="field"><label>Dotación total</label><input type="number" id="headcount" placeholder="Ej: 240" min="1"></div>
+  <div id="output">
+    <div class="rm-doc-header" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+      <div>
+        <img class="rm-doc-logo" src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio" onerror="this.style.display='none'">
+        <div class="rm-doc-title">Roadmap <span id="out-client-name">Cliente</span></div>
+        <div class="rm-doc-sub" id="out-doc-sub">PROTOCOLO DE IMPLEMENTACIÓN</div>
+      </div>
+      <button onclick="resetRoadmapOnly()" style="font-family:var(--font);font-size:11px;font-weight:700;padding:7px 14px;background:transparent;color:#c0392b;border:1px solid #f5c6cb;border-radius:var(--r-md);cursor:pointer;white-space:nowrap;margin-top:4px;" class="no-print">🗑 Limpiar roadmap</button>
     </div>
-    <div class="btn-row">
-      <button class="btn-primary" onclick="generateRoadmap()">Generar roadmap</button>
-      <button class="btn-secondary" onclick="downloadPDF()">⬇ PDF</button>
-      <button class="btn-danger" onclick="resetAll()">🗑 Limpiar todo</button>
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-num">0</div><div class="stat-lbl">Día de inicio</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-golive">30</div><div class="stat-lbl">Días al Go-Live</div></div>
+      <div class="stat-card"><div class="stat-num">3</div><div class="stat-lbl">Hitos de éxito</div></div>
+      <div class="stat-card"><div class="stat-num">90</div><div class="stat-lbl">Días de seguimiento</div></div>
+    </div>
+    <div class="rm-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--brand)"></div>CSM</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>TechOps / Impl.</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Cliente</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Documento / entregable</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>KAM</div>
+    </div>
+    <div class="phase-hdr">
+      <div class="phase-hdr-label pre">ETAPA 1 — CONFIGURACIÓN + PRE GO-LIVE</div>
+      <div class="phase-hdr-meta" contenteditable="true" spellcheck="false" id="pre-days-label">Días 0–30</div>
+    </div>
+    <div id="blocks-pre"></div>
+    <button class="btn-add-block" onclick="addBlock('pre')">+ Agregar bloque a Pre Go-Live</button>
+    <div class="phase-hdr" style="margin-top:2.5rem;">
+      <div class="phase-hdr-label golive">GO-LIVE</div>
+      <div class="phase-hdr-meta" contenteditable="true" spellcheck="false" id="golive-date-label">Día 14</div>
+    </div>
+    <div id="blocks-golive"></div>
+    <button class="btn-add-block" onclick="addBlock('golive')">+ Agregar bloque a Go-Live</button>
+    <div class="phase-hdr" style="margin-top:2.5rem;">
+      <div class="phase-hdr-label" style="background:var(--brand-text)">ETAPA 2 — ÉXITO POST GO-LIVE</div>
+      <div class="phase-hdr-meta" contenteditable="true" spellcheck="false" id="post-days-label">Días 30–120 · 3 hitos fijos · reportes paralelos · seguimiento CSM</div>
+    </div>
+    <div id="blocks-post"></div>
+    <button class="btn-add-block" onclick="addBlock('post')">+ Agregar bloque</button>
+    <div class="rm-footer">
+      <img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio" onerror="this.style.display='none'">
+      <div class="rm-footer-note" id="out-footer">Documento interno · Uso confidencial APPRECIO</div>
     </div>
   </div>
 </div>
 
-<div id="output">
-  <div class="rm-doc-header" style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
-    <div>
-      <img class="rm-doc-logo" src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio" onerror="this.style.display='none'">
-      <div class="rm-doc-title">Roadmap <span id="out-client-name">Cliente</span></div>
-      <div class="rm-doc-sub" id="out-doc-sub">PROTOCOLO DE IMPLEMENTACIÓN</div>
+<!-- ═══════════ VIEW: CLUB COURIER ═══════════ -->
+<div id="view-courier" class="view">
+  <div class="cc-wrap">
+
+    <div class="cc-hero">
+      <div class="cc-hero-eyebrow">Plan de activación de plataforma</div>
+      <h1 class="cc-hero-title" id="cc-hero-title" contenteditable="true" spellcheck="false">Customer Journey · Mi Programa</h1>
+      <p class="cc-hero-sub" id="cc-hero-sub" contenteditable="true" spellcheck="false">Acciones clave por hito para maximizar la adopción y el engagement en la plataforma.</p>
     </div>
-    <button onclick="resetRoadmapOnly()" style="font-family:var(--font);font-size:11px;font-weight:700;padding:7px 14px;background:transparent;color:#c0392b;border:1px solid #f5c6cb;border-radius:var(--r-md);cursor:pointer;white-space:nowrap;margin-top:4px;" class="no-print">🗑 Limpiar roadmap</button>
-  </div>
 
-  <div class="stat-row">
-    <div class="stat-card"><div class="stat-num">0</div><div class="stat-lbl">Día de inicio</div></div>
-    <div class="stat-card"><div class="stat-num" id="stat-golive">30</div><div class="stat-lbl">Días al Go-Live</div></div>
-    <div class="stat-card"><div class="stat-num">3</div><div class="stat-lbl">Hitos de éxito</div></div>
-    <div class="stat-card"><div class="stat-num">90</div><div class="stat-lbl">Días de seguimiento</div></div>
-  </div>
+    <!-- Timeline -->
+    <div class="cc-timeline">
+      <div class="cc-tl-item" style="align-items:flex-start;">
+        <div class="cc-tl-row"><div class="cc-tl-dot"></div><div class="cc-tl-line"></div></div>
+        <div class="cc-tl-label">Día 0</div><div class="cc-tl-desc">Go-Live</div>
+      </div>
+      <div class="cc-tl-item">
+        <div class="cc-tl-row"><div class="cc-tl-line"></div><div class="cc-tl-dot d2"></div><div class="cc-tl-line l2"></div></div>
+        <div class="cc-tl-label">T14</div><div class="cc-tl-desc">Día 14</div>
+      </div>
+      <div class="cc-tl-item">
+        <div class="cc-tl-row"><div class="cc-tl-line l2"></div><div class="cc-tl-dot d3"></div><div class="cc-tl-line l3"></div></div>
+        <div class="cc-tl-label">T30</div><div class="cc-tl-desc">Día 30</div>
+      </div>
+      <div class="cc-tl-item" style="align-items:flex-end;">
+        <div class="cc-tl-row"><div class="cc-tl-line l3"></div><div class="cc-tl-dot d3"></div></div>
+        <div class="cc-tl-label">T90</div><div class="cc-tl-desc">Día 90</div>
+      </div>
+    </div>
 
-  <div class="rm-legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--brand)"></div>CSM</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>TechOps / Impl.</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Cliente</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Documento / entregable</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>KAM</div>
-  </div>
+    <!-- T14 -->
+    <div class="cc-phase">
+      <div class="cc-phase-header">
+        <span class="cc-badge">T14</span>
+        <span class="cc-phase-title" contenteditable="true" spellcheck="false">Primeros pasos y activación</span>
+      </div>
+      <div class="cc-grid">
+        <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon">🏆</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Retos</span></div>
+          <ul class="cc-list">
+            <li contenteditable="true" spellcheck="false">Completa tu entrenamiento (los primeros 10 usuarios reciben recompensa especial)</li>
+            <li contenteditable="true" spellcheck="false">Realiza el reto de bienvenida</li>
+          </ul>
+        </div>
+        <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon">📚</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Entrenamientos</span></div>
+          <ul class="cc-list">
+            <li contenteditable="true" spellcheck="false">Entrenamiento 1</li>
+            <li contenteditable="true" spellcheck="false">Entrenamiento 2</li>
+            <li contenteditable="true" spellcheck="false">Entrenamiento 3</li>
+            <li contenteditable="true" spellcheck="false">Entrenamiento 4</li>
+            <li contenteditable="true" spellcheck="false">Entrenamiento 5</li>
+            <li contenteditable="true" spellcheck="false">+ Entrenamiento especial (usuarios con trayectoria)</li>
+          </ul>
+        </div>
+        <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon">📷</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Módulo de evidencia</span></div>
+          <ul class="cc-list">
+            <li contenteditable="true" spellcheck="false">Tutorial: cómo subir evidencia de campaña</li>
+          </ul>
+        </div>
+        <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon">🎁</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Welcome Pack</span></div>
+          <ul class="cc-list">
+            <li contenteditable="true" spellcheck="false">Regístrate en la plataforma</li>
+            <li contenteditable="true" spellcheck="false">Actualiza tu foto de perfil</li>
+            <li contenteditable="true" spellcheck="false">Reconoce a tu compañero</li>
+          </ul>
+          <div class="cc-special">
+            <div class="cc-special-label" contenteditable="true" spellcheck="false">Top 10 🎁</div>
+            <p class="cc-special-text" contenteditable="true" spellcheck="false">Los primeros 10 en completar las acciones Welcome Pack reciben recompensa especial en puntos Apprecio.</p>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:1rem;">
+        <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon">🏅</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Reconocimientos activos</span></div>
+          <p style="font-size:13px;color:var(--text-2);margin-bottom:10px;" contenteditable="true" spellcheck="false">Reconocimientos alineados a valores corporativos. Insignias activas:</p>
+          <div class="cc-insignias">
+            <div class="cc-ins">
+              <div class="cc-ins-name" contenteditable="true" spellcheck="false">🤝 Valor corporativo 1</div>
+              <div class="cc-ins-items" contenteditable="true" spellcheck="false">Descripción de insignia · Descripción de insignia · Descripción de insignia · Descripción de insignia</div>
+            </div>
+            <div class="cc-ins">
+              <div class="cc-ins-name" contenteditable="true" spellcheck="false">🏠 Valor corporativo 2</div>
+              <div class="cc-ins-items" contenteditable="true" spellcheck="false">Descripción de insignia · Descripción de insignia · Descripción de insignia</div>
+            </div>
+            <div class="cc-ins">
+              <div class="cc-ins-name" contenteditable="true" spellcheck="false">⭐ Valor corporativo 3</div>
+              <div class="cc-ins-items" contenteditable="true" spellcheck="false">Descripción de insignia · Descripción de insignia · Descripción de insignia</div>
+            </div>
+            <div class="cc-ins">
+              <div class="cc-ins-name" contenteditable="true" spellcheck="false">⚡ Valor corporativo 4</div>
+              <div class="cc-ins-items" contenteditable="true" spellcheck="false">Descripción de insignia · Descripción de insignia · Descripción de insignia</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <div class="phase-hdr">
-    <div class="phase-hdr-label pre">ETAPA 1 — CONFIGURACIÓN + PRE GO-LIVE</div>
-    <div class="phase-hdr-meta" contenteditable="true" spellcheck="false" id="pre-days-label">Días 0–30</div>
-  </div>
-  <div id="blocks-pre"></div>
-  <button class="btn-add-block" onclick="addBlock('pre')">+ Agregar bloque a Pre Go-Live</button>
+    <div class="cc-divider"></div>
 
-  <div class="phase-hdr" style="margin-top:2.5rem;">
-    <div class="phase-hdr-label golive">GO-LIVE</div>
-    <div class="phase-hdr-meta" contenteditable="true" spellcheck="false" id="golive-date-label">Día 14</div>
-  </div>
-  <div id="blocks-golive"></div>
-  <button class="btn-add-block" onclick="addBlock('golive')">+ Agregar bloque a Go-Live</button>
+    <!-- T30 -->
+    <div class="cc-phase">
+      <div class="cc-phase-header">
+        <span class="cc-badge t30">T30</span>
+        <span class="cc-phase-title" contenteditable="true" spellcheck="false">Opinión y consolidación</span>
+      </div>
+      <div class="cc-grid">
+        <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon mid">📋</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Encuesta</span></div>
+          <ul class="cc-list">
+            <li contenteditable="true" spellcheck="false">Encuesta de opinión sobre la nueva plataforma</li>
+          </ul>
+        </div>
+        <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon mid">📚</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Entrenamientos</span></div>
+          <ul class="cc-list">
+            <li contenteditable="true" spellcheck="false">Se mantienen activos los mismos para nuevos usuarios</li>
+            <li contenteditable="true" spellcheck="false">+ Entrenamiento especial (usuarios con trayectoria)</li>
+          </ul>
+        </div>
+        <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon mid">🛒</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Canje de puntos</span></div>
+          <ul class="cc-list">
+            <li contenteditable="true" spellcheck="false">Tutorial: cómo canjear puntos desde el app</li>
+            <li contenteditable="true" spellcheck="false">Canje en Gift Cards</li>
+            <li contenteditable="true" spellcheck="false">Work-life rewards con puntos de reconocimiento</li>
+          </ul>
+        </div>
+        <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon mid">🎖️</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Incentivos por insignias</span></div>
+          <ul class="cc-list">
+            <li contenteditable="true" spellcheck="false">Premio a los 10 primeros con más insignias</li>
+            <li contenteditable="true" spellcheck="false">Sorteo especial entre quienes más insignias han entregado</li>
+          </ul>
+          <div class="cc-special">
+            <div class="cc-special-label" contenteditable="true" spellcheck="false">Reconocimientos e insignias activas</div>
+            <p class="cc-special-text" contenteditable="true" spellcheck="false">Se mantienen activos los reconocimientos corporativos del T14.</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <div class="phase-hdr" style="margin-top:2.5rem;">
-    <div class="phase-hdr-label" style="background:var(--brand-text)">ETAPA 2 — ÉXITO POST GO-LIVE</div>
-    <div class="phase-hdr-meta" contenteditable="true" spellcheck="false" id="post-days-label">Días 30–120 · 3 hitos fijos · reportes paralelos · seguimiento CSM</div>
-  </div>
-  <div id="blocks-post"></div>
-  <button class="btn-add-block" onclick="addBlock('post')">+ Agregar bloque</button>
+    <div class="cc-divider"></div>
 
-  <div class="rm-footer">
-    <img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio" onerror="this.style.display='none'">
-    <div class="rm-footer-note" id="out-footer">Documento interno · Uso confidencial APPRECIO</div>
+    <!-- T90 -->
+    <div class="cc-phase">
+      <div class="cc-phase-header">
+        <span class="cc-badge t90">T90</span>
+        <span class="cc-phase-title" contenteditable="true" spellcheck="false">Satisfacción y reconocimiento de liderazgo</span>
+      </div>
+      <div class="cc-grid">
+        <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon dark">✅</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Encuesta</span></div>
+          <ul class="cc-list">
+            <li contenteditable="true" spellcheck="false">Encuesta de satisfacción laboral</li>
+          </ul>
+        </div>
+        <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon dark">📚</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Entrenamientos</span></div>
+          <ul class="cc-list">
+            <li contenteditable="true" spellcheck="false">Se mantienen activos los mismos para nuevos usuarios</li>
+            <li contenteditable="true" spellcheck="false">+ Entrenamiento especial (usuarios con trayectoria)</li>
+          </ul>
+        </div>
+        <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon dark">👑</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Insignias de liderazgo</span></div>
+          <ul class="cc-list">
+            <li contenteditable="true" spellcheck="false">Asignación de insignias de liderazgo al colaborador</li>
+            <li contenteditable="true" spellcheck="false">Para reconocer o destacar logros importantes</li>
+            <li contenteditable="true" spellcheck="false">Se mantienen activas las insignias corporativas iniciales</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="cc-note">
+      <div class="cc-note-icon">ℹ️</div>
+      <div>
+        <div class="cc-note-title" contenteditable="true" spellcheck="false">Nota sobre entrenamientos</div>
+        <p class="cc-note-text" contenteditable="true" spellcheck="false">En todos los hitos, los nuevos usuarios mantienen activos los mismos entrenamientos. Los usuarios con trayectoria acceden además a un entrenamiento especial diferenciado por hito.</p>
+      </div>
+    </div>
+
+    <div style="margin-top:2rem;padding-top:1.5rem;border-top:2px solid var(--brand-light);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;" class="cc-doc-footer">
+      <img src="https://estudios.apprecio.com/hubfs/logos/Apprecio-logo-rojo.png" alt="Apprecio" style="height:20px;" onerror="this.style.display='none'">
+      <div style="font-size:10px;color:var(--text-3);font-style:italic;" id="cc-footer-note" contenteditable="true" spellcheck="false">Documento interno · Mi Programa · Apprecio</div>
+    </div>
+
   </div>
 </div>
 
@@ -394,9 +652,39 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-// ROLE COLORS
-// ═══════════════════════════════════════════════════════════
+// ═══ VIEW SWITCHER ═══
+function switchView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.getElementById('navRoadmap').classList.toggle('active', v === 'roadmap');
+  document.getElementById('navCourier').classList.toggle('active', v === 'courier');
+  document.getElementById('roadmapActions').style.display = v === 'roadmap' ? 'flex' : 'none';
+  document.getElementById('courierActions').style.display = v === 'courier' ? 'flex' : 'none';
+  if (v === 'courier') updateCourierHeader();
+}
+
+function updateCourierHeader() {
+  const prog = document.getElementById('programName').value.trim();
+  const client = document.getElementById('clientName').value.trim();
+  const navBtn = document.getElementById('navCourier');
+  const heroTitle = document.getElementById('cc-hero-title');
+  const heroSub = document.getElementById('cc-hero-sub');
+  const ccFooterNote = document.getElementById('cc-footer-note');
+
+  const progLabel = prog || 'Mi Programa';
+  navBtn.textContent = '🚴 ' + progLabel;
+
+  if (heroTitle) heroTitle.textContent = 'Customer Journey · ' + progLabel;
+  if (heroSub) {
+    const base = 'Acciones clave por hito para maximizar la adopción y el engagement en la plataforma.';
+    heroSub.textContent = client ? base + ' Cliente: ' + client + '.' : base;
+  }
+  if (ccFooterNote) {
+    ccFooterNote.textContent = 'Documento interno · ' + progLabel + (client ? ' · ' + client : '') + ' · Apprecio';
+  }
+}
+
+// ═══ ROLE COLORS ═══
 const ROLE_COLORS = {
   'CSM':'var(--brand)','TechOps':'var(--blue)','Cliente':'var(--green)',
   'KAM':'var(--purple)','Admins':'var(--orange)','C-Level':'var(--brand-text)',
@@ -409,96 +697,26 @@ function roleColor(r) {
   return 'var(--text-3)';
 }
 
-// ═══════════════════════════════════════════════════════════
-// PLAYBOOKS
-// ═══════════════════════════════════════════════════════════
+// ═══ PLAYBOOKS ═══
 const PLAYBOOKS = {
-  fuerza_de_venta: {
-    label:'Fuerza de venta',
-    t14:{kpis_text:'40% fuerza de venta activa · ≥70% cert. "Venta de Valor"',acciones:['Insignias Activador','Certificación Venta de Valor','Bono sprint cierre (últimos 3 días)'],roles:['CSM','Cliente','Admins'],reportes:[{nombre:'Reporte de activación D+7',meta:'PDF ejecutivo',dest:'Admins operativos'},{nombre:'Revisión T-14 · % adopción y certificación',meta:'Reunión 60 min + resumen',dest:'Admins + jefe comercial'}]},
-    t30:{kpis_text:'60-70% dotación activa · >2 challenges por vendedor · transaccionalidad ↑',acciones:['Bono de Salto de tramo','Reto de Calidad (0% anulaciones)','Encuesta D+30 premiada'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Quincenal de tramos',meta:'PDF 5 slides',dest:'Jefe comercial'},{nombre:'Revisión T-30',meta:'Reunión 60 min + reporte PDF',dest:'Admins + sponsor'}]},
-    t90:{kpis_text:'Rotación tramos Oro/Plata · actividad sostenida 3m+ · ROI documentado',acciones:['Gran Pozo Oro trimestral','Encuesta de clima D+90','Premios trimestrales formales','Propuesta de renovación'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review trimestral D+90',meta:'Sesión 90 min + deck T-90',dest:'C-Level + sponsor'},{nombre:'ROI del programa',meta:'Reporte ejecutivo PDF',dest:'C-Level'},{nombre:'Benchmark de industria',meta:'Comparativa vs. promedio segmento',dest:'C-Level'}]}
-  },
-  rrhh: {
-    label:'RRHH / Personas',
-    t14:{kpis_text:'40% colaboradores activos · ≥70% cert. "Cultura y Beneficios"',acciones:['Insignias de Bienvenida','Certificación cultura organizacional','Encuesta pulso inicial'],roles:['CSM','Cliente','Admins'],reportes:[{nombre:'Reporte de activación D+7',meta:'PDF ejecutivo',dest:'Admins RRHH'},{nombre:'Revisión T-14 · adopción por área',meta:'Reunión 60 min',dest:'Gerente RRHH + líderes'}]},
-    t30:{kpis_text:'60-70% dotación activa · rotación ↓ vs mes anterior · >2 usos de beneficios/persona',acciones:['Bono de permanencia por tramo','Reto de clima + acción','Reconocimiento público D+30'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Reporte de retención quincenal',meta:'PDF 5 slides',dest:'Gerente RRHH'},{nombre:'Análisis de clima D+30',meta:'Reunión 60 min + PDF',dest:'Directivos'}]},
-    t90:{kpis_text:'Reducción rotación vs línea base · NPS clima ↑ · ROI en ahorro de reemplazo',acciones:['Premio trimestral de permanencia','Encuesta clima D+90','Análisis de cohortes','Propuesta renovación con ROI'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review RRHH D+90',meta:'Sesión 90 min + deck',dest:'Directivos + RRHH'},{nombre:'ROI (costo rotación evitado)',meta:'Reporte ejecutivo PDF',dest:'Gerente General'}]}
-  },
-  marketing: {
-    label:'Marketing / Comercial',
-    t14:{kpis_text:'40% equipo activo · ≥70% cert. "Metodología de campañas"',acciones:['Insignias Activador de Campaña','Certificación metodología','Sprint de ideas (2 semanas)'],roles:['CSM','Cliente','Admins'],reportes:[{nombre:'Reporte activación campaña D+7',meta:'PDF ejecutivo',dest:'Líder marketing'},{nombre:'Revisión T-14 · primeras conversiones',meta:'Reunión 60 min',dest:'Gerente marketing'}]},
-    t30:{kpis_text:'60-70% equipo activo · conversión ↑ vs baseline · >2 campañas/persona',acciones:['Bono por conversión de tramo','Reto de performance (mejor campaña)','Encuesta D+30'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Reporte quincenal de campañas',meta:'PDF 5 slides',dest:'Gerente marketing'},{nombre:'Análisis de conversión T-30',meta:'Reunión 60 min + PDF',dest:'Directivos'}]},
-    t90:{kpis_text:'Conversión ↑ vs baseline · churn clientes ↓ · revenue atribuible documentado',acciones:['Premio trimestral performer','Análisis cohortes conversión','Encuesta satisfacción D+90','Propuesta renovación ROI'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review Marketing D+90',meta:'Sesión 90 min + deck',dest:'C-Level'},{nombre:'ROI (revenue atribuido)',meta:'Reporte ejecutivo PDF',dest:'CEO / CFO'}]}
-  },
-  operaciones: {
-    label:'Operaciones',
-    t14:{kpis_text:'40% operadores activos · ≥70% cert. "Estándares de calidad"',acciones:['Insignias Calidad y Proceso','Certificación estándares operacionales','Sprint cumplimiento'],roles:['CSM','TechOps','Cliente','Admins'],reportes:[{nombre:'Reporte activación D+7 por área',meta:'PDF ejecutivo',dest:'Supervisores / Jefe ops'},{nombre:'Revisión T-14 · cumplimiento y calidad',meta:'Reunión 60 min',dest:'Gerente operaciones'}]},
-    t30:{kpis_text:'60-70% dotación activa · cumplimiento ↑ vs baseline · tasa error ↓',acciones:['Bono cumplimiento por tramo','Reto de calidad (0% reprocesos)','Encuesta D+30 procesos'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Reporte quincenal cumplimiento',meta:'PDF 5 slides',dest:'Jefe operaciones'},{nombre:'Análisis de calidad T-30',meta:'Reunión 60 min + PDF',dest:'Directivos'}]},
-    t90:{kpis_text:'Tasa error ↓ vs baseline · cumplimiento sostenido · ROI en ahorro reprocesos',acciones:['Premio trimestral mejor equipo','Análisis cohortes calidad','Encuesta clima operacional D+90','Propuesta renovación ROI'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review Operaciones D+90',meta:'Sesión 90 min + deck',dest:'Directivos'},{nombre:'ROI (ahorro en reprocesos)',meta:'Reporte ejecutivo PDF',dest:'Gerente General / CFO'}]}
-  }
+  fuerza_de_venta:{label:'Fuerza de venta',t14:{kpis_text:'40% fuerza de venta activa · ≥70% cert. "Venta de Valor"',acciones:['Insignias Activador','Certificación Venta de Valor','Bono sprint cierre (últimos 3 días)'],roles:['CSM','Cliente','Admins'],reportes:[{nombre:'Reporte de activación D+7',meta:'PDF ejecutivo',dest:'Admins operativos'},{nombre:'Revisión T-14 · % adopción y certificación',meta:'Reunión 60 min + resumen',dest:'Admins + jefe comercial'}]},t30:{kpis_text:'60-70% dotación activa · >2 challenges por vendedor · transaccionalidad ↑',acciones:['Bono de Salto de tramo','Reto de Calidad (0% anulaciones)','Encuesta D+30 premiada'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Quincenal de tramos',meta:'PDF 5 slides',dest:'Jefe comercial'},{nombre:'Revisión T-30',meta:'Reunión 60 min + reporte PDF',dest:'Admins + sponsor'}]},t90:{kpis_text:'Rotación tramos Oro/Plata · actividad sostenida 3m+ · ROI documentado',acciones:['Gran Pozo Oro trimestral','Encuesta de clima D+90','Premios trimestrales formales','Propuesta de renovación'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review trimestral D+90',meta:'Sesión 90 min + deck T-90',dest:'C-Level + sponsor'},{nombre:'ROI del programa',meta:'Reporte ejecutivo PDF',dest:'C-Level'},{nombre:'Benchmark de industria',meta:'Comparativa vs. promedio segmento',dest:'C-Level'}]}},
+  rrhh:{label:'RRHH / Personas',t14:{kpis_text:'40% colaboradores activos · ≥70% cert. "Cultura y Beneficios"',acciones:['Insignias de Bienvenida','Certificación cultura organizacional','Encuesta pulso inicial'],roles:['CSM','Cliente','Admins'],reportes:[{nombre:'Reporte de activación D+7',meta:'PDF ejecutivo',dest:'Admins RRHH'},{nombre:'Revisión T-14 · adopción por área',meta:'Reunión 60 min',dest:'Gerente RRHH + líderes'}]},t30:{kpis_text:'60-70% dotación activa · rotación ↓ vs mes anterior · >2 usos de beneficios/persona',acciones:['Bono de permanencia por tramo','Reto de clima + acción','Reconocimiento público D+30'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Reporte de retención quincenal',meta:'PDF 5 slides',dest:'Gerente RRHH'},{nombre:'Análisis de clima D+30',meta:'Reunión 60 min + PDF',dest:'Directivos'}]},t90:{kpis_text:'Reducción rotación vs línea base · NPS clima ↑ · ROI en ahorro de reemplazo',acciones:['Premio trimestral de permanencia','Encuesta clima D+90','Análisis de cohortes','Propuesta renovación con ROI'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review RRHH D+90',meta:'Sesión 90 min + deck',dest:'Directivos + RRHH'},{nombre:'ROI (costo rotación evitado)',meta:'Reporte ejecutivo PDF',dest:'Gerente General'}]}},
+  operaciones:{label:'Operaciones',t14:{kpis_text:'40% operadores activos · ≥70% cert. "Estándares de calidad"',acciones:['Insignias Calidad y Proceso','Certificación estándares operacionales','Sprint cumplimiento'],roles:['CSM','TechOps','Cliente','Admins'],reportes:[{nombre:'Reporte activación D+7 por área',meta:'PDF ejecutivo',dest:'Supervisores / Jefe ops'},{nombre:'Revisión T-14 · cumplimiento y calidad',meta:'Reunión 60 min',dest:'Gerente operaciones'}]},t30:{kpis_text:'60-70% dotación activa · cumplimiento ↑ vs baseline · tasa error ↓',acciones:['Bono cumplimiento por tramo','Reto de calidad (0% reprocesos)','Encuesta D+30 procesos'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Reporte quincenal cumplimiento',meta:'PDF 5 slides',dest:'Jefe operaciones'},{nombre:'Análisis de calidad T-30',meta:'Reunión 60 min + PDF',dest:'Directivos'}]},t90:{kpis_text:'Tasa error ↓ vs baseline · cumplimiento sostenido · ROI en ahorro reprocesos',acciones:['Premio trimestral mejor equipo','Análisis cohortes calidad','Encuesta clima operacional D+90','Propuesta renovación ROI'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review Operaciones D+90',meta:'Sesión 90 min + deck',dest:'Directivos'},{nombre:'ROI (ahorro en reprocesos)',meta:'Reporte ejecutivo PDF',dest:'Gerente General / CFO'}]}}
 };
 
-// ═══════════════════════════════════════════════════════════
-// RUBRICS — sin puntos, editable en runtime
-// ═══════════════════════════════════════════════════════════
+// ═══ RUBRICS ═══
 const RUBRICS = {
-  t14: {
-    venta: [
-      {title:'Acelerador semana 1',desc:'Bono por 4 acciones clave en la primera semana de Go-Live.'},
-      {title:'Reto Primera Acción + Certificación',desc:'Completar la primera acción con certificación 100%.'},
-      {title:'Calidad de Onboarding',desc:'Meta de 0% errores en el proceso inicial al cierre del mes.'},
-      {title:'Sprint Cierre T14',desc:'Bono extra por completar metas en los últimos 3 días del período.'}
-    ],
-    engage: [
-      {title:'Entrenamiento Bienvenida',desc:'Completar el módulo de onboarding de Apprecio (5–7 pasos).'},
-      {title:'Certificación Producto',desc:'Completar el entrenamiento con nota ≥70%.'},
-      {title:'Perfil Completo',desc:'Completar foto y datos básicos del perfil.'},
-      {title:'Encuesta de Diagnóstico Inicial',desc:'Responder encuesta de conocimiento y contexto inicial.'}
-    ]
-  },
-  t30: {
-    venta: [
-      {title:'Bono Salto de Cuartil',desc:'Incentivo por subir de cuartil respecto al período anterior.'},
-      {title:'Bono Rescate',desc:'Incentivo para colaboradores que reactiven acciones caídas.'},
-      {title:'Misión Horario Activo',desc:'Extra por acciones completadas en horario punta.'},
-      {title:'Sorteo Q1/Q2',desc:'Sorteo entre colaboradores Q1/Q2 sin errores.'}
-    ],
-    engage: [
-      {title:'Check-in Semanal (×4)',desc:'Ingresar al portal cada semana. Máx 4 veces al mes.'},
-      {title:'Trivia Mensual',desc:'Responder la trivia de conocimiento del mes.'},
-      {title:'Compartir Tip',desc:'Publicar un tip útil en la comunidad.'},
-      {title:'Ver Progreso de Meta',desc:'Ingresar y revisar el scorecard mensual propio.'},
-      {title:'Encuesta Comprensión de Metas',desc:'¿Entiendes tu meta? Disparada al ver metas por primera vez.'}
-    ]
-  },
-  t90: {
-    venta: [
-      {title:'Constancia de Nivel',desc:'Mantener Q1 o Q2 durante 3 meses consecutivos.'},
-      {title:'Sprint Q4',desc:'Bono por acciones en semana específica del período.'},
-      {title:'Sorteo Primera Acción Mes',desc:'Primera acción de cada mes = ticket para sorteo.'},
-      {title:'Hito Trimestral',desc:'Completar el objetivo trimestral de la fase.'}
-    ],
-    engage: [
-      {title:'Gran Pozo Oro',desc:'Reparto proporcional entre todos los colaboradores Q1 al cierre.'},
-      {title:'Encuesta de Terreno',desc:'Feedback real sobre barreras y logros. Trimestral.'},
-      {title:'Encuesta Clima Laboral',desc:'Mide sentido de pertenencia y riesgo de rotación.'},
-      {title:'Nominar Partner del Trimestre',desc:'Reconocer a un compañero por apoyo destacado.'},
-      {title:'Feedback Cierre de Período',desc:'Encuesta de evaluación del programa al cierre.'}
-    ]
-  }
+  t14:{venta:[{title:'Acelerador semana 1',desc:'Bono por 4 acciones clave en la primera semana de Go-Live.'},{title:'Reto Primera Acción + Certificación',desc:'Completar la primera acción con certificación 100%.'},{title:'Calidad de Onboarding',desc:'Meta de 0% errores en el proceso inicial al cierre del mes.'},{title:'Sprint Cierre T14',desc:'Bono extra por completar metas en los últimos 3 días del período.'}],engage:[{title:'Entrenamiento Bienvenida',desc:'Completar el módulo de onboarding de Apprecio (5–7 pasos).'},{title:'Certificación Producto',desc:'Completar el entrenamiento con nota ≥70%.'},{title:'Perfil Completo',desc:'Completar foto y datos básicos del perfil.'},{title:'Encuesta de Diagnóstico Inicial',desc:'Responder encuesta de conocimiento y contexto inicial.'}]},
+  t30:{venta:[{title:'Bono Salto de Cuartil',desc:'Incentivo por subir de cuartil respecto al período anterior.'},{title:'Bono Rescate',desc:'Incentivo para colaboradores que reactiven acciones caídas.'},{title:'Misión Horario Activo',desc:'Extra por acciones completadas en horario punta.'},{title:'Sorteo Q1/Q2',desc:'Sorteo entre colaboradores Q1/Q2 sin errores.'}],engage:[{title:'Check-in Semanal (×4)',desc:'Ingresar al portal cada semana. Máx 4 veces al mes.'},{title:'Trivia Mensual',desc:'Responder la trivia de conocimiento del mes.'},{title:'Compartir Tip',desc:'Publicar un tip útil en la comunidad.'},{title:'Ver Progreso de Meta',desc:'Ingresar y revisar el scorecard mensual propio.'},{title:'Encuesta Comprensión de Metas',desc:'¿Entiendes tu meta? Disparada al ver metas por primera vez.'}]},
+  t90:{venta:[{title:'Constancia de Nivel',desc:'Mantener Q1 o Q2 durante 3 meses consecutivos.'},{title:'Sprint Q4',desc:'Bono por acciones en semana específica del período.'},{title:'Sorteo Primera Acción Mes',desc:'Primera acción de cada mes = ticket para sorteo.'},{title:'Hito Trimestral',desc:'Completar el objetivo trimestral de la fase.'}],engage:[{title:'Gran Pozo Oro',desc:'Reparto proporcional entre todos los colaboradores Q1 al cierre.'},{title:'Encuesta de Terreno',desc:'Feedback real sobre barreras y logros. Trimestral.'},{title:'Encuesta Clima Laboral',desc:'Mide sentido de pertenencia y riesgo de rotación.'},{title:'Nominar Partner del Trimestre',desc:'Reconocer a un compañero por apoyo destacado.'},{title:'Feedback Cierre de Período',desc:'Encuesta de evaluación del programa al cierre.'}]}
 };
 
-// ═══════════════════════════════════════════════════════════
-// PPT / n8n
-// ═══════════════════════════════════════════════════════════
+// ═══ PPT / n8n ═══
 const dropZone = document.getElementById('dropZone');
 dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
 dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
 dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('dragover'); fileSelected(e.dataTransfer.files[0]); });
-
 let _selectedFile = null;
-
 function fileSelected(file) {
   if (!file || !file.name.endsWith('.pptx')) { alert('Por favor sube un archivo .pptx'); return; }
   _selectedFile = file;
@@ -509,7 +727,6 @@ function fileSelected(file) {
   document.getElementById('aiLog').innerHTML = '';
   document.getElementById('detectedStrip').classList.remove('show');
 }
-
 function clearFile() {
   _selectedFile = null;
   document.getElementById('pptFile').value = '';
@@ -519,7 +736,6 @@ function clearFile() {
   document.getElementById('detectedStrip').classList.remove('show');
   window._detectedPlaybook = null;
 }
-
 async function analyzeFile() {
   if (!_selectedFile) return;
   showAiStatus('Extrayendo texto del PPT...');
@@ -529,13 +745,10 @@ async function analyzeFile() {
     await analyzeWithN8n(text);
   } catch(err) { showAiStatus('Error: ' + err.message, true); }
 }
-
 async function extractPptxText(file) {
   const ab = await file.arrayBuffer();
   const zip = await JSZip.loadAsync(ab);
-  const slideFiles = Object.keys(zip.files)
-    .filter(n => n.match(/ppt\/slides\/slide\d+\.xml$/))
-    .sort((a,b) => parseInt(a.match(/slide(\d+)/)[1]) - parseInt(b.match(/slide(\d+)/)[1]));
+  const slideFiles = Object.keys(zip.files).filter(n => n.match(/ppt\/slides\/slide\d+\.xml$/)).sort((a,b) => parseInt(a.match(/slide(\d+)/)[1]) - parseInt(b.match(/slide(\d+)/)[1]));
   let out = '';
   for (const sf of slideFiles) {
     const xml = await zip.files[sf].async('string');
@@ -543,7 +756,6 @@ async function extractPptxText(file) {
   }
   return out;
 }
-
 async function analyzeWithN8n(pptText) {
   const N8N_WEBHOOK = 'https://n8n.openip.cl/webhook/apprecio-ppt-analyze';
   const res = await fetch(N8N_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ pptText: pptText.substring(0,3000) }) });
@@ -555,7 +767,6 @@ async function analyzeWithN8n(pptText) {
   if (!parsed.equipo) { parsed.equipo = 'fuerza_de_venta'; logAi('⚠ No se detectó equipo — usando playbook por defecto.'); }
   applyPlaybook(parsed);
 }
-
 function applyPlaybook(parsed) {
   const equipoKey = parsed.equipo || 'fuerza_de_venta';
   const playbook = PLAYBOOKS[equipoKey] || PLAYBOOKS['fuerza_de_venta'];
@@ -566,7 +777,6 @@ function applyPlaybook(parsed) {
   window._detectedPlaybook = { key: equipoKey, dolores: parsed.dolores||[], t14: parsed.t14||{}, t30: parsed.t30||{}, t90: parsed.t90||{} };
   hideAiSpinner();
 }
-
 function showAiStatus(msg, isError=false) {
   const el = document.getElementById('aiStatus'); el.style.display = 'block';
   if (isError) el.style.background = '#fff0f0';
@@ -575,9 +785,7 @@ function showAiStatus(msg, isError=false) {
 function logAi(msg) { const l = document.getElementById('aiLog'); l.innerHTML += (l.innerHTML ? '<br>' : '') + msg; }
 function hideAiSpinner() { document.getElementById('aiSpinner').style.display = 'none'; document.getElementById('aiStatusLabel').textContent = 'Listo'; }
 
-// ═══════════════════════════════════════════════════════════
-// DATE HELPERS
-// ═══════════════════════════════════════════════════════════
+// ═══ DATE HELPERS ═══
 function addDays(d, n) { var r = new Date(d); r.setDate(r.getDate() + n); return r; }
 function toISO(d) { return d.toISOString().split('T')[0]; }
 function parseDate(s) { return s ? new Date(s + 'T12:00:00') : null; }
@@ -585,9 +793,7 @@ function fmtLong(d) { return d.toLocaleDateString('es-CL', {day:'numeric',month:
 function fmtShort(d) { return d.toLocaleDateString('es-CL', {day:'numeric',month:'short',year:'numeric'}); }
 function diffDays(a, b) { return Math.round((b - a) / 86400000); }
 
-// ═══════════════════════════════════════════════════════════
-// GENERATE ROADMAP
-// ═══════════════════════════════════════════════════════════
+// ═══ GENERATE ROADMAP ═══
 function updateGoLiveMin() {
   const ks = document.getElementById('dateKickoff').value;
   if (!ks) return;
@@ -596,7 +802,6 @@ function updateGoLiveMin() {
   const curGL = document.getElementById('dateGoLive').value;
   if (curGL && parseDate(curGL) < minGL) document.getElementById('dateGoLive').value = '';
 }
-
 function generateRoadmap() {
   const cN = document.getElementById('clientName').value.trim();
   const pN = document.getElementById('programName').value.trim();
@@ -610,96 +815,63 @@ function generateRoadmap() {
   if (goLive < minGoLive) { alert('La fecha de Go-Live debe ser al menos 30 días después del kick-off.\nMínimo: ' + fmtLong(minGoLive)); return; }
   const daysToGL = diffDays(kickoff, goLive);
   const d90 = addDays(goLive, 90);
-
   document.getElementById('out-client-name').textContent = cN + (pN ? ' · ' + pN : '');
   document.getElementById('out-doc-sub').textContent = 'PROTOCOLO DE IMPLEMENTACIÓN' + (exec ? ' · Contraparte: ' + exec : '');
   document.getElementById('stat-golive').textContent = daysToGL || 30;
   document.getElementById('golive-date-label').textContent = 'Día ' + daysToGL + ' · ' + fmtShort(goLive);
   document.getElementById('post-days-label').textContent = 'Días ' + daysToGL + '–' + (daysToGL + 90) + ' · 3 hitos fijos (T14, T30, T90) · reportes paralelos · seguimiento CSM';
   document.getElementById('out-footer').textContent = 'Generado para ' + cN + ' · Go-Live: ' + fmtLong(goLive) + ' · D+90: ' + fmtShort(d90) + ' · Documento interno APPRECIO';
-
   const pb = window._detectedPlaybook || { key:'fuerza_de_venta', dolores:[], t14:{}, t30:{}, t90:{} };
   const playbook = PLAYBOOKS[pb.key] || PLAYBOOKS['fuerza_de_venta'];
   const dolores = pb.dolores || [];
   const pptT14 = pb.t14 || {}, pptT30 = pb.t30 || {}, pptT90 = pb.t90 || {};
-
   ['pre','golive','post'].forEach(z => document.getElementById('blocks-' + z).innerHTML = '');
-
   const dr = {
-    kickoff:   { start: kickoff, end: kickoff },
-    nomina:    { start: addDays(kickoff,1),  end: addDays(kickoff,10) },
-    demo:      { start: addDays(kickoff,11), end: addDays(kickoff,22) },
-    checklist: { start: addDays(kickoff,29), end: addDays(kickoff,29) },
-    golive:    { start: goLive, end: goLive },
-    t14:       { start: addDays(goLive,1),   end: addDays(goLive,14) },
-    t30:       { start: addDays(goLive,15),  end: addDays(goLive,30) },
-    t90:       { start: addDays(goLive,31),  end: addDays(goLive,90) }
+    kickoff:{start:kickoff,end:kickoff},nomina:{start:addDays(kickoff,1),end:addDays(kickoff,10)},
+    demo:{start:addDays(kickoff,11),end:addDays(kickoff,22)},checklist:{start:addDays(kickoff,29),end:addDays(kickoff,29)},
+    golive:{start:goLive,end:goLive},t14:{start:addDays(goLive,1),end:addDays(goLive,14)},
+    t30:{start:addDays(goLive,15),end:addDays(goLive,30)},t90:{start:addDays(goLive,31),end:addDays(goLive,90)}
   };
-
-  addBlockToZone('pre',{day:'0',dayLbl:'DÍA',dateRange:dr.kickoff,tag:'Kick-off de onboarding',tagColor:'var(--brand-light)',tagTextColor:'var(--brand-text)',title:'Kick-off call de onboarding',desc:'CSM conduce la llamada de inicio. Presenta los roles, establece el plan de implementación y explica el camino crítico al cliente. Se deja en acta: sin nómina no hay configuración, sin configuración no hay demo, sin demo no hay go-live.',alert:dolores.length?'⚠ Dolores identificados: '+dolores.join(' · '):null,roles:['CSM','Cliente'],acciones:['Email onboarding enviado','Acta kick-off firmada','Camino crítico explicado'],reportes:[]});
-  addBlockToZone('pre',{day:'1–10',dayLbl:'DÍAS',dateRange:dr.nomina,tag:'Ruta crítica',tagColor:'#FEE2E2',tagTextColor:'#991B1B',title:'Entrega de nómina + configuración',desc:'Cliente entrega nómina al CSM. El CSM valida el formato y hace el traspaso interno a TechOps para la configuración de empleados y reglas de negocio.',alert:'⚠ Ruta crítica — el cliente debe entregar la nómina en este bloque. Sin ella se detiene todo el proceso.',roles:['CSM','TechOps','Cliente'],acciones:['Nómina recibida y validada','Traspaso a TechOps realizado','Scorecard configurado','Tramos y metas cargados'],reportes:[]});
-  addBlockToZone('pre',{day:'11–22',dayLbl:'DÍAS',dateRange:dr.demo,tag:'Demo y validación',tagColor:'var(--green-light)',tagTextColor:'var(--green)',title:'Demo + validación con el cliente',desc:'CSM presenta la plataforma configurada al cliente. Se validan flujos y experiencia. CSM levanta requerimientos de ajuste interno a TechOps.',roles:['CSM','Cliente'],acciones:['Demo realizada','Ajustes enviados a TechOps','Aprobación formal obtenida'],reportes:[]});
-  addBlockToZone('pre',{day:String(daysToGL-1),dayLbl:'DÍA',dateRange:dr.checklist,tag:'Checklist pre go-live',tagColor:'var(--orange-light)',tagTextColor:'var(--orange)',title:'Checklist pre go-live',desc:'Verificación final (día 29): nómina cargada, configuración aprobada, accesos activos, comunicación al equipo lista.',roles:['CSM','TechOps'],acciones:['Nómina cargada ✓','Configuración aprobada ✓','Accesos activos ✓','Comunicado interno listo ✓'],reportes:[]});
-  addBlockToZone('golive',{day:String(daysToGL),dayLbl:'DÍA',dateRange:dr.golive,tag:'Lanzamiento',tagColor:'var(--brand)',tagTextColor:'#fff',title:'Lanzamiento oficial de la plataforma',desc:'TechOps activa la plataforma en back-office. CSM comunica el lanzamiento al cliente y queda disponible como primera línea para incidencias.',roles:['CSM','TechOps','Todos'],acciones:['Plataforma activada','Comunicado interno enviado','CSM disponible para incidencias'],reportes:[]});
-
+  addBlockToZone('pre',{day:'0',dayLbl:'DÍA',dateRange:dr.kickoff,tag:'Kick-off de onboarding',tagColor:'var(--brand-light)',tagTextColor:'var(--brand-text)',title:'Kick-off call de onboarding',desc:'CSM conduce la llamada de inicio. Presenta los roles, establece el plan de implementación y explica el camino crítico al cliente.',alert:dolores.length?'⚠ Dolores identificados: '+dolores.join(' · '):null,roles:['CSM','Cliente'],acciones:['Email onboarding enviado','Acta kick-off firmada','Camino crítico explicado'],reportes:[]});
+  addBlockToZone('pre',{day:'1–10',dayLbl:'DÍAS',dateRange:dr.nomina,tag:'Ruta crítica',tagColor:'#FEE2E2',tagTextColor:'#991B1B',title:'Entrega de nómina + configuración',desc:'Cliente entrega nómina al CSM. El CSM valida el formato y hace el traspaso interno a TechOps.',alert:'⚠ Ruta crítica — el cliente debe entregar la nómina en este bloque.',roles:['CSM','TechOps','Cliente'],acciones:['Nómina recibida y validada','Traspaso a TechOps realizado','Scorecard configurado','Tramos y metas cargados'],reportes:[]});
+  addBlockToZone('pre',{day:'11–22',dayLbl:'DÍAS',dateRange:dr.demo,tag:'Demo y validación',tagColor:'var(--green-light)',tagTextColor:'var(--green)',title:'Demo + validación con el cliente',desc:'CSM presenta la plataforma configurada al cliente. Se validan flujos y experiencia.',roles:['CSM','Cliente'],acciones:['Demo realizada','Ajustes enviados a TechOps','Aprobación formal obtenida'],reportes:[]});
+  addBlockToZone('pre',{day:String(daysToGL-1),dayLbl:'DÍA',dateRange:dr.checklist,tag:'Checklist pre go-live',tagColor:'var(--orange-light)',tagTextColor:'var(--orange)',title:'Checklist pre go-live',desc:'Verificación final: nómina cargada, configuración aprobada, accesos activos, comunicación lista.',roles:['CSM','TechOps'],acciones:['Nómina cargada ✓','Configuración aprobada ✓','Accesos activos ✓','Comunicado interno listo ✓'],reportes:[]});
+  addBlockToZone('golive',{day:String(daysToGL),dayLbl:'DÍA',dateRange:dr.golive,tag:'Lanzamiento',tagColor:'var(--brand)',tagTextColor:'#fff',title:'Lanzamiento oficial de la plataforma',desc:'TechOps activa la plataforma. CSM comunica el lanzamiento al cliente y queda disponible para incidencias.',roles:['CSM','TechOps','Todos'],acciones:['Plataforma activada','Comunicado interno enviado','CSM disponible para incidencias'],reportes:[]});
   const t14abs = daysToGL + 14;
-  addBlockToZone('post',{day:String(t14abs),dayLbl:'DÍA',dateRange:dr.t14,tag:'T-14',tagColor:'var(--orange-light)',tagTextColor:'var(--orange)',title:'T-14 — Primeras dos semanas',desc:'Revisión de adopción temprana: accesos activos, primeras transacciones, dudas del equipo.'+(hc?' Meta mínima Apprecio: '+Math.round(hc*0.4)+' colaboradores activos (40% de '+hc+').':''),roles:playbook.t14.roles,acciones:playbook.t14.acciones,reportes:[],phaseKey:'t14',objetivo:{dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',comoMedimos:pptT14.acciones&&pptT14.acciones.length?pptT14.acciones.join(' · '):'Reporte de activación D+7 · revisión T-14 (reunión 60 min) · health score interno CSM',metrica:pptT14.kpis&&pptT14.kpis.length?pptT14.kpis.join(' · '):playbook.t14.kpis_text+(hc?' · mín '+Math.round(hc*0.4)+' personas activas':'')}});
-
+  addBlockToZone('post',{day:String(t14abs),dayLbl:'DÍA',dateRange:dr.t14,tag:'T-14',tagColor:'var(--orange-light)',tagTextColor:'var(--orange)',title:'T-14 — Primeras dos semanas',desc:'Revisión de adopción temprana.'+(hc?' Meta mínima: '+Math.round(hc*0.4)+' colaboradores activos (40% de '+hc+').':''),roles:playbook.t14.roles,acciones:playbook.t14.acciones,reportes:[],phaseKey:'t14',objetivo:{dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',comoMedimos:pptT14.acciones&&pptT14.acciones.length?pptT14.acciones.join(' · '):'Reporte de activación D+7 · revisión T-14 (reunión 60 min)',metrica:pptT14.kpis&&pptT14.kpis.length?pptT14.kpis.join(' · '):playbook.t14.kpis_text+(hc?' · mín '+Math.round(hc*0.4)+' personas':'')}});
   const t30abs = daysToGL + 30;
-  addBlockToZone('post',{day:String(t30abs),dayLbl:'DÍA',dateRange:dr.t30,tag:'T-30',tagColor:'var(--green-light)',tagTextColor:'var(--green)',title:'T-30 — Primer mes completo',desc:'Revisión de resultados del primer mes completo post go-live.'+(hc?' Meta mínima Apprecio: '+Math.round(hc*0.65)+' colaboradores activos (65% de '+hc+').':''),roles:playbook.t30.roles,acciones:playbook.t30.acciones,reportes:playbook.t30.reportes,phaseKey:'t30',objetivo:{dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',comoMedimos:pptT30.acciones&&pptT30.acciones.length?pptT30.acciones.join(' · '):'Reporte quincenal de tramos · revisión T-30 (reunión 60 min) · NPS de producto',metrica:pptT30.kpis&&pptT30.kpis.length?pptT30.kpis.join(' · '):playbook.t30.kpis_text+(hc?' · mín '+Math.round(hc*0.65)+' personas activas':'')}});
-
+  addBlockToZone('post',{day:String(t30abs),dayLbl:'DÍA',dateRange:dr.t30,tag:'T-30',tagColor:'var(--green-light)',tagTextColor:'var(--green)',title:'T-30 — Primer mes completo',desc:'Revisión de resultados del primer mes post go-live.'+(hc?' Meta mínima: '+Math.round(hc*0.65)+' colaboradores activos.':''),roles:playbook.t30.roles,acciones:playbook.t30.acciones,reportes:playbook.t30.reportes,phaseKey:'t30',objetivo:{dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',comoMedimos:pptT30.acciones&&pptT30.acciones.length?pptT30.acciones.join(' · '):'Reporte quincenal · revisión T-30 (reunión 60 min)',metrica:pptT30.kpis&&pptT30.kpis.length?pptT30.kpis.join(' · '):playbook.t30.kpis_text+(hc?' · mín '+Math.round(hc*0.65)+' personas':'')}});
   const t90abs = daysToGL + 90;
-  addBlockToZone('post',{day:String(t90abs),dayLbl:'DÍA',dateRange:dr.t90,tag:'T-90',tagColor:'var(--brand-light)',tagTextColor:'var(--brand-text)',title:'T-90 — Trimestre de éxito',desc:'Presentación ejecutiva de resultados del trimestre. Se revisa el avance hacia las metas, se propone renovación o expansión.',roles:playbook.t90.roles,acciones:playbook.t90.acciones,reportes:playbook.t90.reportes,phaseKey:'t90',objetivo:{dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',comoMedimos:pptT90.acciones&&pptT90.acciones.length?pptT90.acciones.join(' · '):'Business Review 90 min · actividad sostenida 3 meses · comparativa vs línea base del cliente',metrica:pptT90.kpis&&pptT90.kpis.length?pptT90.kpis.join(' · '):playbook.t90.kpis_text}});
-
+  addBlockToZone('post',{day:String(t90abs),dayLbl:'DÍA',dateRange:dr.t90,tag:'T-90',tagColor:'var(--brand-light)',tagTextColor:'var(--brand-text)',title:'T-90 — Trimestre de éxito',desc:'Presentación ejecutiva de resultados del trimestre.',roles:playbook.t90.roles,acciones:playbook.t90.acciones,reportes:playbook.t90.reportes,phaseKey:'t90',objetivo:{dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',comoMedimos:pptT90.acciones&&pptT90.acciones.length?pptT90.acciones.join(' · '):'Business Review 90 min · comparativa vs línea base',metrica:pptT90.kpis&&pptT90.kpis.length?pptT90.kpis.join(' · '):playbook.t90.kpis_text}});
   document.getElementById('output').style.display = 'block';
   document.getElementById('output').scrollIntoView({ behavior:'smooth' });
 }
 
-// ═══════════════════════════════════════════════════════════
-// OBJETIVO DE FASE BUILDER
-// ═══════════════════════════════════════════════════════════
+// ═══ OBJETIVO DE FASE ═══
 function buildObjetivoFase(dolor, comoMedimos, indicador) {
   const wrap = document.createElement('div'); wrap.className = 'objetivo-fase';
   const title = document.createElement('div'); title.className = 'objetivo-fase-title'; title.textContent = 'Objetivo de esta fase';
   wrap.appendChild(title);
   const grid = document.createElement('div'); grid.className = 'objetivo-grid';
-  const items = [
-    {lbl:'Dolor que atacamos',val:dolor,placeholder:'Definir con el cliente en kick-off',cls:''},
-    {lbl:'Cómo lo medimos',val:comoMedimos,placeholder:'Acciones y seguimiento de esta fase',cls:''},
-    {lbl:'Indicador de éxito',val:indicador,placeholder:'KPIs de esta fase',cls:''},
-    {lbl:'Meta del cliente *',val:'',placeholder:'Completar en reunión con el cliente...',cls:'meta'}
-  ];
-  items.forEach(item => {
+  [{lbl:'Dolor que atacamos',val:dolor,placeholder:'Definir con el cliente en kick-off',cls:''},{lbl:'Cómo lo medimos',val:comoMedimos,placeholder:'Acciones y seguimiento de esta fase',cls:''},{lbl:'Indicador de éxito',val:indicador,placeholder:'KPIs de esta fase',cls:''},{lbl:'Meta del cliente *',val:'',placeholder:'Completar en reunión con el cliente...',cls:'meta'}].forEach(item => {
     const cell = document.createElement('div'); cell.className = 'objetivo-item';
     const valEl = document.createElement('div'); valEl.className = 'objetivo-item-val ' + item.cls;
     valEl.contentEditable = 'true'; valEl.spellcheck = false;
-    if (item.val) { valEl.textContent = item.val; }
-    else { valEl.setAttribute('data-placeholder', item.placeholder); valEl.classList.add('empty'); }
-    cell.innerHTML = `<div class="objetivo-item-lbl">${item.lbl}</div>`;
-    cell.appendChild(valEl); grid.appendChild(cell);
+    if (item.val) { valEl.textContent = item.val; } else { valEl.setAttribute('data-placeholder', item.placeholder); valEl.classList.add('empty'); }
+    cell.innerHTML = `<div class="objetivo-item-lbl">${item.lbl}</div>`; cell.appendChild(valEl); grid.appendChild(cell);
   });
   wrap.appendChild(grid);
   const disclaimer = document.createElement('div'); disclaimer.className = 'objetivo-disclaimer';
-  disclaimer.textContent = '* A completar en reunión con el cliente. Las metas deben basarse en el historial real del equipo.';
-  wrap.appendChild(disclaimer);
+  disclaimer.textContent = '* A completar en reunión con el cliente.'; wrap.appendChild(disclaimer);
   return wrap;
 }
 
-// ═══════════════════════════════════════════════════════════
-// BLOCK BUILDER
-// ═══════════════════════════════════════════════════════════
-function addBlockToZone(zone, cfg) {
-  document.getElementById('blocks-' + zone).appendChild(buildBlock(cfg));
-}
-
-function addBlock(zone) {
-  addBlockToZone(zone, { day:'?', dayLbl:'DÍA', tag:'Nuevo hito', tagColor:'var(--bg-2)', tagTextColor:'var(--text-2)', title:'Nuevo bloque', desc:'Describe la actividad de este hito.', roles:['CSM'], acciones:['Nueva acción'], reportes:[] });
-}
-
+// ═══ BLOCK BUILDER ═══
+function addBlockToZone(zone, cfg) { document.getElementById('blocks-' + zone).appendChild(buildBlock(cfg)); }
+function addBlock(zone) { addBlockToZone(zone, { day:'?', dayLbl:'DÍA', tag:'Nuevo hito', tagColor:'var(--bg-2)', tagTextColor:'var(--text-2)', title:'Nuevo bloque', desc:'Describe la actividad de este hito.', roles:['CSM'], acciones:['Nueva acción'], reportes:[] }); }
 function buildBlock(cfg) {
   const wrap = document.createElement('div'); wrap.className = 'rm-block';
   const body = document.createElement('div'); body.className = 'rm-block-body';
-
   const dayCol = document.createElement('div'); dayCol.className = 'rm-block-day';
   const dayNumEl = document.createElement('div'); dayNumEl.className = 'rm-block-day-num'; dayNumEl.contentEditable = 'true'; dayNumEl.spellcheck = false; dayNumEl.textContent = cfg.day;
   const dayLblEl = document.createElement('div'); dayLblEl.className = 'rm-block-day-lbl'; dayLblEl.contentEditable = 'true'; dayLblEl.spellcheck = false; dayLblEl.textContent = cfg.dayLbl;
@@ -713,29 +885,18 @@ function buildBlock(cfg) {
     dayCol.appendChild(badge);
   }
   body.appendChild(dayCol);
-
-  const tag = document.createElement('div'); tag.className = 'rm-block-tag';
-  tag.style.cssText = `background:${cfg.tagColor};color:${cfg.tagTextColor};`;
-  tag.contentEditable = 'true'; tag.spellcheck = false; tag.textContent = cfg.tag;
+  const tag = document.createElement('div'); tag.className = 'rm-block-tag'; tag.style.cssText = `background:${cfg.tagColor};color:${cfg.tagTextColor};`; tag.contentEditable = 'true'; tag.spellcheck = false; tag.textContent = cfg.tag;
   body.appendChild(tag);
-
   const title = document.createElement('div'); title.className = 'rm-block-title'; title.contentEditable = 'true'; title.spellcheck = false; title.textContent = cfg.title;
   body.appendChild(title);
-
   const desc = document.createElement('div'); desc.className = 'rm-block-desc'; desc.contentEditable = 'true'; desc.spellcheck = false; desc.textContent = cfg.desc;
   body.appendChild(desc);
-
-  if (cfg.alert) {
-    const alert = document.createElement('div'); alert.className = 'rm-alert'; alert.contentEditable = 'true'; alert.spellcheck = false; alert.textContent = cfg.alert;
-    body.appendChild(alert);
-  }
-
+  if (cfg.alert) { const alert = document.createElement('div'); alert.className = 'rm-alert'; alert.contentEditable = 'true'; alert.spellcheck = false; alert.textContent = cfg.alert; body.appendChild(alert); }
   const rolesWrap = document.createElement('div'); rolesWrap.className = 'roles-row';
   (cfg.roles || []).forEach(r => rolesWrap.appendChild(makeRolePill(r)));
   const btnAddRole = document.createElement('button'); btnAddRole.className = 'btn-add-role'; btnAddRole.textContent = '+ Rol';
   btnAddRole.onclick = () => { const r = prompt('Nombre del rol:'); if (r) rolesWrap.insertBefore(makeRolePill(r), btnAddRole); };
   rolesWrap.appendChild(btnAddRole); body.appendChild(rolesWrap);
-
   if (cfg.acciones && cfg.acciones.length) {
     const acArea = document.createElement('div'); acArea.className = 'acciones-area';
     cfg.acciones.forEach(a => acArea.appendChild(makeAccionPill(a)));
@@ -743,7 +904,6 @@ function buildBlock(cfg) {
     btnAc.onclick = () => acArea.insertBefore(makeAccionPill('Nueva acción'), btnAc);
     acArea.appendChild(btnAc); body.appendChild(acArea);
   }
-
   if (cfg.reportes && cfg.reportes.length) {
     const repWrap = document.createElement('div'); repWrap.className = 'rm-reportes';
     repWrap.innerHTML = '<div class="rm-reportes-title">Reportes</div>';
@@ -752,15 +912,12 @@ function buildBlock(cfg) {
     btnRep.onclick = () => repWrap.insertBefore(makeReporteRow({nombre:'Nuevo reporte',meta:'Formato',dest:'Destinatario'}), btnRep);
     repWrap.appendChild(btnRep); body.appendChild(repWrap);
   }
-
   if (cfg.objetivo) body.appendChild(buildObjetivoFase(cfg.objetivo.dolor, cfg.objetivo.comoMedimos, cfg.objetivo.metrica));
-
   if (cfg.phaseKey) {
     const rubSec = document.createElement('div'); rubSec.className = 'rubricas-section'; rubSec.dataset.phase = cfg.phaseKey;
     rubSec.innerHTML = `<div class="rubricas-section-title"><span>Rúbricas activas</span><button class="btn-open-drawer" onclick="openDrawer('${cfg.phaseKey}', this.closest('.rm-block'))">+ Seleccionar rúbricas</button></div><div class="rubricas-pills" id="rubricas-${cfg.phaseKey}"></div>`;
     body.appendChild(rubSec);
   }
-
   const ctrl = document.createElement('div'); ctrl.className = 'rm-block-controls';
   const btnUp = document.createElement('button'); btnUp.className = 'btn-block-move'; btnUp.title = 'Subir bloque'; btnUp.textContent = '↑';
   btnUp.onclick = () => { const prev = wrap.previousElementSibling; if (prev && prev.classList.contains('rm-block')) wrap.parentNode.insertBefore(wrap, prev); };
@@ -779,7 +936,6 @@ function buildBlock(cfg) {
   body.appendChild(ctrl); wrap.appendChild(body);
   return wrap;
 }
-
 function makeRolePill(r) {
   const span = document.createElement('span'); span.className = 'role-pill';
   const dot = document.createElement('span'); dot.className = 'role-dot'; dot.style.background = roleColor(r);
@@ -787,7 +943,6 @@ function makeRolePill(r) {
   const del = document.createElement('button'); del.className = 'role-pill-del'; del.textContent = '×'; del.onclick = () => span.remove();
   span.appendChild(dot); span.appendChild(txt); span.appendChild(del); return span;
 }
-
 function makeAccionPill(text) {
   const span = document.createElement('span'); span.className = 'accion-pill';
   const chk = document.createElement('button'); chk.className = 'accion-check'; chk.textContent = '○';
@@ -796,20 +951,16 @@ function makeAccionPill(text) {
   const del = document.createElement('button'); del.className = 'accion-del'; del.textContent = '×'; del.onclick = () => span.remove();
   span.appendChild(chk); span.appendChild(txt); span.appendChild(del); return span;
 }
-
 function makeReporteRow(r) {
   const row = document.createElement('div'); row.className = 'reporte-row';
   row.innerHTML = `<div class="reporte-nombre" contenteditable="true" spellcheck="false">${r.nombre}</div><div class="reporte-meta" contenteditable="true" spellcheck="false">${r.meta}</div><div class="reporte-dest" contenteditable="true" spellcheck="false">${r.dest}</div><button class="reporte-del" onclick="this.closest('.reporte-row').remove()">×</button>`;
   return row;
 }
 
-// ═══════════════════════════════════════════════════════════
-// RUBRIC DRAWER — con gestión del pool (editar / eliminar / agregar)
-// ═══════════════════════════════════════════════════════════
+// ═══ RUBRIC DRAWER ═══
 let _drawerPhase = 't14', _drawerBlock = null, _drawerTab = 'venta';
 let _drawerSel = { t14:[], t30:[], t90:[] };
-let _editingIndex = null; // index in RUBRICS array being edited, null = new
-
+let _editingIndex = null;
 function openDrawer(phase, block) {
   _drawerPhase = phase; _drawerBlock = block; _drawerTab = 'venta';
   document.getElementById('drawerTitle').textContent = 'Rúbricas ' + phase.toUpperCase();
@@ -818,25 +969,21 @@ function openDrawer(phase, block) {
   document.querySelectorAll('.drawer-tab').forEach((t,i) => t.classList.toggle('active', i===0));
   renderDrawerCards();
 }
-
 function closeDrawer() {
   document.getElementById('drawerOverlay').classList.remove('open');
   document.getElementById('rubricDrawer').classList.remove('open');
 }
-
 function switchDrawerTab(tab, btn) {
   _drawerTab = tab;
   document.querySelectorAll('.drawer-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   renderDrawerCards();
 }
-
 function renderDrawerCards() {
   const body = document.getElementById('drawerBody');
   const items = (RUBRICS[_drawerPhase] || {})[_drawerTab] || [];
   const selSet = new Set(_drawerSel[_drawerPhase].filter(r => r.type === _drawerTab).map(r => r.title));
   body.innerHTML = '';
-
   if (items.length) {
     const grid = document.createElement('div'); grid.className = 'dr-grid';
     items.forEach((r, idx) => {
@@ -844,14 +991,7 @@ function renderDrawerCards() {
       const cls = _drawerTab === 'venta' ? 'sel-v' : 'sel-e';
       const card = document.createElement('div');
       card.className = 'dr-card' + (isSel ? ' ' + cls : '');
-      card.innerHTML = `
-        <div class="dr-card-actions">
-          <button class="dr-card-btn edit" title="Editar rúbrica" onclick="event.stopPropagation();showEditForm(${idx})">✎</button>
-          <button class="dr-card-btn del" title="Eliminar rúbrica" onclick="event.stopPropagation();deleteRubric(${idx})">×</button>
-        </div>
-        <div class="dr-check">${isSel ? '✓' : ''}</div>
-        <div class="dr-title">${r.title}</div>
-        <div class="dr-desc">${r.desc}</div>`;
+      card.innerHTML = `<div class="dr-card-actions"><button class="dr-card-btn edit" title="Editar" onclick="event.stopPropagation();showEditForm(${idx})">✎</button><button class="dr-card-btn del" title="Eliminar" onclick="event.stopPropagation();deleteRubric(${idx})">×</button></div><div class="dr-check">${isSel ? '✓' : ''}</div><div class="dr-title">${r.title}</div><div class="dr-desc">${r.desc}</div>`;
       card.addEventListener('click', () => toggleDrawerCard(card, r, cls));
       grid.appendChild(card);
     });
@@ -859,111 +999,60 @@ function renderDrawerCards() {
   } else {
     body.innerHTML = '<p style="font-size:12px;color:var(--text-3);margin-bottom:12px;">No hay rúbricas en esta categoría aún.</p>';
   }
-
-  // New rubric button + form
   const btnNew = document.createElement('button'); btnNew.className = 'btn-new-rubric'; btnNew.id = 'btnNewRubric';
   btnNew.textContent = '+ Nueva rúbrica'; btnNew.onclick = () => showEditForm(null);
   body.appendChild(btnNew);
-
   const form = document.createElement('div'); form.className = 'dr-new-form hidden'; form.id = 'drawerForm';
-  form.innerHTML = `
-    <div class="dr-new-label">Título</div>
-    <input class="dr-new-input" id="formTitle" placeholder="Nombre de la rúbrica">
-    <div class="dr-new-label">Descripción</div>
-    <textarea class="dr-new-textarea" id="formDesc" placeholder="Descripción breve de la rúbrica"></textarea>
-    <div class="dr-new-actions">
-      <button class="dr-new-save" onclick="saveRubric()">Guardar</button>
-      <button class="dr-new-cancel" onclick="hideEditForm()">Cancelar</button>
-    </div>`;
+  form.innerHTML = `<div class="dr-new-label">Título</div><input class="dr-new-input" id="formTitle" placeholder="Nombre de la rúbrica"><div class="dr-new-label">Descripción</div><textarea class="dr-new-textarea" id="formDesc" placeholder="Descripción breve"></textarea><div class="dr-new-actions"><button class="dr-new-save" onclick="saveRubric()">Guardar</button><button class="dr-new-cancel" onclick="hideEditForm()">Cancelar</button></div>`;
   body.appendChild(form);
-
   updateDrawerFooter();
 }
-
 function showEditForm(idx) {
   _editingIndex = idx;
   const form = document.getElementById('drawerForm');
   const btnNew = document.getElementById('btnNewRubric');
-  if (idx !== null) {
-    const r = RUBRICS[_drawerPhase][_drawerTab][idx];
-    document.getElementById('formTitle').value = r.title;
-    document.getElementById('formDesc').value = r.desc;
-  } else {
-    document.getElementById('formTitle').value = '';
-    document.getElementById('formDesc').value = '';
-  }
-  form.classList.remove('hidden');
-  btnNew.style.display = 'none';
+  if (idx !== null) { const r = RUBRICS[_drawerPhase][_drawerTab][idx]; document.getElementById('formTitle').value = r.title; document.getElementById('formDesc').value = r.desc; }
+  else { document.getElementById('formTitle').value = ''; document.getElementById('formDesc').value = ''; }
+  form.classList.remove('hidden'); btnNew.style.display = 'none';
   document.getElementById('formTitle').focus();
 }
-
 function hideEditForm() {
-  const form = document.getElementById('drawerForm');
-  const btnNew = document.getElementById('btnNewRubric');
-  if (form) form.classList.add('hidden');
-  if (btnNew) btnNew.style.display = '';
-  _editingIndex = null;
+  const form = document.getElementById('drawerForm'); const btnNew = document.getElementById('btnNewRubric');
+  if (form) form.classList.add('hidden'); if (btnNew) btnNew.style.display = ''; _editingIndex = null;
 }
-
 function saveRubric() {
   const title = document.getElementById('formTitle').value.trim();
   const desc = document.getElementById('formDesc').value.trim();
   if (!title) { alert('El título no puede estar vacío.'); return; }
-
   if (!RUBRICS[_drawerPhase]) RUBRICS[_drawerPhase] = {};
   if (!RUBRICS[_drawerPhase][_drawerTab]) RUBRICS[_drawerPhase][_drawerTab] = [];
-
   const list = RUBRICS[_drawerPhase][_drawerTab];
-
   if (_editingIndex !== null) {
-    // Update existing — preserve selection state with new title
-    const oldTitle = list[_editingIndex].title;
-    list[_editingIndex] = { title, desc };
-    // Update selection if title changed
-    const selList = _drawerSel[_drawerPhase];
-    const selIdx = selList.findIndex(r => r.type === _drawerTab && r.title === oldTitle);
+    const oldTitle = list[_editingIndex].title; list[_editingIndex] = { title, desc };
+    const selList = _drawerSel[_drawerPhase]; const selIdx = selList.findIndex(r => r.type === _drawerTab && r.title === oldTitle);
     if (selIdx !== -1) selList[selIdx] = { title, desc, type: _drawerTab };
-  } else {
-    list.push({ title, desc });
-  }
-
+  } else { list.push({ title, desc }); }
   renderDrawerCards();
 }
-
 function deleteRubric(idx) {
-  const list = RUBRICS[_drawerPhase][_drawerTab];
-  const title = list[idx].title;
-  if (!confirm('¿Eliminar la rúbrica "' + title + '"?')) return;
+  const list = RUBRICS[_drawerPhase][_drawerTab]; const title = list[idx].title;
+  if (!confirm('¿Eliminar "' + title + '"?')) return;
   list.splice(idx, 1);
-  // Remove from selection if it was selected
   _drawerSel[_drawerPhase] = _drawerSel[_drawerPhase].filter(r => !(r.type === _drawerTab && r.title === title));
   renderDrawerCards();
 }
-
 function toggleDrawerCard(card, rubric, cls) {
   const isSel = card.classList.contains(cls);
-  if (isSel) {
-    card.classList.remove(cls); card.querySelector('.dr-check').textContent = '';
-    _drawerSel[_drawerPhase] = _drawerSel[_drawerPhase].filter(r => r.title !== rubric.title);
-  } else {
-    card.classList.add(cls); card.querySelector('.dr-check').textContent = '✓';
-    _drawerSel[_drawerPhase].push({ ...rubric, type: _drawerTab });
-  }
+  if (isSel) { card.classList.remove(cls); card.querySelector('.dr-check').textContent = ''; _drawerSel[_drawerPhase] = _drawerSel[_drawerPhase].filter(r => r.title !== rubric.title); }
+  else { card.classList.add(cls); card.querySelector('.dr-check').textContent = '✓'; _drawerSel[_drawerPhase].push({ ...rubric, type: _drawerTab }); }
   updateDrawerFooter();
 }
-
 function updateDrawerFooter() {
   const sel = _drawerSel[_drawerPhase];
-  const summary = document.getElementById('drawerSummary');
-  const btn = document.getElementById('btnApplyRubrics');
-  if (!sel.length) {
-    summary.innerHTML = 'Ninguna rúbrica seleccionada'; btn.disabled = true;
-  } else {
-    summary.innerHTML = `<strong>${sel.length} rúbrica${sel.length>1?'s':''} seleccionada${sel.length>1?'s':''}</strong>`;
-    btn.disabled = false;
-  }
+  const summary = document.getElementById('drawerSummary'); const btn = document.getElementById('btnApplyRubrics');
+  if (!sel.length) { summary.innerHTML = 'Ninguna rúbrica seleccionada'; btn.disabled = true; }
+  else { summary.innerHTML = `<strong>${sel.length} rúbrica${sel.length>1?'s':''} seleccionada${sel.length>1?'s':''}</strong>`; btn.disabled = false; }
 }
-
 function applyRubrics() {
   const sel = _drawerSel[_drawerPhase];
   if (!sel.length || !_drawerBlock) return;
@@ -979,21 +1068,29 @@ function applyRubrics() {
   closeDrawer();
 }
 
-// ═══════════════════════════════════════════════════════════
-// MODE / PDF / RESET
-// ═══════════════════════════════════════════════════════════
+// ═══ MODE / PDF / RESET ═══
 function setMode(mode) {
   const isPresent = mode === 'present';
   document.body.classList.toggle('present-mode', isPresent);
   document.getElementById('btnEdit').classList.toggle('active', !isPresent);
   document.getElementById('btnPresent').classList.toggle('active', isPresent);
 }
-
 function downloadPDF() {
   if (document.getElementById('output').style.display === 'none') { alert('Primero genera el roadmap.'); return; }
   window.print();
 }
-
+function downloadCourierPDF() {
+  document.body.classList.add('print-courier');
+  window.print();
+  setTimeout(() => document.body.classList.remove('print-courier'), 500);
+}
+// Live update nav tab label and header when user types in programa/cliente fields
+document.addEventListener('DOMContentLoaded', () => {
+  const pN = document.getElementById('programName');
+  const cN = document.getElementById('clientName');
+  if (pN) pN.addEventListener('input', () => { if (document.getElementById('view-courier').classList.contains('active')) updateCourierHeader(); else { const v = pN.value.trim() || 'Mi Programa'; document.getElementById('navCourier').textContent = '🚴 ' + v; } });
+  if (cN) cN.addEventListener('input', () => { if (document.getElementById('view-courier').classList.contains('active')) updateCourierHeader(); });
+});
 function resetAll() {
   if (!confirm('¿Limpiar todo?')) return;
   ['clientName','programName','execName','dateKickoff','dateGoLive','headcount'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
@@ -1007,7 +1104,6 @@ function resetAll() {
   ['pre','golive','post'].forEach(z => document.getElementById('blocks-' + z).innerHTML = '');
   window._detectedPlaybook = null;
 }
-
 function resetRoadmapOnly() {
   if (!confirm('¿Limpiar solo el roadmap?')) return;
   ['pre','golive','post'].forEach(z => document.getElementById('blocks-' + z).innerHTML = '');
