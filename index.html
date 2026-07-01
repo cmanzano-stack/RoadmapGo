@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Apprecio — Roadmap Generator</title>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 :root {
@@ -285,6 +285,9 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .cc-list{list-style:none;}
 .cc-list li{font-size:13px;color:var(--text-2);padding:3px 0;display:flex;gap:7px;align-items:flex-start;line-height:1.5;}
 .cc-list li::before{content:'·';color:var(--brand);font-weight:700;flex-shrink:0;margin-top:1px;}
+.cc-list-del{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--text-3);font-size:12px;opacity:0;transition:opacity .15s;flex-shrink:0;padding:0 2px;line-height:1.5;}
+.cc-list li:hover .cc-list-del{opacity:1;}
+.cc-list-add{font-size:10px;font-weight:700;color:var(--brand);background:transparent;border:1px dashed var(--border-m);padding:4px 12px;border-radius:var(--r-md);cursor:pointer;width:100%;text-align:center;margin-top:6px;}
 .cc-divider{height:0.5px;background:var(--border-l);margin:1.5rem 0;}
 .cc-special{background:var(--brand-light);border:0.5px solid rgba(250,52,94,.25);border-radius:12px;padding:.9rem 1.1rem;margin-top:10px;}
 .cc-special-label{font-size:11px;font-family:var(--font);font-weight:700;color:var(--brand-dark);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
@@ -331,8 +334,14 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
   body.print-courier #view-roadmap{display:none!important;}
   body.print-courier #view-courier{display:block!important;}
   body.print-courier .cc-wrap{max-width:100%!important;padding:0!important;}
-  body.print-courier .cc-phase{page-break-inside:avoid;break-inside:avoid;}
+  body.print-courier .cc-card{page-break-inside:avoid;break-inside:avoid;}
+  body.print-courier .cc-grid{display:block!important;}
+  body.print-courier .cc-grid .cc-card{margin-bottom:10px;}
+  body.print-courier .cc-phase-header{page-break-after:avoid;break-after:avoid;}
+  body.print-courier .cc-hero{margin-bottom:1rem!important;}
+  body.print-courier .cc-timeline{margin-bottom:1rem!important;}
   body.print-courier .cc-note{page-break-inside:avoid;break-inside:avoid;}
+  body.print-courier .cc-ai-row,body.print-courier .cc-ai-status,body.print-courier .cc-metas-add,body.print-courier .cc-metas-del,body.print-courier .cc-list-add,body.print-courier .cc-list-del{display:none!important;}
   /* Roadmap print: hide courier */
   body:not(.print-courier) #view-courier{display:none!important;}
 }
@@ -501,10 +510,11 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
       <div class="cc-grid">
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon">🏆</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Retos</span></div>
-          <ul class="cc-list">
+          <ul class="cc-list" id="ccRetosT14">
             <li contenteditable="true" spellcheck="false">Completa tu entrenamiento (los primeros 10 usuarios reciben recompensa especial)</li>
             <li contenteditable="true" spellcheck="false">Realiza el reto de bienvenida</li>
           </ul>
+          <button class="cc-list-add" onclick="addListItem('ccRetosT14')">+ Agregar</button>
           <div class="cc-metas-title" contenteditable="true" spellcheck="false">Cumplimiento de metas</div>
           <div class="cc-metas-table" id="ccMetasT14">
             <div class="cc-metas-row"><div class="cc-metas-categoria" contenteditable="true" spellcheck="false">Venta de equipos o productos</div><div class="cc-metas-detalle" contenteditable="true" spellcheck="false">Premio según volumen alcanzado en el período</div><button class="cc-metas-del" onclick="this.closest('.cc-metas-row').remove()">×</button></div>
@@ -526,20 +536,23 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
             <li contenteditable="true" spellcheck="false">Entrenamiento 5</li>
             <li contenteditable="true" spellcheck="false">+ Entrenamiento especial (usuarios con trayectoria)</li>
           </ul>
+          <button class="cc-list-add" onclick="addListItem('ccEntrenosT14')">+ Agregar</button>
         </div>
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon">📷</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Módulo de evidencia</span></div>
-          <ul class="cc-list">
+          <ul class="cc-list" id="ccEvidenciaT14">
             <li contenteditable="true" spellcheck="false">Tutorial: cómo subir evidencia de campaña</li>
           </ul>
+          <button class="cc-list-add" onclick="addListItem('ccEvidenciaT14')">+ Agregar</button>
         </div>
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon">🎁</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Welcome Pack</span></div>
-          <ul class="cc-list">
+          <ul class="cc-list" id="ccWelcomeT14">
             <li contenteditable="true" spellcheck="false">Regístrate en la plataforma</li>
             <li contenteditable="true" spellcheck="false">Actualiza tu foto de perfil</li>
             <li contenteditable="true" spellcheck="false">Reconoce a tu compañero</li>
           </ul>
+          <button class="cc-list-add" onclick="addListItem('ccWelcomeT14')">+ Agregar</button>
           <div class="cc-special">
             <div class="cc-special-label" contenteditable="true" spellcheck="false">Top 10 🎁</div>
             <p class="cc-special-text" contenteditable="true" spellcheck="false">Los primeros 10 en completar las acciones Welcome Pack reciben recompensa especial en puntos Apprecio.</p>
@@ -580,31 +593,35 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
         </div>
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon mid">📋</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Encuesta</span></div>
-          <ul class="cc-list">
+          <ul class="cc-list" id="ccEncuestaT30">
             <li contenteditable="true" spellcheck="false">Encuesta de opinión sobre la nueva plataforma</li>
           </ul>
+          <button class="cc-list-add" onclick="addListItem('ccEncuestaT30')">+ Agregar</button>
         </div>
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon mid">📚</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Entrenamientos</span></div>
-          <ul class="cc-list">
+          <ul class="cc-list" id="ccEntrenosT30">
             <li contenteditable="true" spellcheck="false">Se mantienen activos los mismos para nuevos usuarios</li>
             <li contenteditable="true" spellcheck="false">+ Entrenamiento especial (usuarios con trayectoria)</li>
           </ul>
+          <button class="cc-list-add" onclick="addListItem('ccEntrenosT30')">+ Agregar</button>
         </div>
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon mid">🛒</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Canje de puntos</span></div>
-          <ul class="cc-list">
+          <ul class="cc-list" id="ccCanjeT30">
             <li contenteditable="true" spellcheck="false">Tutorial: cómo canjear puntos desde el app</li>
             <li contenteditable="true" spellcheck="false">Canje en Gift Cards</li>
             <li contenteditable="true" spellcheck="false">Work-life rewards con puntos de reconocimiento</li>
           </ul>
+          <button class="cc-list-add" onclick="addListItem('ccCanjeT30')">+ Agregar</button>
         </div>
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon mid">🎖️</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Incentivos por insignias</span></div>
-          <ul class="cc-list">
+          <ul class="cc-list" id="ccIncentivosT30">
             <li contenteditable="true" spellcheck="false">Premio a los 10 primeros con más insignias</li>
             <li contenteditable="true" spellcheck="false">Sorteo especial entre quienes más insignias han entregado</li>
           </ul>
+          <button class="cc-list-add" onclick="addListItem('ccIncentivosT30')">+ Agregar</button>
           <div class="cc-special">
             <div class="cc-special-label" contenteditable="true" spellcheck="false">Reconocimientos e insignias activas</div>
             <p class="cc-special-text" contenteditable="true" spellcheck="false">Se mantienen activos los reconocimientos corporativos del T14.</p>
@@ -633,24 +650,27 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
         </div>
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon dark">✅</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Encuesta</span></div>
-          <ul class="cc-list">
+          <ul class="cc-list" id="ccEncuestaT90">
             <li contenteditable="true" spellcheck="false">Encuesta de satisfacción laboral</li>
           </ul>
+          <button class="cc-list-add" onclick="addListItem('ccEncuestaT90')">+ Agregar</button>
         </div>
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon dark">📚</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Entrenamientos</span></div>
-          <ul class="cc-list">
+          <ul class="cc-list" id="ccEntrenosT90">
             <li contenteditable="true" spellcheck="false">Se mantienen activos los mismos para nuevos usuarios</li>
             <li contenteditable="true" spellcheck="false">+ Entrenamiento especial (usuarios con trayectoria)</li>
           </ul>
+          <button class="cc-list-add" onclick="addListItem('ccEntrenosT90')">+ Agregar</button>
         </div>
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon dark">👑</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Insignias de liderazgo</span></div>
-          <ul class="cc-list">
+          <ul class="cc-list" id="ccLiderazgoT90">
             <li contenteditable="true" spellcheck="false">Asignación de insignias de liderazgo al colaborador</li>
             <li contenteditable="true" spellcheck="false">Para reconocer o destacar logros importantes</li>
             <li contenteditable="true" spellcheck="false">Se mantienen activas las insignias corporativas iniciales</li>
           </ul>
+          <button class="cc-list-add" onclick="addListItem('ccLiderazgoT90')">+ Agregar</button>
         </div>
       </div>
     </div>
@@ -913,9 +933,11 @@ function applyEntrenamientosSugeridos(entrenamientos) {
   list.innerHTML = '';
   entrenamientos.forEach(t => {
     const li = document.createElement('li'); li.contentEditable = 'true'; li.spellcheck = false; li.textContent = t;
+    attachListItemDelete(li);
     list.appendChild(li);
   });
   const special = document.createElement('li'); special.contentEditable = 'true'; special.spellcheck = false; special.textContent = '+ Entrenamiento especial (usuarios con trayectoria)';
+  attachListItemDelete(special);
   list.appendChild(special);
 }
 
@@ -1104,6 +1126,26 @@ function addMetaRow(containerId, categoria, detalle) {
   row.innerHTML = `<div class="cc-metas-categoria" contenteditable="true" spellcheck="false">${categoria || 'Nueva categoría'}</div><div class="cc-metas-detalle" contenteditable="true" spellcheck="false">${detalle || 'Detalle del premio'}</div><button class="cc-metas-del" onclick="this.closest('.cc-metas-row').remove()">×</button>`;
   table.appendChild(row);
 }
+function attachListItemDelete(li) {
+  if (li.querySelector('.cc-list-del')) return;
+  const btn = document.createElement('button');
+  btn.className = 'cc-list-del';
+  btn.setAttribute('contenteditable', 'false');
+  btn.textContent = '×';
+  btn.onclick = (e) => { e.stopPropagation(); li.remove(); };
+  li.appendChild(btn);
+}
+function addListItem(ulId, text) {
+  const ul = document.getElementById(ulId);
+  if (!ul) return;
+  const li = document.createElement('li'); li.contentEditable = 'true'; li.spellcheck = false;
+  li.textContent = text || 'Nuevo ítem';
+  attachListItemDelete(li);
+  ul.appendChild(li);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.cc-list li').forEach(attachListItemDelete);
+});
 function applyMetasPorFase(phaseKey, metas) {
   if (!metas || !metas.length) return;
   const table = document.getElementById('ccMetas' + phaseKey.toUpperCase());
@@ -1237,12 +1279,12 @@ function setMode(mode) {
 }
 function downloadPDF() {
   if (document.getElementById('output').style.display === 'none') { alert('Primero genera el roadmap.'); return; }
-  window.print();
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(() => window.print()); } else { window.print(); }
 }
 function downloadCourierPDF() {
   document.body.classList.add('print-courier');
-  window.print();
-  setTimeout(() => document.body.classList.remove('print-courier'), 500);
+  const doPrint = () => { window.print(); setTimeout(() => document.body.classList.remove('print-courier'), 500); };
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(doPrint); } else { doPrint(); }
 }
 // Live update nav tab label and header when user types in programa/cliente fields
 document.addEventListener('DOMContentLoaded', () => {
