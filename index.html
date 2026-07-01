@@ -146,6 +146,14 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .reporte-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:14px;flex-shrink:0;}
 .reporte-del:hover{color:var(--brand);}
 .btn-add-reporte{font-size:10px;font-weight:700;color:var(--brand);background:transparent;border:1px dashed var(--border-m);padding:4px 12px;border-radius:var(--r-md);cursor:pointer;width:100%;text-align:center;margin-top:4px;}
+.cc-metas-title{font-size:11px;font-weight:700;color:var(--text-2);margin:10px 0 6px;text-transform:uppercase;letter-spacing:.05em;}
+.cc-metas-table{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
+.cc-metas-row{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg-2);border-radius:var(--r-md);border-left:3px solid var(--green);}
+.cc-metas-categoria{font-size:12px;font-weight:600;flex:1;outline:none;color:var(--text-1);}
+.cc-metas-detalle{font-size:12px;color:var(--green);font-weight:700;outline:none;white-space:nowrap;}
+.cc-metas-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:14px;flex-shrink:0;line-height:1;}
+.cc-metas-del:hover{color:var(--brand);}
+.cc-metas-add{font-size:10px;font-weight:700;color:var(--brand);background:transparent;border:1px dashed var(--border-m);padding:4px 12px;border-radius:var(--r-md);cursor:pointer;width:100%;text-align:center;}
 .btn-add-reporte:hover{border-color:var(--brand);background:var(--brand-light);}
 .rm-block-controls{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-l);}
 .btn-block-add-section{font-size:10px;font-weight:700;color:var(--text-3);background:transparent;border:1px dashed var(--border-m);padding:3px 10px;border-radius:var(--r-md);cursor:pointer;}
@@ -396,6 +404,8 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
         <div class="field"><label>Fecha Go-Live <span class="tooltip-icon">?<span class="tooltip-text">Mínimo 30 días desde el kick-off</span></span></label><input type="date" id="dateGoLive"></div>
         <div class="field"><label>Dotación total</label><input type="number" id="headcount" placeholder="Ej: 240" min="1"></div>
         <div class="field"><label>Rubro / Industria</label><input type="text" id="clientRubro" placeholder="Ej: Retail, Logística"></div>
+        <div class="field"><label>Equipo objetivo</label><input type="text" id="clientEquipo" placeholder="Ej: Fuerza de venta, Atención al cliente, Logística..." value="Fuerza de venta"></div>
+        <div class="field"><label>Qué vende/gestiona el equipo <span class="tooltip-icon">?<span class="tooltip-text">Ej: Máquinas Point (cobro con tarjeta)</span></span></label><input type="text" id="clientProducto" placeholder="Ej: Máquinas Point"></div>
       </div>
       <div class="btn-row">
         <button class="btn-primary" onclick="generateRoadmap()">Generar roadmap</button>
@@ -495,6 +505,12 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
             <li contenteditable="true" spellcheck="false">Completa tu entrenamiento (los primeros 10 usuarios reciben recompensa especial)</li>
             <li contenteditable="true" spellcheck="false">Realiza el reto de bienvenida</li>
           </ul>
+          <div class="cc-metas-title" contenteditable="true" spellcheck="false">Cumplimiento de metas</div>
+          <div class="cc-metas-table" id="ccMetasT14">
+            <div class="cc-metas-row"><div class="cc-metas-categoria" contenteditable="true" spellcheck="false">Venta de equipos o productos</div><div class="cc-metas-detalle" contenteditable="true" spellcheck="false">Premio según volumen alcanzado en el período</div><button class="cc-metas-del" onclick="this.closest('.cc-metas-row').remove()">×</button></div>
+            <div class="cc-metas-row"><div class="cc-metas-categoria" contenteditable="true" spellcheck="false">% de retención de cartera</div><div class="cc-metas-detalle" contenteditable="true" spellcheck="false">Premio según meta de retención cumplida</div><button class="cc-metas-del" onclick="this.closest('.cc-metas-row').remove()">×</button></div>
+          </div>
+          <button class="cc-metas-add" onclick="addMetaRow('ccMetasT14')">+ Agregar categoría</button>
         </div>
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon">📚</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Entrenamientos</span></div>
@@ -554,6 +570,15 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
       </div>
       <div class="cc-grid">
         <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon mid">🎯</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Cumplimiento de metas</span></div>
+          <p style="font-size:12px;color:var(--text-2);margin-bottom:8px;" contenteditable="true" spellcheck="false">Premio acumulado del mes según desempeño por categoría.</p>
+          <div class="cc-metas-table" id="ccMetasT30">
+            <div class="cc-metas-row"><div class="cc-metas-categoria" contenteditable="true" spellcheck="false">Venta de equipos o productos</div><div class="cc-metas-detalle" contenteditable="true" spellcheck="false">Premio según meta mensual alcanzada</div><button class="cc-metas-del" onclick="this.closest('.cc-metas-row').remove()">×</button></div>
+            <div class="cc-metas-row"><div class="cc-metas-categoria" contenteditable="true" spellcheck="false">% de retención de cartera</div><div class="cc-metas-detalle" contenteditable="true" spellcheck="false">Premio según retención sostenida en el mes</div><button class="cc-metas-del" onclick="this.closest('.cc-metas-row').remove()">×</button></div>
+          </div>
+          <button class="cc-metas-add" onclick="addMetaRow('ccMetasT30')">+ Agregar categoría</button>
+        </div>
+        <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon mid">📋</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Encuesta</span></div>
           <ul class="cc-list">
             <li contenteditable="true" spellcheck="false">Encuesta de opinión sobre la nueva plataforma</li>
@@ -597,6 +622,15 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
         <span class="cc-phase-title" contenteditable="true" spellcheck="false">Satisfacción y reconocimiento de liderazgo</span>
       </div>
       <div class="cc-grid">
+        <div class="cc-card">
+          <div class="cc-card-head"><div class="cc-card-icon dark">🎯</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Cumplimiento de metas</span></div>
+          <p style="font-size:12px;color:var(--text-2);margin-bottom:8px;" contenteditable="true" spellcheck="false">Premio trimestral acumulado según desempeño sostenido por categoría.</p>
+          <div class="cc-metas-table" id="ccMetasT90">
+            <div class="cc-metas-row"><div class="cc-metas-categoria" contenteditable="true" spellcheck="false">Venta de equipos o productos</div><div class="cc-metas-detalle" contenteditable="true" spellcheck="false">Premio trimestral según meta acumulada</div><button class="cc-metas-del" onclick="this.closest('.cc-metas-row').remove()">×</button></div>
+            <div class="cc-metas-row"><div class="cc-metas-categoria" contenteditable="true" spellcheck="false">% de retención de cartera</div><div class="cc-metas-detalle" contenteditable="true" spellcheck="false">Premio según retención sostenida en el trimestre</div><button class="cc-metas-del" onclick="this.closest('.cc-metas-row').remove()">×</button></div>
+          </div>
+          <button class="cc-metas-add" onclick="addMetaRow('ccMetasT90')">+ Agregar categoría</button>
+        </div>
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon dark">✅</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Encuesta</span></div>
           <ul class="cc-list">
@@ -781,6 +815,7 @@ function applyPlaybook(parsed) {
   document.getElementById('detectedStrip').classList.add('show');
   logAi('✅ Playbook "' + playbook.label + '" cargado.');
   if (parsed.cliente && !document.getElementById('clientName').value) document.getElementById('clientName').value = parsed.cliente;
+  const equipoField = document.getElementById('clientEquipo'); if (equipoField && !equipoField.value.trim()) equipoField.value = playbook.label;
   window._detectedPlaybook = { key: equipoKey, dolores: parsed.dolores||[], t14: parsed.t14||{}, t30: parsed.t30||{}, t90: parsed.t90||{} };
   hideAiSpinner();
 }
@@ -800,8 +835,9 @@ function setAiRowStatus(id, msg, cls) {
   el.className = 'cc-ai-status' + (cls ? ' ' + cls : '');
 }
 async function buscarValoresCorporativos() {
-  const url = (document.getElementById('clientUrl')||{}).value ? document.getElementById('clientUrl').value.trim() : '';
+  let url = (document.getElementById('clientUrl')||{}).value ? document.getElementById('clientUrl').value.trim() : '';
   if (!url) { setAiRowStatus('valoresStatus', 'Completa "Sitio web cliente" en el Paso 1 (arriba).', 'error'); return; }
+  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
   const btn = document.getElementById('btnBuscarValores');
   btn.disabled = true;
   setAiRowStatus('valoresStatus', 'Buscando valores corporativos...', '');
@@ -822,13 +858,21 @@ async function buscarValoresCorporativos() {
     btn.disabled = false;
   }
 }
+const EMOJI_SHORTCODES = { bulb:'💡', lock_with_ink_pen:'🔏', lock:'🔒', moneybag:'💰', sunglasses:'😎', handshake:'🤝', star:'⭐', star2:'🌟', house:'🏠', zap:'⚡', target:'🎯', trophy:'🏆', rocket:'🚀', heart:'❤️', gem:'💎', shield:'🛡️', muscle:'💪', gear:'⚙️', chart_with_upwards_trend:'📈', people_holding_hands:'🧑\u200d🤝\u200d🧑', globe_with_meridians:'🌐', seedling:'🌱', compass:'🧭' };
+function normalizeIcono(icono) {
+  if (!icono) return '';
+  const m = String(icono).trim().match(/^:([a-zA-Z0-9_+-]+):$/);
+  if (m) return EMOJI_SHORTCODES[m[1].toLowerCase()] || '⭐';
+  return icono;
+}
 function applyValoresCorporativos(valores) {
   const wrap = document.getElementById('ccInsignias');
   wrap.innerHTML = '';
   valores.forEach(v => {
     const ins = document.createElement('div'); ins.className = 'cc-ins';
     const name = document.createElement('div'); name.className = 'cc-ins-name'; name.contentEditable = 'true'; name.spellcheck = false;
-    name.textContent = (v.icono ? v.icono + ' ' : '') + (v.nombre || v.valor || 'Valor corporativo');
+    const icono = normalizeIcono(v.icono);
+    name.textContent = (icono ? icono + ' ' : '') + (v.nombre || v.valor || 'Valor corporativo');
     const items = document.createElement('div'); items.className = 'cc-ins-items'; items.contentEditable = 'true'; items.spellcheck = false;
     items.textContent = (v.insignias && v.insignias.length) ? v.insignias.join(' · ') : 'Descripción de insignia';
     ins.appendChild(name); ins.appendChild(items); wrap.appendChild(ins);
@@ -840,12 +884,15 @@ const N8N_ENTRENOS_WEBHOOK = 'https://n8n.openip.cl/webhook/apprecio-entrenamien
 async function sugerirEntrenamientos() {
   const cliente = (document.getElementById('clientName')||{}).value || document.getElementById('cc-hero-title').textContent || '';
   const rubro = (document.getElementById('clientRubro')||{}).value || '';
+  const equipoTxt = (document.getElementById('clientEquipo')||{}).value.trim() || '';
+  const equipoLabel = equipoTxt || (window._detectedPlaybook ? (PLAYBOOKS[window._detectedPlaybook.key]||{}).label : '') || 'Fuerza de venta';
+  const producto = (document.getElementById('clientProducto')||{}).value || '';
   if (!rubro) { setAiRowStatus('entrenoStatus', 'Completa el campo "Rubro / Industria" en el formulario.', 'error'); return; }
   const btn = document.getElementById('btnSugerirEntrenos');
   btn.disabled = true;
-  setAiRowStatus('entrenoStatus', 'Generando sugerencias...', '');
+  setAiRowStatus('entrenoStatus', 'Generando para ' + equipoLabel + (producto ? ' · ' + producto : '') + '...', '');
   try {
-    const res = await fetch(N8N_ENTRENOS_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ cliente, rubro }) });
+    const res = await fetch(N8N_ENTRENOS_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ cliente, rubro, equipo: equipoLabel, equipoLabel, producto }) });
     if (!res.ok) throw new Error('Error ' + res.status + ' — verifica que el workflow esté activo en n8n.');
     const text = await res.text();
     if (!text || text.trim() === '') throw new Error('n8n devolvió respuesta vacía.');
@@ -930,6 +977,9 @@ function generateRoadmap() {
   addBlockToZone('post',{day:String(t30abs),dayLbl:'DÍA',dateRange:dr.t30,tag:'T-30',tagColor:'var(--green-light)',tagTextColor:'var(--green)',title:'T-30 — Primer mes completo',desc:'Revisión de resultados del primer mes post go-live.'+(hc?' Meta mínima: '+Math.round(hc*0.65)+' colaboradores activos.':''),roles:playbook.t30.roles,acciones:playbook.t30.acciones,reportes:playbook.t30.reportes,phaseKey:'t30',objetivo:{dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',comoMedimos:pptT30.acciones&&pptT30.acciones.length?pptT30.acciones.join(' · '):'Reporte quincenal · revisión T-30 (reunión 60 min)',metrica:pptT30.kpis&&pptT30.kpis.length?pptT30.kpis.join(' · '):playbook.t30.kpis_text+(hc?' · mín '+Math.round(hc*0.65)+' personas':'')}});
   const t90abs = daysToGL + 90;
   addBlockToZone('post',{day:String(t90abs),dayLbl:'DÍA',dateRange:dr.t90,tag:'T-90',tagColor:'var(--brand-light)',tagTextColor:'var(--brand-text)',title:'T-90 — Trimestre de éxito',desc:'Presentación ejecutiva de resultados del trimestre.',roles:playbook.t90.roles,acciones:playbook.t90.acciones,reportes:playbook.t90.reportes,phaseKey:'t90',objetivo:{dolor:dolores.length?dolores.join(' · '):'Definir con el cliente en kick-off',comoMedimos:pptT90.acciones&&pptT90.acciones.length?pptT90.acciones.join(' · '):'Business Review 90 min · comparativa vs línea base',metrica:pptT90.kpis&&pptT90.kpis.length?pptT90.kpis.join(' · '):playbook.t90.kpis_text}});
+  applyMetasPorFase('t14', pptT14.metas);
+  applyMetasPorFase('t30', pptT30.metas);
+  applyMetasPorFase('t90', pptT90.metas);
   document.getElementById('output').style.display = 'block';
   document.getElementById('output').scrollIntoView({ behavior:'smooth' });
 }
@@ -1046,6 +1096,20 @@ function makeAccionPill(a) {
   }
   const del = document.createElement('button'); del.className = 'accion-del'; del.textContent = '×'; del.onclick = () => span.remove();
   span.appendChild(del); return span;
+}
+function addMetaRow(containerId, categoria, detalle) {
+  const table = document.getElementById(containerId);
+  if (!table) return;
+  const row = document.createElement('div'); row.className = 'cc-metas-row';
+  row.innerHTML = `<div class="cc-metas-categoria" contenteditable="true" spellcheck="false">${categoria || 'Nueva categoría'}</div><div class="cc-metas-detalle" contenteditable="true" spellcheck="false">${detalle || 'Detalle del premio'}</div><button class="cc-metas-del" onclick="this.closest('.cc-metas-row').remove()">×</button>`;
+  table.appendChild(row);
+}
+function applyMetasPorFase(phaseKey, metas) {
+  if (!metas || !metas.length) return;
+  const table = document.getElementById('ccMetas' + phaseKey.toUpperCase());
+  if (!table) return;
+  table.innerHTML = '';
+  metas.forEach(m => addMetaRow(table.id, m.categoria || m.nombre || 'Categoría', m.detalle || m.descripcion || ''));
 }
 function makeReporteRow(r) {
   const row = document.createElement('div'); row.className = 'reporte-row';
@@ -1189,7 +1253,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 function resetAll() {
   if (!confirm('¿Limpiar todo?')) return;
-  ['clientName','programName','execName','dateKickoff','dateGoLive','headcount','clientRubro','clientUrl'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
+  ['clientName','programName','execName','dateKickoff','dateGoLive','headcount','clientRubro','clientUrl','clientProducto'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
+  const equipoField = document.getElementById('clientEquipo'); if (equipoField) equipoField.value = '';
   document.getElementById('output').style.display = 'none';
   document.getElementById('aiStatus').style.display = 'none';
   document.getElementById('aiLog').innerHTML = '';
