@@ -124,6 +124,19 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .accion-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:13px;padding:0;line-height:1;}
 .accion-del:hover{color:var(--brand);}
 .btn-add-accion{font-size:10px;font-weight:700;color:var(--brand);background:var(--brand-light);border:none;padding:4px 10px;border-radius:10px;cursor:pointer;}
+.accion-impact{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;border-radius:50%;background:var(--green-light);color:var(--green);font-size:9px;font-weight:700;cursor:default;position:relative;flex-shrink:0;font-style:normal;}
+.accion-impact:hover .accion-impact-text{display:block;}
+.accion-impact-text{display:none;position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--text-1);color:#fff;font-size:10px;font-weight:500;padding:5px 9px;border-radius:6px;white-space:nowrap;z-index:99;pointer-events:none;}
+.accion-impact-text::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--text-1);}
+.cc-ai-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.cc-ai-input{flex:1;min-width:160px;padding:7px 10px;border:1px solid var(--border-m);border-radius:var(--r-md);font-family:var(--font);font-size:12px;color:var(--text-1);background:var(--bg-1);outline:none;}
+.cc-ai-input:focus{border-color:var(--brand);}
+.cc-ai-btn{font-size:11px;font-weight:700;color:var(--brand-text);background:var(--brand-light);border:none;padding:7px 12px;border-radius:var(--r-md);cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.cc-ai-btn:hover{background:#f8ccd6;}
+.cc-ai-btn:disabled{opacity:.5;cursor:default;}
+.cc-ai-status{font-size:11px;color:var(--text-3);font-style:italic;}
+.cc-ai-status.error{color:#c0392b;}
+.cc-ai-status.ok{color:var(--green);}
 .rm-reportes{margin-top:10px;border-top:1px solid var(--border-l);padding-top:10px;}
 .rm-reportes-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:8px;}
 .reporte-row{display:flex;align-items:flex-start;gap:10px;padding:7px 10px;background:var(--bg-2);border-radius:var(--r-md);margin-bottom:5px;border-left:3px solid var(--brand-light);}
@@ -350,6 +363,7 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
         <div class="upload-label">Arrastra el .pptx aquí o haz clic para seleccionar</div>
         <div class="upload-hint">Solo archivos .pptx · El archivo no sale de tu navegador</div>
       </div>
+      <div class="field" style="margin-top:12px;"><label>Sitio web cliente <span class="tooltip-icon">?<span class="tooltip-text">Para buscar valores corporativos automáticamente</span></span></label><input type="text" id="clientUrl" placeholder="https://www.cliente.com"></div>
       <div id="filePreview" style="display:none;margin-top:12px;padding:12px 16px;background:var(--bg-2);border:1px solid var(--border-m);border-radius:var(--r-md);align-items:center;gap:12px;">
         <span style="font-size:20px;">📎</span>
         <div style="flex:1;">
@@ -381,6 +395,7 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
         <div class="field"><label>Fecha kick-off</label><input type="date" id="dateKickoff" onchange="updateGoLiveMin()"></div>
         <div class="field"><label>Fecha Go-Live <span class="tooltip-icon">?<span class="tooltip-text">Mínimo 30 días desde el kick-off</span></span></label><input type="date" id="dateGoLive"></div>
         <div class="field"><label>Dotación total</label><input type="number" id="headcount" placeholder="Ej: 240" min="1"></div>
+        <div class="field"><label>Rubro / Industria</label><input type="text" id="clientRubro" placeholder="Ej: Retail, Logística"></div>
       </div>
       <div class="btn-row">
         <button class="btn-primary" onclick="generateRoadmap()">Generar roadmap</button>
@@ -483,7 +498,11 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
         </div>
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon">📚</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Entrenamientos</span></div>
-          <ul class="cc-list">
+          <div class="cc-ai-row">
+            <button class="cc-ai-btn" id="btnSugerirEntrenos" onclick="sugerirEntrenamientos()">💡 Sugerir entrenamientos</button>
+            <span class="cc-ai-status" id="entrenoStatus"></span>
+          </div>
+          <ul class="cc-list" id="ccEntrenosT14">
             <li contenteditable="true" spellcheck="false">Entrenamiento 1</li>
             <li contenteditable="true" spellcheck="false">Entrenamiento 2</li>
             <li contenteditable="true" spellcheck="false">Entrenamiento 3</li>
@@ -514,30 +533,18 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
       <div style="margin-top:1rem;">
         <div class="cc-card">
           <div class="cc-card-head"><div class="cc-card-icon">🏅</div><span class="cc-card-label" contenteditable="true" spellcheck="false">Reconocimientos activos</span></div>
-          <p style="font-size:13px;color:var(--text-2);margin-bottom:10px;" contenteditable="true" spellcheck="false">Reconocimientos alineados a valores corporativos. Insignias activas:</p>
-          <div class="cc-insignias">
-            <div class="cc-ins">
-              <div class="cc-ins-name" contenteditable="true" spellcheck="false">🤝 Valor corporativo 1</div>
-              <div class="cc-ins-items" contenteditable="true" spellcheck="false">Descripción de insignia · Descripción de insignia · Descripción de insignia · Descripción de insignia</div>
-            </div>
-            <div class="cc-ins">
-              <div class="cc-ins-name" contenteditable="true" spellcheck="false">🏠 Valor corporativo 2</div>
-              <div class="cc-ins-items" contenteditable="true" spellcheck="false">Descripción de insignia · Descripción de insignia · Descripción de insignia</div>
-            </div>
-            <div class="cc-ins">
-              <div class="cc-ins-name" contenteditable="true" spellcheck="false">⭐ Valor corporativo 3</div>
-              <div class="cc-ins-items" contenteditable="true" spellcheck="false">Descripción de insignia · Descripción de insignia · Descripción de insignia</div>
-            </div>
-            <div class="cc-ins">
-              <div class="cc-ins-name" contenteditable="true" spellcheck="false">⚡ Valor corporativo 4</div>
-              <div class="cc-ins-items" contenteditable="true" spellcheck="false">Descripción de insignia · Descripción de insignia · Descripción de insignia</div>
-            </div>
+          <div class="cc-ai-row">
+            <button class="cc-ai-btn" id="btnBuscarValores" onclick="buscarValoresCorporativos()">🔎 Buscar valores</button>
+            <span class="cc-ai-status" id="valoresStatus"></span>
           </div>
+          <p style="font-size:13px;color:var(--text-2);margin-bottom:10px;" contenteditable="true" spellcheck="false">Reconocimientos alineados a valores corporativos. Insignias activas:</p>
+          <div class="cc-insignias" id="ccInsignias"></div>
         </div>
       </div>
     </div>
 
     <div class="cc-divider"></div>
+
 
     <!-- T30 -->
     <div class="cc-phase">
@@ -699,9 +706,9 @@ function roleColor(r) {
 
 // ═══ PLAYBOOKS ═══
 const PLAYBOOKS = {
-  fuerza_de_venta:{label:'Fuerza de venta',t14:{kpis_text:'40% fuerza de venta activa · ≥70% cert. "Venta de Valor"',acciones:['Insignias Activador','Certificación Venta de Valor','Bono sprint cierre (últimos 3 días)'],roles:['CSM','Cliente','Admins'],reportes:[{nombre:'Reporte de activación D+7',meta:'PDF ejecutivo',dest:'Admins operativos'},{nombre:'Revisión T-14 · % adopción y certificación',meta:'Reunión 60 min + resumen',dest:'Admins + jefe comercial'}]},t30:{kpis_text:'60-70% dotación activa · >2 challenges por vendedor · transaccionalidad ↑',acciones:['Bono de Salto de tramo','Reto de Calidad (0% anulaciones)','Encuesta D+30 premiada'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Quincenal de tramos',meta:'PDF 5 slides',dest:'Jefe comercial'},{nombre:'Revisión T-30',meta:'Reunión 60 min + reporte PDF',dest:'Admins + sponsor'}]},t90:{kpis_text:'Rotación tramos Oro/Plata · actividad sostenida 3m+ · ROI documentado',acciones:['Gran Pozo Oro trimestral','Encuesta de clima D+90','Premios trimestrales formales','Propuesta de renovación'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review trimestral D+90',meta:'Sesión 90 min + deck T-90',dest:'C-Level + sponsor'},{nombre:'ROI del programa',meta:'Reporte ejecutivo PDF',dest:'C-Level'},{nombre:'Benchmark de industria',meta:'Comparativa vs. promedio segmento',dest:'C-Level'}]}},
-  rrhh:{label:'RRHH / Personas',t14:{kpis_text:'40% colaboradores activos · ≥70% cert. "Cultura y Beneficios"',acciones:['Insignias de Bienvenida','Certificación cultura organizacional','Encuesta pulso inicial'],roles:['CSM','Cliente','Admins'],reportes:[{nombre:'Reporte de activación D+7',meta:'PDF ejecutivo',dest:'Admins RRHH'},{nombre:'Revisión T-14 · adopción por área',meta:'Reunión 60 min',dest:'Gerente RRHH + líderes'}]},t30:{kpis_text:'60-70% dotación activa · rotación ↓ vs mes anterior · >2 usos de beneficios/persona',acciones:['Bono de permanencia por tramo','Reto de clima + acción','Reconocimiento público D+30'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Reporte de retención quincenal',meta:'PDF 5 slides',dest:'Gerente RRHH'},{nombre:'Análisis de clima D+30',meta:'Reunión 60 min + PDF',dest:'Directivos'}]},t90:{kpis_text:'Reducción rotación vs línea base · NPS clima ↑ · ROI en ahorro de reemplazo',acciones:['Premio trimestral de permanencia','Encuesta clima D+90','Análisis de cohortes','Propuesta renovación con ROI'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review RRHH D+90',meta:'Sesión 90 min + deck',dest:'Directivos + RRHH'},{nombre:'ROI (costo rotación evitado)',meta:'Reporte ejecutivo PDF',dest:'Gerente General'}]}},
-  operaciones:{label:'Operaciones',t14:{kpis_text:'40% operadores activos · ≥70% cert. "Estándares de calidad"',acciones:['Insignias Calidad y Proceso','Certificación estándares operacionales','Sprint cumplimiento'],roles:['CSM','TechOps','Cliente','Admins'],reportes:[{nombre:'Reporte activación D+7 por área',meta:'PDF ejecutivo',dest:'Supervisores / Jefe ops'},{nombre:'Revisión T-14 · cumplimiento y calidad',meta:'Reunión 60 min',dest:'Gerente operaciones'}]},t30:{kpis_text:'60-70% dotación activa · cumplimiento ↑ vs baseline · tasa error ↓',acciones:['Bono cumplimiento por tramo','Reto de calidad (0% reprocesos)','Encuesta D+30 procesos'],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Reporte quincenal cumplimiento',meta:'PDF 5 slides',dest:'Jefe operaciones'},{nombre:'Análisis de calidad T-30',meta:'Reunión 60 min + PDF',dest:'Directivos'}]},t90:{kpis_text:'Tasa error ↓ vs baseline · cumplimiento sostenido · ROI en ahorro reprocesos',acciones:['Premio trimestral mejor equipo','Análisis cohortes calidad','Encuesta clima operacional D+90','Propuesta renovación ROI'],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review Operaciones D+90',meta:'Sesión 90 min + deck',dest:'Directivos'},{nombre:'ROI (ahorro en reprocesos)',meta:'Reporte ejecutivo PDF',dest:'Gerente General / CFO'}]}}
+  fuerza_de_venta:{label:'Fuerza de venta',t14:{kpis_text:'40% fuerza de venta activa · ≥70% cert. "Venta de Valor"',acciones:[{text:'Insignias Activador',impacto:'+25% activación en primeros 7 días'},{text:'Certificación Venta de Valor',impacto:'↑ calidad de venta y menos anulaciones'},{text:'Bono sprint cierre (últimos 3 días)',impacto:'+15% cierre de metas al final del período'}],roles:['CSM','Cliente','Admins'],reportes:[{nombre:'Reporte de activación D+7',meta:'PDF ejecutivo',dest:'Admins operativos'},{nombre:'Revisión T-14 · % adopción y certificación',meta:'Reunión 60 min + resumen',dest:'Admins + jefe comercial'}]},t30:{kpis_text:'60-70% dotación activa · >2 challenges por vendedor · transaccionalidad ↑',acciones:[{text:'Bono de Salto de tramo',impacto:'Impulsa movilidad entre tramos de venta'},{text:'Reto de Calidad (0% anulaciones)',impacto:'Reduce anulaciones y mejora calidad de venta'},{text:'Encuesta D+30 premiada',impacto:'>80% tasa de respuesta esperada'}],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Quincenal de tramos',meta:'PDF 5 slides',dest:'Jefe comercial'},{nombre:'Revisión T-30',meta:'Reunión 60 min + reporte PDF',dest:'Admins + sponsor'}]},t90:{kpis_text:'Rotación tramos Oro/Plata · actividad sostenida 3m+ · ROI documentado',acciones:[{text:'Gran Pozo Oro trimestral',impacto:'Sostiene actividad en el tramo top 3+ meses'},{text:'Encuesta de clima D+90',impacto:'Detecta riesgo de rotación temprano'},{text:'Premios trimestrales formales',impacto:'Refuerza permanencia en tramos altos'},{text:'Propuesta de renovación',impacto:'Con ROI documentado del trimestre'}],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review trimestral D+90',meta:'Sesión 90 min + deck T-90',dest:'C-Level + sponsor'},{nombre:'ROI del programa',meta:'Reporte ejecutivo PDF',dest:'C-Level'},{nombre:'Benchmark de industria',meta:'Comparativa vs. promedio segmento',dest:'C-Level'}]}},
+  rrhh:{label:'RRHH / Personas',t14:{kpis_text:'40% colaboradores activos · ≥70% cert. "Cultura y Beneficios"',acciones:[{text:'Insignias de Bienvenida',impacto:'+25% activación en primeros 7 días'},{text:'Certificación cultura organizacional',impacto:'↑ alineamiento con valores corporativos'},{text:'Encuesta pulso inicial',impacto:'Línea base para medir clima desde el día 1'}],roles:['CSM','Cliente','Admins'],reportes:[{nombre:'Reporte de activación D+7',meta:'PDF ejecutivo',dest:'Admins RRHH'},{nombre:'Revisión T-14 · adopción por área',meta:'Reunión 60 min',dest:'Gerente RRHH + líderes'}]},t30:{kpis_text:'60-70% dotación activa · rotación ↓ vs mes anterior · >2 usos de beneficios/persona',acciones:[{text:'Bono de permanencia por tramo',impacto:'Reduce rotación temprana'},{text:'Reto de clima + acción',impacto:'↑ engagement y participación activa'},{text:'Reconocimiento público D+30',impacto:'Refuerza sentido de pertenencia'}],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Reporte de retención quincenal',meta:'PDF 5 slides',dest:'Gerente RRHH'},{nombre:'Análisis de clima D+30',meta:'Reunión 60 min + PDF',dest:'Directivos'}]},t90:{kpis_text:'Reducción rotación vs línea base · NPS clima ↑ · ROI en ahorro de reemplazo',acciones:[{text:'Premio trimestral de permanencia',impacto:'Sostiene retención en el largo plazo'},{text:'Encuesta clima D+90',impacto:'Detecta riesgo de rotación temprano'},{text:'Análisis de cohortes',impacto:'Identifica patrones de abandono por área'},{text:'Propuesta renovación con ROI',impacto:'Con ahorro en costo de reemplazo documentado'}],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review RRHH D+90',meta:'Sesión 90 min + deck',dest:'Directivos + RRHH'},{nombre:'ROI (costo rotación evitado)',meta:'Reporte ejecutivo PDF',dest:'Gerente General'}]}},
+  operaciones:{label:'Operaciones',t14:{kpis_text:'40% operadores activos · ≥70% cert. "Estándares de calidad"',acciones:[{text:'Insignias Calidad y Proceso',impacto:'+25% activación en primeros 7 días'},{text:'Certificación estándares operacionales',impacto:'↓ errores en el proceso inicial'},{text:'Sprint cumplimiento',impacto:'+15% cumplimiento al cierre del período'}],roles:['CSM','TechOps','Cliente','Admins'],reportes:[{nombre:'Reporte activación D+7 por área',meta:'PDF ejecutivo',dest:'Supervisores / Jefe ops'},{nombre:'Revisión T-14 · cumplimiento y calidad',meta:'Reunión 60 min',dest:'Gerente operaciones'}]},t30:{kpis_text:'60-70% dotación activa · cumplimiento ↑ vs baseline · tasa error ↓',acciones:[{text:'Bono cumplimiento por tramo',impacto:'Impulsa movilidad hacia tramos superiores'},{text:'Reto de calidad (0% reprocesos)',impacto:'Reduce reprocesos y costos operativos'},{text:'Encuesta D+30 procesos',impacto:'>80% tasa de respuesta esperada'}],roles:['CSM','KAM','Admins','Sponsor'],reportes:[{nombre:'Reporte quincenal cumplimiento',meta:'PDF 5 slides',dest:'Jefe operaciones'},{nombre:'Análisis de calidad T-30',meta:'Reunión 60 min + PDF',dest:'Directivos'}]},t90:{kpis_text:'Tasa error ↓ vs baseline · cumplimiento sostenido · ROI en ahorro reprocesos',acciones:[{text:'Premio trimestral mejor equipo',impacto:'Sostiene cumplimiento en el largo plazo'},{text:'Análisis cohortes calidad',impacto:'Identifica patrones de error por equipo'},{text:'Encuesta clima operacional D+90',impacto:'Detecta riesgo de rotación temprano'},{text:'Propuesta renovación ROI',impacto:'Con ahorro en reprocesos documentado'}],roles:['CSM','KAM','C-Level','Sponsor'],reportes:[{nombre:'Business Review Operaciones D+90',meta:'Sesión 90 min + deck',dest:'Directivos'},{nombre:'ROI (ahorro en reprocesos)',meta:'Reporte ejecutivo PDF',dest:'Gerente General / CFO'}]}}
 };
 
 // ═══ RUBRICS ═══
@@ -784,6 +791,86 @@ function showAiStatus(msg, isError=false) {
 }
 function logAi(msg) { const l = document.getElementById('aiLog'); l.innerHTML += (l.innerHTML ? '<br>' : '') + msg; }
 function hideAiSpinner() { document.getElementById('aiSpinner').style.display = 'none'; document.getElementById('aiStatusLabel').textContent = 'Listo'; }
+
+// ═══ VALORES CORPORATIVOS (n8n) ═══
+const N8N_VALORES_WEBHOOK = 'https://n8n.openip.cl/webhook/apprecio-valores-scrape';
+function setAiRowStatus(id, msg, cls) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = 'cc-ai-status' + (cls ? ' ' + cls : '');
+}
+async function buscarValoresCorporativos() {
+  const url = (document.getElementById('clientUrl')||{}).value ? document.getElementById('clientUrl').value.trim() : '';
+  if (!url) { setAiRowStatus('valoresStatus', 'Completa "Sitio web cliente" en el Paso 1 (arriba).', 'error'); return; }
+  const btn = document.getElementById('btnBuscarValores');
+  btn.disabled = true;
+  setAiRowStatus('valoresStatus', 'Buscando valores corporativos...', '');
+  try {
+    const res = await fetch(N8N_VALORES_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ url, cliente: (document.getElementById('clientName')||{}).value || '' }) });
+    if (!res.ok) throw new Error('Error ' + res.status + ' — verifica que el workflow esté activo en n8n.');
+    const text = await res.text();
+    if (!text || text.trim() === '') throw new Error('n8n devolvió respuesta vacía.');
+    let parsed;
+    try { parsed = JSON.parse(text); } catch(e) { throw new Error('Respuesta inválida de n8n: ' + text.substring(0,100)); }
+    const valores = parsed.valores || [];
+    if (!valores.length) throw new Error('No se encontraron valores corporativos en el sitio.');
+    applyValoresCorporativos(valores);
+    setAiRowStatus('valoresStatus', '✅ ' + valores.length + ' valores cargados.', 'ok');
+  } catch(err) {
+    setAiRowStatus('valoresStatus', 'Error: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+function applyValoresCorporativos(valores) {
+  const wrap = document.getElementById('ccInsignias');
+  wrap.innerHTML = '';
+  valores.forEach(v => {
+    const ins = document.createElement('div'); ins.className = 'cc-ins';
+    const name = document.createElement('div'); name.className = 'cc-ins-name'; name.contentEditable = 'true'; name.spellcheck = false;
+    name.textContent = (v.icono ? v.icono + ' ' : '') + (v.nombre || v.valor || 'Valor corporativo');
+    const items = document.createElement('div'); items.className = 'cc-ins-items'; items.contentEditable = 'true'; items.spellcheck = false;
+    items.textContent = (v.insignias && v.insignias.length) ? v.insignias.join(' · ') : 'Descripción de insignia';
+    ins.appendChild(name); ins.appendChild(items); wrap.appendChild(ins);
+  });
+}
+
+// ═══ SUGERENCIA DE ENTRENAMIENTOS (n8n) ═══
+const N8N_ENTRENOS_WEBHOOK = 'https://n8n.openip.cl/webhook/apprecio-entrenamientos-sugerir';
+async function sugerirEntrenamientos() {
+  const cliente = (document.getElementById('clientName')||{}).value || document.getElementById('cc-hero-title').textContent || '';
+  const rubro = (document.getElementById('clientRubro')||{}).value || '';
+  if (!rubro) { setAiRowStatus('entrenoStatus', 'Completa el campo "Rubro / Industria" en el formulario.', 'error'); return; }
+  const btn = document.getElementById('btnSugerirEntrenos');
+  btn.disabled = true;
+  setAiRowStatus('entrenoStatus', 'Generando sugerencias...', '');
+  try {
+    const res = await fetch(N8N_ENTRENOS_WEBHOOK, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ cliente, rubro }) });
+    if (!res.ok) throw new Error('Error ' + res.status + ' — verifica que el workflow esté activo en n8n.');
+    const text = await res.text();
+    if (!text || text.trim() === '') throw new Error('n8n devolvió respuesta vacía.');
+    let parsed;
+    try { parsed = JSON.parse(text); } catch(e) { throw new Error('Respuesta inválida de n8n: ' + text.substring(0,100)); }
+    const entrenamientos = parsed.entrenamientos || [];
+    if (!entrenamientos.length) throw new Error('No se generaron sugerencias.');
+    applyEntrenamientosSugeridos(entrenamientos);
+    setAiRowStatus('entrenoStatus', '✅ ' + entrenamientos.length + ' entrenamientos sugeridos.', 'ok');
+  } catch(err) {
+    setAiRowStatus('entrenoStatus', 'Error: ' + err.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+function applyEntrenamientosSugeridos(entrenamientos) {
+  const list = document.getElementById('ccEntrenosT14');
+  list.innerHTML = '';
+  entrenamientos.forEach(t => {
+    const li = document.createElement('li'); li.contentEditable = 'true'; li.spellcheck = false; li.textContent = t;
+    list.appendChild(li);
+  });
+  const special = document.createElement('li'); special.contentEditable = 'true'; special.spellcheck = false; special.textContent = '+ Entrenamiento especial (usuarios con trayectoria)';
+  list.appendChild(special);
+}
 
 // ═══ DATE HELPERS ═══
 function addDays(d, n) { var r = new Date(d); r.setDate(r.getDate() + n); return r; }
@@ -943,13 +1030,22 @@ function makeRolePill(r) {
   const del = document.createElement('button'); del.className = 'role-pill-del'; del.textContent = '×'; del.onclick = () => span.remove();
   span.appendChild(dot); span.appendChild(txt); span.appendChild(del); return span;
 }
-function makeAccionPill(text) {
+function makeAccionPill(a) {
+  const isObj = a && typeof a === 'object';
+  const text = isObj ? a.text : a;
+  const impacto = isObj ? a.impacto : null;
   const span = document.createElement('span'); span.className = 'accion-pill';
   const chk = document.createElement('button'); chk.className = 'accion-check'; chk.textContent = '○';
   chk.onclick = () => { const done = !span.classList.contains('done'); span.classList.toggle('done', done); chk.textContent = done ? '✓' : '○'; chk.classList.toggle('done', done); };
   const txt = document.createElement('span'); txt.className = 'accion-pill-text'; txt.contentEditable = 'true'; txt.spellcheck = false; txt.textContent = text;
+  span.appendChild(chk); span.appendChild(txt);
+  if (impacto) {
+    const info = document.createElement('span'); info.className = 'accion-impact'; info.textContent = '↑';
+    const tip = document.createElement('span'); tip.className = 'accion-impact-text'; tip.textContent = impacto;
+    info.appendChild(tip); span.appendChild(info);
+  }
   const del = document.createElement('button'); del.className = 'accion-del'; del.textContent = '×'; del.onclick = () => span.remove();
-  span.appendChild(chk); span.appendChild(txt); span.appendChild(del); return span;
+  span.appendChild(del); return span;
 }
 function makeReporteRow(r) {
   const row = document.createElement('div'); row.className = 'reporte-row';
@@ -1093,7 +1189,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 function resetAll() {
   if (!confirm('¿Limpiar todo?')) return;
-  ['clientName','programName','execName','dateKickoff','dateGoLive','headcount'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
+  ['clientName','programName','execName','dateKickoff','dateGoLive','headcount','clientRubro','clientUrl'].forEach(id => { const e = document.getElementById(id); if (e) e.value = ''; });
   document.getElementById('output').style.display = 'none';
   document.getElementById('aiStatus').style.display = 'none';
   document.getElementById('aiLog').innerHTML = '';
