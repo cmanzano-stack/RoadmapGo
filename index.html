@@ -148,10 +148,10 @@ body{font-family:var(--font);background:var(--bg-page);color:var(--text-1);line-
 .btn-add-reporte{font-size:10px;font-weight:700;color:var(--brand);background:transparent;border:1px dashed var(--border-m);padding:4px 12px;border-radius:var(--r-md);cursor:pointer;width:100%;text-align:center;margin-top:4px;}
 .cc-metas-title{font-size:11px;font-weight:700;color:var(--text-2);margin:10px 0 6px;text-transform:uppercase;letter-spacing:.05em;}
 .cc-metas-table{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
-.cc-metas-row{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg-2);border-radius:var(--r-md);border-left:3px solid var(--green);}
-.cc-metas-categoria{font-size:12px;font-weight:600;flex:1;outline:none;color:var(--text-1);}
-.cc-metas-detalle{font-size:12px;color:var(--green);font-weight:700;outline:none;white-space:nowrap;}
-.cc-metas-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:14px;flex-shrink:0;line-height:1;}
+.cc-metas-row{display:flex;flex-direction:column;gap:3px;padding:9px 32px 9px 12px;background:var(--bg-2);border-radius:var(--r-md);border-left:3px solid var(--green);position:relative;}
+.cc-metas-categoria{font-size:12px;font-weight:700;outline:none;color:var(--text-1);word-break:break-word;overflow-wrap:break-word;}
+.cc-metas-detalle{font-size:12px;color:var(--green);font-weight:600;outline:none;word-break:break-word;overflow-wrap:break-word;white-space:normal;}
+.cc-metas-del{background:none;border:none;cursor:pointer;color:var(--text-3);font-size:14px;line-height:1;position:absolute;top:8px;right:8px;}
 .cc-metas-del:hover{color:var(--brand);}
 .cc-metas-add{font-size:10px;font-weight:700;color:var(--brand);background:transparent;border:1px dashed var(--border-m);padding:4px 12px;border-radius:var(--r-md);cursor:pointer;width:100%;text-align:center;}
 .btn-add-reporte:hover{border-color:var(--brand);background:var(--brand-light);}
@@ -404,7 +404,7 @@ body.present-mode .accion-pill.done .accion-pill-text{text-decoration:none;opaci
         <div class="field"><label>Fecha Go-Live <span class="tooltip-icon">?<span class="tooltip-text">Mínimo 30 días desde el kick-off</span></span></label><input type="date" id="dateGoLive"></div>
         <div class="field"><label>Dotación total</label><input type="number" id="headcount" placeholder="Ej: 240" min="1"></div>
         <div class="field"><label>Rubro / Industria</label><input type="text" id="clientRubro" placeholder="Ej: Retail, Logística"></div>
-        <div class="field"><label>Equipo objetivo</label><input type="text" id="clientEquipo" placeholder="Ej: Fuerza de venta, Atención al cliente, Logística..." value="Fuerza de venta"></div>
+        <div class="field"><label>Equipo objetivo</label><input type="text" id="clientEquipo" placeholder="Ej: Fuerza de venta, Atención al cliente, Logística..."></div>
         <div class="field"><label>Qué vende/gestiona el equipo <span class="tooltip-icon">?<span class="tooltip-text">Ej: Máquinas Point (cobro con tarjeta)</span></span></label><input type="text" id="clientProducto" placeholder="Ej: Máquinas Point"></div>
       </div>
       <div class="btn-row">
